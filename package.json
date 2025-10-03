@@ -1,6 +1,6 @@
 {
   "name": "com.feed_the_realm.shared",
-  "displayName": "Feed the realm - Shared package",
+  "displayName": "1 - Feed the realm - Shared package",
   "version": "0.1.0",
   "unity": "6000.2",
   "description": "Shared logic and UI components for Feed the realm client and world creator.",
