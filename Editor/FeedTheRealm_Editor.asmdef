@@ -1,0 +1,13 @@
+{
+  "name": "FeedTheRealm_Editor",
+  "references": [
+    "FeedTheRealm_Shared",
+    "UnityEditor"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "defineConstraints": [],
+  "allowUnsafeCode": false
+}

@@ -1,0 +1,21 @@
+{
+    "name": "FeedTheRealm_Shared",
+    "rootNamespace": "",
+    "references": [
+        "UnityEngine",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "LinuxStandalone64",
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
