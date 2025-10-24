@@ -6,6 +6,8 @@ using System;
 public class PlayerInputReader : ScriptableObject, PlayerControls.IPlayerActions {
     public event Action<Vector2> MoveEvent;
     public event Action DashEvent;
+    public event Action AttackEvent;
+    public event Action CursorToggleEvent;
 
     private PlayerControls controls;
 
@@ -32,6 +34,18 @@ public class PlayerInputReader : ScriptableObject, PlayerControls.IPlayerActions
     public void OnDash(InputAction.CallbackContext context) {
         if (context.performed) {
             DashEvent?.Invoke();
+        }
+    }
+
+    public void OnCursorToggle(InputAction.CallbackContext context) {
+        if (context.performed) {
+            CursorToggleEvent?.Invoke();
+        }
+    }
+
+    public void OnAttack(InputAction.CallbackContext context) {
+        if (context.performed) {
+            AttackEvent?.Invoke();
         }
     }
 }
