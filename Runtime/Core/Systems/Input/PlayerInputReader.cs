@@ -6,6 +6,7 @@ using System;
 public class PlayerInputReader : ScriptableObject, PlayerControls.IPlayerActions {
     public event Action<Vector2> MoveEvent;
     public event Action DashEvent;
+    public event Action InventoryEvent;
 
     private PlayerControls controls;
 
@@ -32,6 +33,12 @@ public class PlayerInputReader : ScriptableObject, PlayerControls.IPlayerActions
     public void OnDash(InputAction.CallbackContext context) {
         if (context.performed) {
             DashEvent?.Invoke();
+        }
+    }
+
+    public void OnInventory(InputAction.CallbackContext context) {
+        if (context.performed) {
+            InventoryEvent?.Invoke();
         }
     }
 }
