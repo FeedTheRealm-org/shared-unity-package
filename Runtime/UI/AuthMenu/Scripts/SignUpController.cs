@@ -1,8 +1,6 @@
 using UnityEngine;
-using UnityEditor;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
-using UnityEditor.PackageManager;
 
 public class SignUpController : MonoBehaviour {
     [SerializeField]
@@ -12,10 +10,10 @@ public class SignUpController : MonoBehaviour {
     private Session.Session session;
 
     [SerializeField]
-    private SceneAsset targetScene;
+    private SceneReference targetScene;
 
     [SerializeField]
-    private SceneAsset otherFormScene;
+    private SceneReference otherFormScene;
 
     [SerializeField]
     private Logging.Logger logger;
@@ -43,8 +41,8 @@ public class SignUpController : MonoBehaviour {
 
         _changeButton = ui.Q<Label>("LoginChangeButton");
         _changeButton.RegisterCallback<ClickEvent>(evt => {
-            logger.Log("Navigating to " + otherFormScene.name + ".", this);
-            SceneManager.LoadScene(otherFormScene.name);
+            logger.Log("Navigating to " + otherFormScene.SceneName + ".", this);
+            SceneManager.LoadScene(otherFormScene.SceneName);
         });
 
         _emailField = ui.Q<TextField>("EmailField");
@@ -74,9 +72,9 @@ public class SignUpController : MonoBehaviour {
                 logger.Log("SignUp successful, email: " + _emailField.value, this);
                 if (preloadOperation != null) {
                     preloadOperation.allowSceneActivation = true;
-                    logger.Log("Activating preloaded " + targetScene.name + ".", this);
+                    logger.Log("Activating preloaded " + targetScene.SceneName + ".", this);
                 } else {
-                    SceneManager.LoadScene(targetScene.name);
+                    SceneManager.LoadScene(targetScene.SceneName);
                 }
             } else {
                 logger.Log("Login failed", this, Logging.LogType.Error);
