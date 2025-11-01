@@ -1,22 +1,28 @@
 using UnityEngine;
 
 namespace Session {
-  [CreateAssetMenu(fileName = "Session", menuName = "Scriptable Objects/Session")]
-  public class Session : ScriptableObject {
-    public string APIToken { get; private set; }
-    public string Email { get; private set; }
+    [CreateAssetMenu(fileName = "Session", menuName = "Scriptable Objects/Session")]
+    public class Session : ScriptableObject {
+        // Metadata
+        public string APIToken { get; private set; }
+        public bool IsFirstLogin { get; set; }
 
-    public void SetAPIToken(string token) {
-      APIToken = token;
-    }
+        // User Info
+        public string Email { get; private set; }
+        public string CharacterName { get; set; }
 
-    public void SetEmail(string email) {
-      Email = email;
-    }
+        public void SetAPIToken(string token) {
+            APIToken = token;
+        }
 
-    public void ClearSession() {
-      APIToken = null;
-      Email = null;
+        public void SetEmail(string email) {
+            Email = email;
+        }
+
+        public void ClearSession() {
+            APIToken = null;
+            Email = null;
+            CharacterName = null;
+        }
     }
-  }
 }
