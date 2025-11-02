@@ -2,20 +2,22 @@ using UnityEngine;
 using System.Collections;
 
 namespace API {
+    /* --- Request --- */
     [System.Serializable]
-    class LoginPayload {
+    public class LoginRequest {
         public string email;
         public string password;
     }
 
+    /* --- Responses --- */
     [System.Serializable]
-    class LoginResponse {
+    public class LoginResponse {
         public string message;
         public string token;
     }
 
     [System.Serializable]
-    class SignUpResponse {
+    public class SignUpResponse {
         public string message;
         public string email;
     }

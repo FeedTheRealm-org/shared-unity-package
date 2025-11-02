@@ -18,7 +18,7 @@ namespace API {
 
         public IEnumerator Login(string email, string password, System.Action<string, string, string> handler) {
             var url = $"http://{Hostname}:{Port}/auth/login";
-            var payload = new LoginPayload { email = email, password = password };
+            var payload = new LoginRequest { email = email, password = password };
             var json = JsonUtility.ToJson(payload);
 
             var uwr = new UnityWebRequest(url, "POST");
@@ -45,7 +45,7 @@ namespace API {
 
         public IEnumerator SignUp(string email, string password, System.Action<bool, string> handler) {
             var url = $"http://{Hostname}:{Port}/auth/signup";
-            var payload = new LoginPayload { email = email, password = password };
+            var payload = new LoginRequest { email = email, password = password };
             var json = JsonUtility.ToJson(payload);
 
             var uwr = new UnityWebRequest(url, "POST");
