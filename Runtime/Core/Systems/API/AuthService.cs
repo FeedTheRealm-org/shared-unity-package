@@ -5,35 +5,16 @@ using System.Collections;
 namespace API {
     [CreateAssetMenu(fileName = "AuthService", menuName = "Scriptable Objects/API/AuthService")]
     public class AuthService : ScriptableObject {
-        [SerializeField]
-        private Logging.Logger logger;
-
+        [Header("Server settings")]
         [SerializeField]
         public string Hostname;
 
         [SerializeField]
         public int Port;
 
-        [System.Serializable]
-        class DataEnvelope<T> { public T data; }
-
-        [System.Serializable]
-        class LoginPayload { public string email; public string password; }
-
-        [System.Serializable]
-        class LoginResponse { public string message; public string token; }
-
-        [System.Serializable]
-        class SignUpResponse { public string message; public string email; }
-
-        [System.Serializable]
-        class ErrorResponse {
-            public string type;
-            public string title;
-            public int status;
-            public string detail;
-            public string instance;
-        }
+        [Header("General settings")]
+        [SerializeField]
+        private Logging.Logger logger;
 
         public IEnumerator Login(string email, string password, System.Action<string, string, string> handler) {
             var url = $"http://{Hostname}:{Port}/auth/login";
