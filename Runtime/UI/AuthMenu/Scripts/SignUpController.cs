@@ -77,7 +77,7 @@ public class SignUpController : MonoBehaviour {
                     SceneManager.LoadScene(targetScene.SceneName);
                 }
             } else {
-                logger.Log("Login failed", this, Logging.LogType.Error);
+                logger.Log("SignUp failed", this, Logging.LogType.Error);
                 _messageError.text = err;
             }
         }));

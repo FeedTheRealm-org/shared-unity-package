@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Packages/com.feed_the_realm.shared/Runtime/UI/AuthMenu/Themes/AuthForm.uss?fileID=7433441132597879392&amp;guid=c25ac5f0ef9fbfd46bdd96a557e53334&amp;type=3#AuthForm" />
+    <ui:VisualElement name="VerifyCodeContainer" class="AuthContainer" style="transition-property: all; transition-duration: 0s; transition-timing-function: ease; transition-delay: 0s;">
+        <ui:VisualElement name="FormVerifyCode" class="formBox" style="flex-direction: column;">
+            <ui:TextField label="Email" placeholder-text="Ingress your email" name="EmailField" class="AuthEmailInput" />
+            <ui:TextField label="Code" placeholder-text="Ingress your code" name="CodeField" class="AuthPasswordField" />
+            <ui:Label text="Verify code" name="FormTitle" class="AuthFormTitle" />
+            <ui:Label name="MessageError" class="AuthChangeButton AuthMessageError" />
+            <ui:Label text="Go back to Login" name="LoginBackButton" class="AuthChangeButton" />
+            <ui:Button text="Verify code" name="VerifyCodeButton" class="AuthFormButton" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
