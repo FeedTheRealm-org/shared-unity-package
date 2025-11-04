@@ -3,51 +3,22 @@ using UnityEngine.Networking;
 using System.Collections;
 
 namespace API {
-
     [CreateAssetMenu(fileName = "AuthService", menuName = "Scriptable Objects/API/AuthService")]
     public class AuthService : ScriptableObject {
-        [SerializeField]
-        private Logging.Logger logger;
-
+        [Header("Server settings")]
         [SerializeField]
         public string Hostname;
 
         [SerializeField]
         public int Port;
 
-        [System.Serializable]
-        class LoginPayload { public string email; public string password; }
-
-        [System.Serializable]
-        class VerifyCodePayload { public string email; public string code; }
-
-        [System.Serializable]
-        class LoginResponse {
-            public Data data;
-            [System.Serializable]
-            public class Data { public string token; }
-        }
-
-        [System.Serializable]
-        class SignUpResponse {
-            public Data data;
-            [System.Serializable]
-            public class Data { public string email; }
-        }
-
-
-        [System.Serializable]
-        class ErrorResponse {
-            public string type;
-            public string title;
-            public int status;
-            public string detail;
-            public string instance;
-        }
+        [Header("General settings")]
+        [SerializeField]
+        private Logging.Logger logger;
 
         public IEnumerator Login(string email, string password, System.Action<string, string, string> handler) {
             var url = $"http://{Hostname}:{Port}/auth/login";
-            var payload = new LoginPayload { email = email, password = password };
+            var payload = new LoginRequest { email = email, password = password };
             var json = JsonUtility.ToJson(payload);
 
             var uwr = new UnityWebRequest(url, "POST");
@@ -62,10 +33,10 @@ namespace API {
 
             if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError) {
                 var res = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<ErrorResponse>(responseText);
-                logger.Log($"Login error: {(res != null ? res.title : responseText)} - {responseText}", this, Logging.LogType.Error);
-                handler?.Invoke("", "", res.title);
+                logger.Log($"Login error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}", this, Logging.LogType.Error);
+                handler?.Invoke("", "", res.detail);
             } else {
-                var res = JsonUtility.FromJson<LoginResponse>(responseText);
+                var res = JsonUtility.FromJson<DataEnvelope<LoginResponse>>(responseText);
                 logger.Log($"Login response: {responseText}", this);
                 logger.Log($"Login successful: {res.data.token}", this);
                 handler?.Invoke(!string.IsNullOrEmpty(res.data.token) ? res.data.token : "", email, "");
@@ -74,7 +45,7 @@ namespace API {
 
         public IEnumerator SignUp(string email, string password, System.Action<bool, string> handler) {
             var url = $"http://{Hostname}:{Port}/auth/signup";
-            var payload = new LoginPayload { email = email, password = password };
+            var payload = new LoginRequest { email = email, password = password };
             var json = JsonUtility.ToJson(payload);
 
             var uwr = new UnityWebRequest(url, "POST");
@@ -89,10 +60,10 @@ namespace API {
 
             if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError) {
                 var res = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<ErrorResponse>(responseText);
-                logger.Log($"SignUp error: {(res != null ? res.title : responseText)} - {responseText}", this, Logging.LogType.Error);
-                handler?.Invoke(false, res.title);
+                logger.Log($"SignUp error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}", this, Logging.LogType.Error);
+                handler?.Invoke(false, res.detail);
             } else {
-                var res = JsonUtility.FromJson<SignUpResponse>(responseText);
+                var res = JsonUtility.FromJson<DataEnvelope<SignUpResponse>>(responseText);
                 logger.Log($"SignUp response: {responseText}", this);
                 logger.Log($"SignUp successful: {res.data.email}", this);
                 handler?.Invoke(res.data.email == email, "");
@@ -116,10 +87,10 @@ namespace API {
 
             if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError) {
                 var res = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<ErrorResponse>(responseText);
-                logger.Log($"VerifyCode error: {(res != null ? res.title : responseText)} - {responseText}", this, Logging.LogType.Error);
-                handler?.Invoke(false, res.title);
+                logger.Log($"Verify Code error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}", this, Logging.LogType.Error);
+                handler?.Invoke("", "", res.detail);
             } else {
-                logger.Log($"VerifyCode response: {responseText}", this);
+                logger.Log($"Verify Code response: {responseText}", this);
                 handler?.Invoke(true, "");
             }
         }
