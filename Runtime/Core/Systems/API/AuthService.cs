@@ -72,7 +72,7 @@ namespace API {
 
         public IEnumerator VerifyCode(string email, string code, System.Action<bool, string> handler) {
             var url = $"http://{Hostname}:{Port}/auth/verify";
-            var payload = new VerifyCodePayload { email = email, code = code };
+            var payload = new VerifyCodeRequest { email = email, code = code };
             var json = JsonUtility.ToJson(payload);
 
             var uwr = new UnityWebRequest(url, "POST");
@@ -88,10 +88,11 @@ namespace API {
             if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError) {
                 var res = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<ErrorResponse>(responseText);
                 logger.Log($"Verify Code error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}", this, Logging.LogType.Error);
-                handler?.Invoke("", "", res.detail);
+                handler?.Invoke(false, res.detail);
             } else {
+                var res = JsonUtility.FromJson<DataEnvelope<VerifyCodeResponse>>(responseText);
                 logger.Log($"Verify Code response: {responseText}", this);
-                handler?.Invoke(true, "");
+                handler?.Invoke(res.data.verified, "");
             }
         }
     }

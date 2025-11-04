@@ -76,7 +76,7 @@ public class LoginController : MonoBehaviour {
                 }
             } else {
                 logger.Log("Login failed", this, Logging.LogType.Error);
-                if (err == "Please verify your account before logging in") {
+                if (err == "You must verify your email address before you can log in.") {
                     logger.Log("Navigating to " + verifyCodeScene.SceneName + " for verification.", this);
                     SceneManager.LoadScene(verifyCodeScene.SceneName);
                 }
