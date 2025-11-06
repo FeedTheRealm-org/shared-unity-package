@@ -16,13 +16,14 @@ namespace API {
     /* --- Responses --- */
     [System.Serializable]
     public class LoginResponse {
-        public string message;
-        public string token;
+        public string id;
+        public string email;
+        public string createdAt;
+        public string updatedAt;
     }
 
     [System.Serializable]
     public class SignUpResponse {
-        public string message;
         public string email;
     }
 

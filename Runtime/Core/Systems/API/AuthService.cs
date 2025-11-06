@@ -36,10 +36,16 @@ namespace API {
                 logger.Log($"Login error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}", this, Logging.LogType.Error);
                 handler?.Invoke("", "", res.detail);
             } else {
+                string authHeader = uwr.GetResponseHeader("Authorization");
+                string token = "";
+                if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer ")) {
+                    token = authHeader.Substring("Bearer ".Length);
+                }
+
                 var res = JsonUtility.FromJson<DataEnvelope<LoginResponse>>(responseText);
                 logger.Log($"Login response: {responseText}", this);
-                logger.Log($"Login successful: {res.data.token}", this);
-                handler?.Invoke(!string.IsNullOrEmpty(res.data.token) ? res.data.token : "", email, "");
+                logger.Log($"Login successful UserID: {res.data.id}", this);
+                handler?.Invoke(!string.IsNullOrEmpty(token) ? token : "", res.data.email, "");
             }
         }
 
