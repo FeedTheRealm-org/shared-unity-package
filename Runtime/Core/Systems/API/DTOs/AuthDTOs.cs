@@ -16,6 +16,7 @@ namespace API {
     /* --- Responses --- */
     [System.Serializable]
     public class LoginResponse {
+        public string access_token;
         public string id;
         public string email;
         public string createdAt;
