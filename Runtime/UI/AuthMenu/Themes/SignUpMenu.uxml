@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Packages/com.feed_the_realm.shared/Runtime/UI/AuthMenu/Themes/AuthForm.uss?fileID=7433441132597879392&amp;guid=c25ac5f0ef9fbfd46bdd96a557e53334&amp;type=3#AuthForm" />
-    <ui:VisualElement name="SignUpContainer" class="AuthContainer" style="flex-grow: 1;">
+    <ui:VisualElement name="SignUpContainer" class="AuthContainer" style="flex-grow: 1; background-image: none;">
         <ui:VisualElement name="SignUpForm" class="formBox" style="flex-grow: 1; flex-direction: column;">
             <ui:Label text="Sign Up" name="TitleForm" class="AuthFormTitle" style="top: 3%; left: auto;" />
             <ui:TextField label="Email" placeholder-text="filler text" name="EmailField" class="AuthEmailInput" />
