@@ -160,7 +160,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Inventory",
-                    "action": "CursorToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
