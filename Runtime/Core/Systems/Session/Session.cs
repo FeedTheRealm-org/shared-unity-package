@@ -4,12 +4,13 @@ namespace Session {
     [CreateAssetMenu(fileName = "Session", menuName = "Scriptable Objects/Session")]
     public class Session : ScriptableObject {
         // Metadata
-        public string APIToken { get; private set; }
-        public bool IsFirstLogin { get; set; }
+        public string APIToken { get; private set; } = "";
+        public bool IsFirstLogin { get; set; } = false;
 
         // User Info
-        public string Email { get; private set; }
-        public string CharacterName { get; set; }
+        public string UserId { get; set; } = "";
+        public string Email { get; private set; } = "";
+        public string CharacterName { get; set; } = "";
 
         public void SetAPIToken(string token) {
             APIToken = token;
@@ -20,9 +21,11 @@ namespace Session {
         }
 
         public void ClearSession() {
-            APIToken = null;
-            Email = null;
-            CharacterName = null;
+            APIToken = "";
+            IsFirstLogin = false;
+            UserId = "";
+            Email = "";
+            CharacterName = "";
         }
     }
 }
