@@ -58,12 +58,12 @@ public class PlayerInputReader : ScriptableObject, PlayerControls.IPlayerActions
     }
 
     public void NotifyInventoryOpened() {
-        Debug.Log("[PlayerInputReader] NotifyInventoryOpened - Broadcasting to subscribers");
+        //Debug.Log("[PlayerInputReader] NotifyInventoryOpened - Broadcasting to subscribers");
         InventoryOpenedEvent?.Invoke();
     }
 
     public void NotifyInventoryClosed() {
-        Debug.Log("[PlayerInputReader] NotifyInventoryClosed - Broadcasting to subscribers");
+        //Debug.Log("[PlayerInputReader] NotifyInventoryClosed - Broadcasting to subscribers");
         InventoryClosedEvent?.Invoke();
     }
 }
