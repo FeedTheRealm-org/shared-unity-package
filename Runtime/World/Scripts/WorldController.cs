@@ -98,7 +98,6 @@ namespace World {
         }
 
         public void ToggleGridVisualization(bool isVisible) {
-            Debug.Log("Toggling grid visualization: " + isVisible);
             if (placementGridMaterial != null) {
                 placementGridMaterial.SetFloat("_Show", isVisible ? 1f : 0f);
             }
