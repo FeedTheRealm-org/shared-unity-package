@@ -9,7 +9,7 @@ namespace Models {
     /// </summary>
     [Serializable]
     public class Asset {
-        [SerializeField] private int id;
+        [SerializeField] private string id;
         [SerializeField] private string name;
         [SerializeField] private Vector2Int size = Vector2Int.one;
         [SerializeField] private string modelPath;
@@ -55,7 +55,7 @@ namespace Models {
             }
         }
 
-        public int Id => id;
+        public string Id => id;
         public string Name => name;
         public Vector2Int Size => size;
         public string ModelPath => modelPath;

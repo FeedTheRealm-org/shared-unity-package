@@ -8,7 +8,7 @@ namespace Models {
         [SerializeField]
         public Vector3Int Position;
         [SerializeField]
-        public int AssetDataId;
+        public string AssetDataId;
         [NonSerialized]
         public List<Vector3Int> OccupiedPositions;
         [NonSerialized]

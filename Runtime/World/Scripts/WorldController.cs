@@ -52,7 +52,7 @@ namespace World {
 
             // Optional: position the world plane so its center aligns with the grid center
             worldPlane.transform.position = new Vector3(
-                worldSize * cellSize / 2f - cellSize / 2f,
+                (worldSize * cellSize) / 2f - cellSize / 2f,
                 worldPlane.transform.position.y,
                 worldSize * cellSize / 2f - cellSize / 2f
             );
