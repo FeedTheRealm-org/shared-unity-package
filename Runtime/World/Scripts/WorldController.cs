@@ -7,31 +7,25 @@ namespace World {
 
         [Header("World Configuration")]
         [SerializeField, Min(0.1f)]
-        [Tooltip("Size of each grid cell in world units")]
         private float cellSize = 1f;
 
         [SerializeField, Min(1)]
-        [Tooltip("Number of grid cells (creates gridSize x gridSize world)")]
         private int worldSize = 10;
 
         [Space(10)]
         [Header("World Components")]
         [SerializeField]
-        [Tooltip("The visual ground plane that represents the world")]
         private GameObject worldPlane;
 
         [SerializeField]
-        [Tooltip("Unity Grid component for object snapping")]
         private Grid grid;
 
         [Space(10)]
         [Header("Visual Settings")]
         [SerializeField]
-        [Tooltip("Material used for grid visualization overlay")]
         private Material placementGridMaterial;
 
         [SerializeField]
-        [Tooltip("Show/Hide grid visualization in Scene view")]
         private bool showGridVisualization = false;
 
         [Space(15)]
@@ -102,45 +96,5 @@ namespace World {
             showGridVisualization = false;
             UpdateWorld();
         }
-
-#if UNITY_EDITOR
-        [UnityEditor.CustomEditor(typeof(WorldController))]
-        public class WorldControllerEditor : UnityEditor.Editor {
-            public override void OnInspectorGUI() {
-                DrawDefaultInspector();
-
-                WorldController controller = (WorldController)target;
-
-                GUILayout.Space(10);
-
-                UnityEditor.EditorGUILayout.HelpBox(
-                    $"World Size: {controller.totalWorldSize:F1} x {controller.totalWorldSize:F1} units\n" +
-                    $"Total Cells: {controller.totalCells}\n" +
-                    $"Cell Size: {controller.cellSize:F1} units per cell",
-                    UnityEditor.MessageType.Info
-                );
-
-                GUILayout.Label("Quick Actions", UnityEditor.EditorStyles.boldLabel);
-
-                GUILayout.BeginHorizontal();
-                if (GUILayout.Button("Small World (50x50)")) {
-                    controller.worldSize = 50;
-                    controller.UpdateWorld();
-                    UnityEditor.EditorUtility.SetDirty(controller);
-                }
-                if (GUILayout.Button("Medium World (100x100)")) {
-                    controller.worldSize = 100;
-                    controller.UpdateWorld();
-                    UnityEditor.EditorUtility.SetDirty(controller);
-                }
-                if (GUILayout.Button("Large World (200x200)")) {
-                    controller.worldSize = 200;
-                    controller.UpdateWorld();
-                    UnityEditor.EditorUtility.SetDirty(controller);
-                }
-                GUILayout.EndHorizontal();
-            }
-        }
-#endif
     }
 }
