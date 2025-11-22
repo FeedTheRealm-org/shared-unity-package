@@ -9,8 +9,6 @@ public class PlayerInputReader : ScriptableObject, PlayerControls.IPlayerActions
     public event Action InventoryEvent;
     public event Action AttackEvent;
     public event Action CursorToggleEvent;
-    public event Action InventoryOpenedEvent;
-    public event Action InventoryClosedEvent;
 
     private PlayerControls controls;
 
@@ -55,15 +53,5 @@ public class PlayerInputReader : ScriptableObject, PlayerControls.IPlayerActions
         if (context.performed) {
             AttackEvent?.Invoke();
         }
-    }
-
-    public void NotifyInventoryOpened() {
-        //Debug.Log("[PlayerInputReader] NotifyInventoryOpened - Broadcasting to subscribers");
-        InventoryOpenedEvent?.Invoke();
-    }
-
-    public void NotifyInventoryClosed() {
-        //Debug.Log("[PlayerInputReader] NotifyInventoryClosed - Broadcasting to subscribers");
-        InventoryClosedEvent?.Invoke();
     }
 }
