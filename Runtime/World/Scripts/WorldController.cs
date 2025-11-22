@@ -30,23 +30,23 @@ namespace World {
         private bool showGridVisualization = false;
 
         private void OnValidate() {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             if (!Application.isPlaying) {
                 // Only update in edit mode, avoid runtime issues
                 UnityEditor.EditorApplication.delayCall += () => {
                     if (this != null) {
                         UpdateWorld();
-                        UpdateGridVisualization();
+                        ToggleGridVisualization(showGridVisualization);
                     }
                 };
             }
-            #endif
+#endif
         }
 
         private void Start() {
             UpdateWorld();
-            UpdateGridVisualization();
-            ToggleGridVisualization(false);
+            showGridVisualization = false;
+            ToggleGridVisualization(showGridVisualization);
         }
 
         private void UpdateWorld() {
@@ -57,13 +57,10 @@ namespace World {
             UpdateGridMaterialProperties();
         }
 
-        private void UpdateGridVisualization() {
-            ToggleGridVisualization(showGridVisualization);
-        }
 
         private void UpdateGridMaterialProperties() {
             if (placementGridMaterial == null) return;
-            Vector2 sizeVector = new(1/cellSize, 1/cellSize);
+            Vector2 sizeVector = new(1 / cellSize, 1 / cellSize);
             if (placementGridMaterial.HasProperty("_Size")) {
                 placementGridMaterial.SetVector("_Size", sizeVector);
             } else {
@@ -101,6 +98,7 @@ namespace World {
         }
 
         public void ToggleGridVisualization(bool isVisible) {
+            Debug.Log("Toggling grid visualization: " + isVisible);
             if (placementGridMaterial != null) {
                 placementGridMaterial.SetFloat("_Show", isVisible ? 1f : 0f);
             }

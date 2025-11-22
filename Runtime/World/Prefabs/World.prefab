@@ -70,7 +70,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: d5f09047f4a3ca407985bde260eeb86e, type: 2}
-  - {fileID: 2100000, guid: 61cd5841b492e06df8328fb56120f49c, type: 2}
+  - {fileID: 2100000, guid: 2cf0482a3c6d48d01adede77138000c3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -144,4 +144,4 @@ MonoBehaviour:
   worldPlane: {fileID: 1507695453073613818}
   grid: {fileID: 1985455477242005293}
   placementGridMaterial: {fileID: 2100000, guid: 61cd5841b492e06df8328fb56120f49c, type: 2}
-  showGridVisualization: 1
+  showGridVisualization: 0
