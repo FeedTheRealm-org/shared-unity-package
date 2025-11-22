@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1153590472658203426}
   - component: {fileID: 5575354327328161626}
   - component: {fileID: 7074053888500729754}
+  - component: {fileID: 8284100836717390884}
   m_Layer: 3
   m_Name: World
   m_TagString: Untagged
@@ -29,8 +30,8 @@ Transform:
   m_GameObject: {fileID: 6957738974218692161}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalPosition: {x: 4.5, y: 0, z: 4.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -68,8 +69,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 61cd5841b492e06df8328fb56120f49c, type: 2}
-  - {fileID: 2100000, guid: 1280f9b1245fa4a279fcee42726118a6, type: 2}
+  - {fileID: 2100000, guid: 76810f1cd63c1b4c0b7d65c0d2f024d9, type: 2}
+  - {fileID: 2100000, guid: 203868ea2aca10e40bcdad06c79da941, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -126,3 +127,23 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
+--- !u!114 &8284100836717390884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6957738974218692161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa8c4e3a25bc91045a343fb7aa2ae4a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FeedTheRealm_Shared::World.WorldController
+  cellSize: 1
+  worldSize: 10
+  worldPlane: {fileID: 6957738974218692161}
+  grid: {fileID: 7074053888500729754}
+  placementGridMaterial: {fileID: 2100000, guid: 61cd5841b492e06df8328fb56120f49c, type: 2}
+  showGridVisualization: 0
+  totalWorldSize: 10
+  totalCells: 100
