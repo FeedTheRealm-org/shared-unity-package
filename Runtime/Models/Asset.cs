@@ -40,7 +40,7 @@ namespace Models {
         }
 
 
-        public GameObject InstantiateModel() {
+        private GameObject InstantiateModel() {
             try {
                 GameObject prefab = GetPrefab();
                 GameObject instance = UnityEngine.Object.Instantiate(prefab);

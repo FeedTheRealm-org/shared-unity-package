@@ -2,15 +2,16 @@ using UnityEngine;
 
 namespace World {
 
-    [ExecuteAlways] // Runs in edit mode too
+    [ExecuteAlways]
     public class WorldController : MonoBehaviour {
 
         [Header("World Configuration")]
+
         [SerializeField, Min(0.1f)]
         private float cellSize = 1f;
 
         [SerializeField, Min(1)]
-        private int worldSize = 10;
+        private int gridSize = 5;
 
         [Space(10)]
         [Header("World Components")]
@@ -28,38 +29,54 @@ namespace World {
         [SerializeField]
         private bool showGridVisualization = false;
 
-        [Space(15)]
-        [Header("World Info (Read Only)")]
-        [SerializeField, HideInInspector] private float totalWorldSize;
-        [SerializeField, HideInInspector] private int totalCells;
-
         private void OnValidate() {
+            #if UNITY_EDITOR
+            if (!Application.isPlaying) {
+                // Only update in edit mode, avoid runtime issues
+                UnityEditor.EditorApplication.delayCall += () => {
+                    if (this != null) {
+                        UpdateWorld();
+                        UpdateGridVisualization();
+                    }
+                };
+            }
+            #endif
+        }
+
+        private void Start() {
             UpdateWorld();
             UpdateGridVisualization();
+            ToggleGridVisualization(false);
         }
 
         private void UpdateWorld() {
             if (grid == null || worldPlane == null)
                 return;
-
-            // Set the cell size for the Unity Grid
-            grid.cellSize = new Vector3(cellSize, 0, cellSize);
-
-            // Scale the world plane to match the grid
-            // Default Unity plane is 10x10 units, so scale accordingly
-            float scale = worldSize * cellSize / 10f;
-            worldPlane.transform.localScale = new Vector3(scale, 1, scale);
-
-            // Optional: position the world plane so its center aligns with the grid center
-            worldPlane.transform.position = new Vector3(
-                (worldSize * cellSize) / 2f - cellSize / 2f,
-                worldPlane.transform.position.y,
-                worldSize * cellSize / 2f - cellSize / 2f
-            );
+            grid.cellSize = new Vector3(cellSize / gridSize, 0, cellSize / gridSize);
+            worldPlane.transform.localScale = new Vector3(gridSize, 1, gridSize);
+            UpdateGridMaterialProperties();
         }
 
         private void UpdateGridVisualization() {
             ToggleGridVisualization(showGridVisualization);
+        }
+
+        private void UpdateGridMaterialProperties() {
+            if (placementGridMaterial == null) return;
+            Vector2 sizeVector = new(1/cellSize, 1/cellSize);
+            if (placementGridMaterial.HasProperty("_Size")) {
+                placementGridMaterial.SetVector("_Size", sizeVector);
+            } else {
+                Debug.LogWarning("Grid material doesn't have _Size property");
+            }
+        }
+
+        [ContextMenu("Reset World to Default")]
+        private void ResetToDefault() {
+            cellSize = 1f;
+            gridSize = 10;
+            showGridVisualization = false;
+            UpdateWorld();
         }
 
         public Vector3Int GetSelectedPosition(Vector3 position) {
@@ -89,12 +106,6 @@ namespace World {
             }
         }
 
-        [ContextMenu("Reset World to Default")]
-        private void ResetToDefault() {
-            cellSize = 1f;
-            worldSize = 10;
-            showGridVisualization = false;
-            UpdateWorld();
-        }
+
     }
 }
