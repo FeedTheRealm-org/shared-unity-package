@@ -16,9 +16,18 @@ namespace API {
         private string GetBaseUrl() => $"http://{Hostname}:{Port}/world";
 
         // ----------- CREATE WORLD (POST /world) -----------
-        public IEnumerator CreateWorld(WorldRequest payload, string accessToken, System.Action<string, string> handler) {
-            var url = GetBaseUrl();
-            var json = JsonUtility.ToJson(payload);
+        public IEnumerator CreateWorld(string filePath, string worldName, string accessToken, System.Action<string, string> handler) {
+            // Read file content
+            string fileJson = System.IO.File.ReadAllText(filePath);
+
+            // Convert to WorldData
+            WorldData worldData = JsonUtility.FromJson<WorldData>(fileJson);
+
+            // Wrap into final payload with file_name
+            WorldRequest payload = new WorldRequest(worldData, worldName);
+
+            string url = GetBaseUrl();
+            string json = JsonUtility.ToJson(payload);
 
             var uwr = new UnityWebRequest(url, "POST");
             byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
@@ -26,6 +35,8 @@ namespace API {
             uwr.downloadHandler = new DownloadHandlerBuffer();
             uwr.SetRequestHeader("Content-Type", "application/json");
             uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+
+            logger.Log($"Sending Request: {json}", this);
 
             yield return uwr.SendWebRequest();
 
@@ -38,32 +49,9 @@ namespace API {
             } else {
                 logger.Log($"CreateWorld response: {responseText}", this);
                 var res = JsonUtility.FromJson<DataEnvelope<WorldCreateResponse>>(responseText);
-                handler?.Invoke(res?.data?.worldId, "");
+                handler?.Invoke(res?.data?.id, "");
             }
         }
 
-        // ----------- GET WORLD (GET /world/{worldId}) -----------
-        public IEnumerator GetWorldById(string worldId, string accessToken, System.Action<WorldData, string> handler) {
-            var url = $"{GetBaseUrl()}/{worldId}";
-
-            var uwr = UnityWebRequest.Get(url);
-            uwr.downloadHandler = new DownloadHandlerBuffer();
-            uwr.SetRequestHeader("Accept", "application/json");
-            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
-
-            yield return uwr.SendWebRequest();
-
-            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
-
-            if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError) {
-                var res = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<ErrorResponse>(responseText);
-                logger.Log($"GetWorldById error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}", this, Logging.LogType.Error);
-                handler?.Invoke(null, res?.detail ?? responseText);
-            } else {
-                logger.Log($"GetWorldById response: {responseText}", this);
-                var res = JsonUtility.FromJson<DataEnvelope<WorldData>>(responseText);
-                handler?.Invoke(res?.data, "");
-            }
-        }
     }
 }
