@@ -3,9 +3,9 @@
     <ui:VisualElement name="SignUpContainer" class="AuthContainer" style="flex-grow: 1; background-image: none; background-color: rgb(81, 111, 144);">
         <ui:VisualElement name="SignUpForm" class="formBox" style="flex-grow: 1; flex-direction: column;">
             <ui:Label text="Sign Up" name="TitleForm" class="AuthFormTitle" style="top: 3%; left: auto;" />
-            <ui:TextField label="Email" placeholder-text="filler text" name="EmailField" class="AuthEmailInput" />
-            <ui:TextField label="Password" placeholder-text="filler text" name="PasswordField" password="true" class="AuthPasswordField" />
-            <ui:TextField label="Repeat Password" placeholder-text="filler text" name="RepeatPasswordField" password="true" class="AuthPasswordField" />
+            <ui:TextField label="Email" placeholder-text="Ingress your email" name="EmailField" class="AuthEmailInput" />
+            <ui:TextField label="Password" placeholder-text="Ingress your password" name="PasswordField" password="true" class="AuthPasswordField" />
+            <ui:TextField label="Repeat Password" placeholder-text="Ingress your password" name="RepeatPasswordField" password="true" class="AuthPasswordField" />
             <ui:Label text="Already have account? Login here" name="LoginChangeButton" class="AuthChangeButton" style="top: 1%;" />
             <ui:Label name="MessageError" class="AuthChangeButton AuthMessageError" style="top: 1%;" />
             <ui:Button text="Sign Up" name="SignUpButton" class="AuthFormButton" style="bottom: 3%;" />
