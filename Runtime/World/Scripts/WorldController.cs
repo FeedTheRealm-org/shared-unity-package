@@ -23,11 +23,12 @@ namespace World {
 
         [Space(10)]
         [Header("Visual Settings")]
-        [SerializeField]
-        private Material placementGridMaterial;
 
         [SerializeField]
         private bool showGridVisualization = false;
+
+        // cached resolved material (shared, don't instantiate)
+        private Material resolvedGridMaterial;
 
         private void OnValidate() {
 #if UNITY_EDITOR
@@ -45,26 +46,65 @@ namespace World {
 
         private void Start() {
             UpdateWorld();
+            // ensure runtime starts with visualization off
             showGridVisualization = false;
-            ToggleGridVisualization(showGridVisualization);
+            ToggleGridVisualization(false);
         }
 
         private void UpdateWorld() {
             if (grid == null || worldPlane == null)
                 return;
+
+            // keep behavior: grid cell size relative to cellSize & gridSize
             grid.cellSize = new Vector3(cellSize / gridSize, 0, cellSize / gridSize);
             worldPlane.transform.localScale = new Vector3(gridSize, 1, gridSize);
+
+            // refresh material reference (in case prefab/materials changed)
+            resolvedGridMaterial = ResolveGridMaterial();
             UpdateGridMaterialProperties();
         }
 
 
+        private Material ResolveGridMaterial() {
+
+            if (worldPlane == null) return null;
+
+            if (!worldPlane.TryGetComponent<Renderer>(out var renderer)) return null;
+
+            var mats = renderer.sharedMaterials;
+            // prefab uses material at element 1 per requirement
+            if (mats != null && mats.Length > 1 && mats[1] != null) return mats[1];
+
+            // fallback to first material if index 1 not present
+            if (mats != null && mats.Length > 0) return mats[0];
+
+            return null;
+        }
+
         private void UpdateGridMaterialProperties() {
-            if (placementGridMaterial == null) return;
-            Vector2 sizeVector = new(1 / cellSize, 1 / cellSize);
-            if (placementGridMaterial.HasProperty("_Size")) {
-                placementGridMaterial.SetVector("_Size", sizeVector);
+            var mat = resolvedGridMaterial ?? ResolveGridMaterial();
+            if (mat == null) {
+                // no material available — nothing to update
+                return;
+            }
+
+            // size vector: how many cells per world unit (keep previous convention)
+            Vector2 sizeVector = new Vector2(1f / cellSize, 1f / cellSize);
+
+            // try several common property names (shader dependent)
+            if (mat.HasProperty("_Size")) {
+                mat.SetVector("_Size", sizeVector);
+            } else if (mat.HasProperty("_GridSize")) {
+                mat.SetVector("_GridSize", sizeVector);
+            } else if (mat.HasProperty("_Tiling")) {
+                mat.SetVector("_Tiling", sizeVector);
             } else {
-                Debug.LogWarning("Grid material doesn't have _Size property");
+                Debug.LogWarning($"Grid material on '{name}' doesn't expose expected size property (_Size/_GridSize/_Tiling).");
+            }
+
+            // ensure visibility property respects current flag if shader supports it
+            if (mat.HasProperty("_Show")) {
+                mat.SetFloat("_Show", showGridVisualization ? 1f : 0f);
             }
         }
 
@@ -98,8 +138,14 @@ namespace World {
         }
 
         public void ToggleGridVisualization(bool isVisible) {
-            if (placementGridMaterial != null) {
-                placementGridMaterial.SetFloat("_Show", isVisible ? 1f : 0f);
+            showGridVisualization = isVisible;
+            var mat = resolvedGridMaterial ?? ResolveGridMaterial();
+            if (mat != null) {
+                if (mat.HasProperty("_Show")) {
+                    mat.SetFloat("_Show", isVisible ? 1f : 0f);
+                } else {
+                    Debug.LogWarning("Grid material does not have a '_Show' property.");
+                }
             }
         }
 
