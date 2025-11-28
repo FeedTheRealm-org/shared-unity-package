@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Packages/com.feed_the_realm.shared/Runtime/UI/AuthMenu/Themes/AuthForm.uss?fileID=7433441132597879392&amp;guid=c25ac5f0ef9fbfd46bdd96a557e53334&amp;type=3#AuthForm" />
-    <ui:VisualElement name="LoginContainer" class="AuthContainer" style="transition-property: all; transition-duration: 0s; transition-timing-function: ease; transition-delay: 0s; background-image: none; background-color: rgb(81, 111, 144);">
+    <ui:VisualElement name="LoginContainer" class="AuthContainer" style="transition-property: all; transition-duration: 0s; transition-timing-function: ease; transition-delay: 0s; background-image: url(&quot;project://database/Packages/com.feed_the_realm.shared/Runtime/UI/AuthMenu/Themes/auth_bg.jpg?fileID=2800000&amp;guid=1b1cc05eb2cfed684bf76274a95ddb1f&amp;type=3#auth_bg&quot;); background-color: rgb(81, 111, 144); -unity-background-image-tint-color: rgb(255, 166, 165);">
         <ui:VisualElement name="FormLogin" class="formBox" style="flex-direction: column;">
             <ui:TextField label="Email" placeholder-text="Ingress your email" name="EmailField" class="AuthEmailInput" />
             <ui:TextField label="Password" placeholder-text="Ingress your password" name="PasswordField" password="true" class="AuthPasswordField" />
