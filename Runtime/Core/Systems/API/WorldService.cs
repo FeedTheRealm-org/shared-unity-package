@@ -16,15 +16,13 @@ namespace API {
         private string GetBaseUrl() => $"http://{Hostname}:{Port}/world";
 
         // ----------- CREATE WORLD (POST /world) -----------
-        public IEnumerator CreateWorld(string filePath, string worldName, string accessToken, System.Action<string, string> handler) {
+        public IEnumerator CreateWorld(Models.WorldData worldData, string accessToken, System.Action<string, string> handler) {
             // Read file content
-            string fileJson = System.IO.File.ReadAllText(filePath);
 
-            // Convert to WorldData
-            WorldData worldData = JsonUtility.FromJson<WorldData>(fileJson);
+            logger.Log($"Uploading world data with these objects: {worldData.objectPlacementData}", this);
 
             // Wrap into final payload with file_name
-            WorldRequest payload = new WorldRequest(worldData, worldName);
+            WorldRequest payload = new(worldData);
 
             string url = GetBaseUrl();
             string json = JsonUtility.ToJson(payload);

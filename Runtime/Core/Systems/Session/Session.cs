@@ -4,8 +4,11 @@ namespace Session {
     [CreateAssetMenu(fileName = "Session", menuName = "Scriptable Objects/Session")]
     public class Session : ScriptableObject {
         // Metadata
-        public string APIToken { get; private set; } = "";
-        public bool IsFirstLogin { get; set; } = false;
+        [SerializeField] private string apiToken = "";
+        [SerializeField] private bool isFirstLogin = false;
+
+        public string APIToken { get => apiToken; private set => apiToken = value; }
+        public bool IsFirstLogin { get => isFirstLogin; set => isFirstLogin = value; }
 
         // User Info
         public string UserId { get; set; } = "";
@@ -13,6 +16,7 @@ namespace Session {
         public string CharacterName { get; set; } = "";
 
         public void SetAPIToken(string token) {
+            Debug.Log($"Session: Setting API Token: {token}");
             APIToken = token;
         }
 

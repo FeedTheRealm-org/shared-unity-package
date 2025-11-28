@@ -9,9 +9,6 @@ namespace Models {
         [SerializeField]
         public string worldName = "New World";
         [SerializeField]
-        public string filepath = "";
-        [SerializeField]
         public List<PlacedAsset> objectPlacementData;
-
     }
 }

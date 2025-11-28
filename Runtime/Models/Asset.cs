@@ -20,7 +20,8 @@ namespace Models {
 
         private void LoadModel() {
             try {
-                GameObject model = Resources.Load<GameObject>(modelPath);
+                string pathWithoutExtension = System.IO.Path.ChangeExtension(modelPath, null);
+                GameObject model = Resources.Load<GameObject>(pathWithoutExtension);
                 if (model == null) {
                     Debug.LogError($"Asset {name} | Model not found at path: {modelPath}");
                     return;
@@ -44,7 +45,8 @@ namespace Models {
             try {
                 GameObject prefab = GetPrefab();
                 GameObject instance = UnityEngine.Object.Instantiate(prefab);
-                Material material = Resources.Load<Material>(materialPath);
+                string pathWithoutExtension = System.IO.Path.ChangeExtension(materialPath, null);
+                Material material = Resources.Load<Material>(pathWithoutExtension);
                 if (material != null && instance.TryGetComponent<Renderer>(out var renderer)) {
                     renderer.material = material;
                 }
