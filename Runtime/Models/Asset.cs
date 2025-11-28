@@ -20,13 +20,11 @@ namespace Models
         [NonSerialized] private bool isModelLoaded = false;
 
 
-        private void LoadModel()
-        {
-            try
-            {
-                GameObject model = Resources.Load<GameObject>(modelPath);
-                if (model == null)
-                {
+        private void LoadModel() {
+            try {
+                string pathWithoutExtension = System.IO.Path.ChangeExtension(modelPath, null);
+                GameObject model = Resources.Load<GameObject>(pathWithoutExtension);
+                if (model == null) {
                     Debug.LogError($"Asset {name} | Model not found at path: {modelPath}");
                     return;
                 }
@@ -49,10 +47,8 @@ namespace Models
         }
 
 
-        public GameObject InstantiateModel()
-        {
-            try
-            {
+        private GameObject InstantiateModel() {
+            try {
                 GameObject prefab = GetPrefab();
                 if (prefab == null)
                 {
@@ -60,9 +56,9 @@ namespace Models
                     return null;
                 }
                 GameObject instance = UnityEngine.Object.Instantiate(prefab);
-                Material material = Resources.Load<Material>(materialPath);
-                if (material != null && instance.TryGetComponent<Renderer>(out var renderer))
-                {
+                string pathWithoutExtension = System.IO.Path.ChangeExtension(materialPath, null);
+                Material material = Resources.Load<Material>(pathWithoutExtension);
+                if (material != null && instance.TryGetComponent<Renderer>(out var renderer)) {
                     renderer.material = material;
                     Debug.Log($"Applied material to {name}");
                 }

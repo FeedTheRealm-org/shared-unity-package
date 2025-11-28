@@ -2,15 +2,16 @@ using UnityEngine;
 
 namespace World {
 
-    [ExecuteAlways] // Runs in edit mode too
+    [ExecuteAlways]
     public class WorldController : MonoBehaviour {
 
         [Header("World Configuration")]
+
         [SerializeField, Min(0.1f)]
         private float cellSize = 1f;
 
         [SerializeField, Min(1)]
-        private int worldSize = 10;
+        private int gridSize = 5;
 
         [Space(10)]
         [Header("World Components")]
@@ -22,44 +23,97 @@ namespace World {
 
         [Space(10)]
         [Header("Visual Settings")]
-        [SerializeField]
-        private Material placementGridMaterial;
 
         [SerializeField]
         private bool showGridVisualization = false;
 
-        [Space(15)]
-        [Header("World Info (Read Only)")]
-        [SerializeField, HideInInspector] private float totalWorldSize;
-        [SerializeField, HideInInspector] private int totalCells;
+        // cached resolved material (shared, don't instantiate)
+        private Material resolvedGridMaterial;
 
         private void OnValidate() {
+#if UNITY_EDITOR
+            if (!Application.isPlaying) {
+                // Only update in edit mode, avoid runtime issues
+                UnityEditor.EditorApplication.delayCall += () => {
+                    if (this != null) {
+                        UpdateWorld();
+                        ToggleGridVisualization(showGridVisualization);
+                    }
+                };
+            }
+#endif
+        }
+
+        private void Start() {
             UpdateWorld();
-            UpdateGridVisualization();
+            // ensure runtime starts with visualization off
+            showGridVisualization = false;
+            ToggleGridVisualization(false);
         }
 
         private void UpdateWorld() {
             if (grid == null || worldPlane == null)
                 return;
 
-            // Set the cell size for the Unity Grid
-            grid.cellSize = new Vector3(cellSize, 0, cellSize);
+            // keep behavior: grid cell size relative to cellSize & gridSize
+            grid.cellSize = new Vector3(cellSize / gridSize, 0, cellSize / gridSize);
+            worldPlane.transform.localScale = new Vector3(gridSize, 1, gridSize);
 
-            // Scale the world plane to match the grid
-            // Default Unity plane is 10x10 units, so scale accordingly
-            float scale = worldSize * cellSize / 10f;
-            worldPlane.transform.localScale = new Vector3(scale, 1, scale);
-
-            // Optional: position the world plane so its center aligns with the grid center
-            worldPlane.transform.position = new Vector3(
-                (worldSize * cellSize) / 2f - cellSize / 2f,
-                worldPlane.transform.position.y,
-                worldSize * cellSize / 2f - cellSize / 2f
-            );
+            // refresh material reference (in case prefab/materials changed)
+            resolvedGridMaterial = ResolveGridMaterial();
+            UpdateGridMaterialProperties();
         }
 
-        private void UpdateGridVisualization() {
-            ToggleGridVisualization(showGridVisualization);
+
+        private Material ResolveGridMaterial() {
+
+            if (worldPlane == null) return null;
+
+            if (!worldPlane.TryGetComponent<Renderer>(out var renderer)) return null;
+
+            var mats = renderer.sharedMaterials;
+            // prefab uses material at element 1 per requirement
+            if (mats != null && mats.Length > 1 && mats[1] != null) return mats[1];
+
+            // fallback to first material if index 1 not present
+            if (mats != null && mats.Length > 0) return mats[0];
+
+            return null;
+        }
+
+        private void UpdateGridMaterialProperties() {
+            var mat = resolvedGridMaterial ?? ResolveGridMaterial();
+            if (mat == null) {
+                // no material available — nothing to update
+                return;
+            }
+
+            // size vector: how many cells per world unit (keep previous convention)
+            Vector2 sizeVector = new Vector2(1f / cellSize, 1f / cellSize);
+
+            // try several common property names (shader dependent)
+            if (mat.HasProperty("_Size")) {
+                mat.SetVector("_Size", sizeVector);
+            } else if (mat.HasProperty("_GridSize")) {
+                mat.SetVector("_GridSize", sizeVector);
+            } else if (mat.HasProperty("_Tiling")) {
+                mat.SetVector("_Tiling", sizeVector);
+            } else {
+                Debug.LogWarning($"Grid material on '{name}' doesn't expose expected size property (_Size/_GridSize/_Tiling).");
+            }
+
+            // ensure visibility property respects current flag if shader supports it
+            if (mat.HasProperty("_Show")) {
+                mat.SetFloat("_Show", showGridVisualization ? 1f : 0f);
+            }
+        }
+
+        [ContextMenu("Reset World to Default")]
+        private void ResetToDefault() {
+            cellSize = 1f;
+            gridSize = 10;
+            showGridVisualization = false;
+            UpdateWorld();
         }
 
         public Vector3Int GetSelectedPosition(Vector3 position) {
@@ -84,17 +138,17 @@ namespace World {
         }
 
         public void ToggleGridVisualization(bool isVisible) {
-            if (placementGridMaterial != null) {
-                placementGridMaterial.SetFloat("_Show", isVisible ? 1f : 0f);
+            showGridVisualization = isVisible;
+            var mat = resolvedGridMaterial ?? ResolveGridMaterial();
+            if (mat != null) {
+                if (mat.HasProperty("_Show")) {
+                    mat.SetFloat("_Show", isVisible ? 1f : 0f);
+                } else {
+                    Debug.LogWarning("Grid material does not have a '_Show' property.");
+                }
             }
         }
 
-        [ContextMenu("Reset World to Default")]
-        private void ResetToDefault() {
-            cellSize = 1f;
-            worldSize = 10;
-            showGridVisualization = false;
-            UpdateWorld();
-        }
+
     }
 }
