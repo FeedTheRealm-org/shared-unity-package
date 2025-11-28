@@ -62,11 +62,8 @@ public class LoginController : MonoBehaviour {
         logger.Log("Email: " + _emailField.value, this);
         logger.Log("Password: " + _passwordField.value, this);
 
-        StartCoroutine(authService.Login(_emailField.value, _passwordField.value, (token, email, err) => {
-            if (!string.IsNullOrEmpty(token)) {
-                logger.Log("Login successful, token: " + token, this);
-                session.SetAPIToken(token);
-                session.SetEmail(email);
+        StartCoroutine(authService.Login(_emailField.value, _passwordField.value, (err) => {
+            if (string.IsNullOrEmpty(err)) {
                 logger.Log($"Navigating to {session.APIToken}", this);
                 if (preloadOperation != null) {
                     preloadOperation.allowSceneActivation = true;

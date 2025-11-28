@@ -62,10 +62,9 @@ public class VerifyCodeController : MonoBehaviour {
         StartCoroutine(authService.VerifyCode(session.Email, _codeField.value, (success, err) => {
             if (success) {
                 logger.Log("Verify code successful", this);
-                StartCoroutine(authService.Login(session.Email, session.Password, (token, email, loginErr) => {
-                    if (token != "") {
+                StartCoroutine(authService.Login(session.Email, session.Password, (loginErr) => {
+                    if (string.IsNullOrEmpty(loginErr)) {
                         logger.Log("Login after verify code successful", this);
-                        session.SetAPIToken(token);
                         SceneManager.LoadScene(targetScene.SceneName);
                     } else {
                         logger.Log("Login after verify code failed", this, Logging.LogType.Error);

@@ -11,7 +11,7 @@ namespace Session {
         public bool IsFirstLogin { get => isFirstLogin; set => isFirstLogin = value; }
 
         // User Info
-        public string UserId { get; set; } = "";
+        public string UserId { get; private set; } = "";
         public string Email { get; private set; } = "";
         public string Password { get; private set; } = "";
         public string CharacterName { get; set; } = "";
@@ -27,6 +27,10 @@ namespace Session {
 
         public void SetPassword(string password) {
             Password = password;
+        }
+
+        public void SetUserId(string id) {
+            UserId = id;
         }
 
         public void ClearSession() {

@@ -16,7 +16,10 @@ namespace API {
         [SerializeField]
         private Logging.Logger logger;
 
-        public IEnumerator Login(string email, string password, System.Action<string, string, string> handler) {
+        [SerializeField]
+        private Session.Session session;
+
+        public IEnumerator Login(string email, string password, System.Action<string> handler) {
             var url = $"http://{Hostname}:{Port}/auth/login";
             var payload = new LoginRequest { email = email, password = password };
             var json = JsonUtility.ToJson(payload);
@@ -34,12 +37,15 @@ namespace API {
             if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError) {
                 var res = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<ErrorResponse>(responseText);
                 logger.Log($"Login error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}", this, Logging.LogType.Error);
-                handler?.Invoke("", "", res.detail);
+                handler?.Invoke(res.detail);
             } else {
                 var res = JsonUtility.FromJson<DataEnvelope<LoginResponse>>(responseText);
                 logger.Log($"Login response: {responseText}", this);
                 logger.Log($"Login successful UserID: {res.data.id}", this);
-                handler?.Invoke(!string.IsNullOrEmpty(res.data.access_token) ? res.data.access_token : "", res.data.email, "");
+                session.SetUserId(res.data.id);
+                session.SetAPIToken(res.data.access_token);
+                session.SetEmail(res.data.email);
+                handler?.Invoke("");
             }
         }
 
