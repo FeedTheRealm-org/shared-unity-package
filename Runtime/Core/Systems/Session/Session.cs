@@ -10,6 +10,7 @@ namespace Session {
         // User Info
         public string UserId { get; set; } = "";
         public string Email { get; private set; } = "";
+        public string Password { get; private set; } = "";
         public string CharacterName { get; set; } = "";
 
         public void SetAPIToken(string token) {
@@ -18,6 +19,10 @@ namespace Session {
 
         public void SetEmail(string email) {
             Email = email;
+        }
+
+        public void SetPassword(string password) {
+            Password = password;
         }
 
         public void ClearSession() {

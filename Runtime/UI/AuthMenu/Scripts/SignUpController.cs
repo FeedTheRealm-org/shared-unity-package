@@ -70,6 +70,8 @@ public class SignUpController : MonoBehaviour {
         StartCoroutine(authService.SignUp(_emailField.value, _passwordField.value, (success, err) => {
             if (success) {
                 logger.Log("SignUp successful, email: " + _emailField.value, this);
+                session.SetEmail(_emailField.value);
+                session.SetPassword(_passwordField.value);
                 if (preloadOperation != null) {
                     preloadOperation.allowSceneActivation = true;
                     logger.Log("Activating preloaded " + targetScene.SceneName + ".", this);

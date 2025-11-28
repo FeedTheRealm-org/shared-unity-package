@@ -1,14 +1,16 @@
 using System;
 using UnityEngine;
 
-namespace Models {
+namespace Models
+{
 
     /// <summary>
     /// This is the Asset Data type used to store Assets in the Database
     /// Assets are considered all kind of placeable objects in the world editor
     /// </summary>
     [Serializable]
-    public class Asset {
+    public class Asset
+    {
         [SerializeField] private string id;
         [SerializeField] private string name;
         [SerializeField] private Vector2Int size = Vector2Int.one;
@@ -18,38 +20,61 @@ namespace Models {
         [NonSerialized] private bool isModelLoaded = false;
 
 
-        private void LoadModel() {
-            try {
+        private void LoadModel()
+        {
+            try
+            {
                 GameObject model = Resources.Load<GameObject>(modelPath);
-                if (model == null) {
+                if (model == null)
+                {
                     Debug.LogError($"Asset {name} | Model not found at path: {modelPath}");
                     return;
                 }
                 assetModel = model;
                 isModelLoaded = true;
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Debug.LogError($"Model could not be loaded for asset [{name}]: {e}");
             }
         }
 
-        private GameObject GetPrefab() {
-            if (!isModelLoaded) {
+        private GameObject GetPrefab()
+        {
+            if (!isModelLoaded)
+            {
                 LoadModel();
             }
             return assetModel;
         }
 
 
-        public GameObject InstantiateModel() {
-            try {
+        public GameObject InstantiateModel()
+        {
+            try
+            {
                 GameObject prefab = GetPrefab();
+                if (prefab == null)
+                {
+                    Debug.LogError($"Cannot instantiate model for {name}: prefab is null");
+                    return null;
+                }
                 GameObject instance = UnityEngine.Object.Instantiate(prefab);
                 Material material = Resources.Load<Material>(materialPath);
-                if (material != null && instance.TryGetComponent<Renderer>(out var renderer)) {
+                if (material != null && instance.TryGetComponent<Renderer>(out var renderer))
+                {
                     renderer.material = material;
+                    Debug.Log($"Applied material to {name}");
                 }
+                else
+                {
+                    Debug.LogWarning($"No material applied to {name}: materialPath='{materialPath}', material={material}, hasRenderer={instance.TryGetComponent<Renderer>(out _)}");
+                }
+                Debug.Log($"Instantiated model for {name} at {instance.transform.position}");
                 return instance;
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Debug.LogError($"Error instantiating model for asset {name}: {e}");
                 return null;
             }

@@ -45,7 +45,6 @@ public class VerifyCodeController : MonoBehaviour {
             SceneManager.LoadScene(backScene.SceneName);
         });
 
-        _emailField = ui.Q<TextField>("EmailField");
         _codeField = ui.Q<TextField>("CodeField");
         _messageError = ui.Q<Label>("MessageError");
     }
@@ -57,13 +56,22 @@ public class VerifyCodeController : MonoBehaviour {
 
     private void OnLoginClicked() {
         logger.Log("Verify code Button Clicked", this);
-        logger.Log("Email: " + _emailField.value, this);
+        logger.Log("Email: " + session.Email, this);
         logger.Log("Code: " + _codeField.value, this);
 
-        StartCoroutine(authService.VerifyCode(_emailField.value, _codeField.value, (success, err) => {
+        StartCoroutine(authService.VerifyCode(session.Email, _codeField.value, (success, err) => {
             if (success) {
                 logger.Log("Verify code successful", this);
-                SceneManager.LoadScene(targetScene.SceneName);
+                StartCoroutine(authService.Login(session.Email, session.Password, (token, email, loginErr) => {
+                    if (token != "") {
+                        logger.Log("Login after verify code successful", this);
+                        session.SetAPIToken(token);
+                        SceneManager.LoadScene(targetScene.SceneName);
+                    } else {
+                        logger.Log("Login after verify code failed", this, Logging.LogType.Error);
+                        _messageError.text = loginErr;
+                    }
+                }));
             } else {
                 logger.Log("Verify code failed", this, Logging.LogType.Error);
                 _messageError.text = err;
