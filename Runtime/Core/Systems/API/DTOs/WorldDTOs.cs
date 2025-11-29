@@ -22,4 +22,13 @@ namespace API {
         public string updated_at;
     }
 
+
+    [System.Serializable]
+    public class WorldListResponse {
+        public List<Models.WorldData> worlds;
+        public int amount;
+        public int limit;
+        public int offset;
+    }
+
 }

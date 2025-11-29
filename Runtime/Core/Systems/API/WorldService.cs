@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 using System.Text;
+using System.Collections.Generic;
 
 namespace API {
     [CreateAssetMenu(fileName = "WorldService", menuName = "Scriptable Objects/API/WorldService")]
@@ -51,5 +52,40 @@ namespace API {
             }
         }
 
+        /// <summary>
+        /// Get a page of worlds from the server.
+        /// </summary>
+        public IEnumerator GetWorldPage(int offset, int limit, string filter, string accessToken, System.Action<int, List<Models.WorldData>, string> handler) {
+            var url = $"{GetBaseUrl()}?offset={offset}&limit={limit}";
+            if (!string.IsNullOrWhiteSpace(filter)) {
+                var trimmed = filter.Trim();
+                url = $"{url}&filter={UnityWebRequest.EscapeURL(trimmed)}";
+            }
+            logger.Log($"Fetching worlds from URL: {url}", this);
+
+            var uwr = UnityWebRequest.Get(url);
+            uwr.SetRequestHeader("Content-Type", "application/json");
+            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+            logger.Log($"Using API Token: {accessToken}", this);
+
+            yield return uwr.SendWebRequest();
+
+            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+            logger.Log($"Worlds response text: {responseText}", this);
+            if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError) {
+                var res = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<ErrorResponse>(responseText);
+                logger.Log($"GetWorldPage error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}", this, Logging.LogType.Error);
+                handler?.Invoke(0, null, res?.detail ?? responseText);
+            } else {
+                var res = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<DataEnvelope<WorldListResponse>>(responseText);
+                var amount = res?.data?.amount ?? 0;
+                var worlds = res?.data?.worlds ?? new List<Models.WorldData>();
+                logger.Log($"GetWorldPage response: {responseText}", this);
+                handler?.Invoke(amount, worlds, "");
+            }
+        }
+
     }
+
+
 }
