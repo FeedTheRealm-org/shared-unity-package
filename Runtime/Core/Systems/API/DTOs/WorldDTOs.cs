@@ -24,8 +24,18 @@ namespace API {
 
 
     [System.Serializable]
+    public class WorldListItemResponse {
+        public string id;
+        public string user_id;
+        public string name;
+        public string data;
+        public string created_at;
+        public string updated_at;
+    }
+
+    [System.Serializable]
     public class WorldListResponse {
-        public List<Models.WorldData> worlds;
+        public List<WorldListItemResponse> worlds;
         public int amount;
         public int limit;
         public int offset;

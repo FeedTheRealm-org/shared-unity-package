@@ -16,7 +16,9 @@ namespace API {
 
         private string GetBaseUrl() => $"http://{Hostname}:{Port}/world";
 
-        // ----------- CREATE WORLD (POST /world) -----------
+        /// <summary>
+        ///  Post a new world to the server.
+        /// </summary>
         public IEnumerator CreateWorld(Models.WorldData worldData, string accessToken, System.Action<string, string> handler) {
             // Read file content
 
@@ -72,16 +74,34 @@ namespace API {
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
             logger.Log($"Worlds response text: {responseText}", this);
+
             if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError) {
                 var res = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<ErrorResponse>(responseText);
                 logger.Log($"GetWorldPage error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}", this, Logging.LogType.Error);
                 handler?.Invoke(0, null, res?.detail ?? responseText);
             } else {
-                var res = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<DataEnvelope<WorldListResponse>>(responseText);
-                var amount = res?.data?.amount ?? 0;
-                var worlds = res?.data?.worlds ?? new List<Models.WorldData>();
-                logger.Log($"GetWorldPage response: {responseText}", this);
-                handler?.Invoke(amount, worlds, "");
+                var envelope = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<DataEnvelope<WorldListResponse>>(responseText);
+                var worldListResponse = envelope?.data;
+
+                if (worldListResponse == null) {
+                    handler?.Invoke(0, null, "Failed to parse world list response");
+                    yield break;
+                }
+
+                var worldDataList = new List<Models.WorldData>();
+
+                foreach (var worldItem in worldListResponse.worlds) {
+                    try {
+                        var worldData = JsonUtility.FromJson<Models.WorldData>(worldItem.data);
+                        worldData.id = worldItem.id;
+                        worldDataList.Add(worldData);
+                    } catch (System.Exception ex) {
+                        logger.Log($"Failed to parse world data for {worldItem.id}: {ex.Message}", this, Logging.LogType.Error);
+                    }
+                }
+
+                logger.Log($"GetWorldPage response: Loaded {worldDataList.Count} worlds", this);
+                handler?.Invoke(worldListResponse.amount, worldDataList, "");
             }
         }
 
