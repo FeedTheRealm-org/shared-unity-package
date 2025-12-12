@@ -115,14 +115,8 @@ namespace API {
 
                 form.AddField($"{prefix}.model_id", asset.Id);
                 form.AddField($"{prefix}.name", asset.Name);
-                form.AddField($"{prefix}.model_file", asset.ModelPath);
-                form.AddField($"{prefix}.model_file", asset.ModelPath);
-                form.AddField($"{prefix}.material_file", asset.MaterialPath);
-
-                // TODO: refactor this to store in the unity persistent data path
 
                 byte[] modelData = File.ReadAllBytes(Path.Combine(Application.dataPath, "Resources", asset.ModelPath));
-
                 form.AddBinaryData(
                     $"{prefix}.model_file",
                     modelData,
@@ -130,16 +124,21 @@ namespace API {
                     "application/octet-stream"
                 );
 
-                byte[] materialData = File.ReadAllBytes(Path.Combine(Application.dataPath, "Resources", asset.MaterialPath));
-                form.AddBinaryData(
-                    $"{prefix}.material_file",
-                    materialData,
-                    Path.GetFileName(asset.MaterialPath),
-                    "application/octet-stream"
-                );
+                if (!string.IsNullOrEmpty(asset.MaterialPath)) {
+                    form.AddField($"{prefix}.material_file", asset.MaterialPath);
+
+                    byte[] materialData = File.ReadAllBytes(Path.Combine(Application.dataPath, "Resources", asset.MaterialPath));
+                    form.AddBinaryData(
+                        $"{prefix}.material_file",
+                        materialData,
+                        Path.GetFileName(asset.MaterialPath),
+                        "application/octet-stream"
+                    );
+                }
             }
 
-            UnityWebRequest uwr = UnityWebRequest.Post(GetBaseUrl(), form);
+            var url = $"{GetBaseUrl().TrimEnd('/')}/{worldId}";
+            UnityWebRequest uwr = UnityWebRequest.Post(url, form);
             uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
             yield return uwr.SendWebRequest();
 
