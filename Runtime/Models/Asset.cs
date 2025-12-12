@@ -92,6 +92,10 @@ namespace Models {
         public string ModelPath => modelPath;
         public string MaterialPath => materialPath;
         public GameObject AssetModelInstance => InstantiateModel();
+        public void SetRuntimeModel(GameObject go) {
+            assetModel = go;
+            isModelLoaded = true;
+        }
 
     }
 

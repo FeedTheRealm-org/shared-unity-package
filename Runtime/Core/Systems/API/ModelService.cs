@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.IO.Compression;
+using System.Threading.Tasks;
 
 namespace API {
     [CreateAssetMenu(fileName = "ModelService", menuName = "Scriptable Objects/API/ModelService")]
@@ -17,79 +18,75 @@ namespace API {
 
         private string GetBaseUrl() => $"http://{Hostname}:{Port}/assets/models";
 
+
         /// <summary>
-        /// Downloads the .zip for the given worldId from /assets/models/{worldId}, saves it to a temp file,
-        /// extracts it into destinationPath (creates directories as needed) and invokes callback with null on success
-        /// or an error message on failure.
+        ///  Lists all asset models for a given world.
         /// </summary>
-        public IEnumerator DownloadAndExtractAssets(string worldId, string accessToken, string destinationPath, System.Action<string> callback) {
-            if (string.IsNullOrEmpty(worldId)) {
-                callback?.Invoke("worldId is null or empty");
-                yield break;
-            }
+        /// <param name="worldId"></param>
+        /// <param name="accessToken"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public async Task<List<string>> ListWorldAssets(
+            string worldId,
+            string accessToken
+        ) {
+            string url = $"{GetBaseUrl().TrimEnd('/')}/{worldId}";
 
-            var url = $"{GetBaseUrl().TrimEnd('/')}/{worldId}";
-            logger.Log($"Downloading assets zip from: {url}", this);
-
-            var tempZipPath = Path.Combine(Application.temporaryCachePath, $"{worldId}.zip");
-
-            // Ensure destination exists
-            try {
-                Directory.CreateDirectory(destinationPath);
-            } catch (System.Exception ex) {
-                logger.Log($"Failed to create destination directory: {ex.Message}", this, Logging.LogType.Error);
-                callback?.Invoke(ex.Message);
-                yield break;
-            }
-
-            var uwr = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET);
-            uwr.downloadHandler = new DownloadHandlerFile(tempZipPath);
+            UnityWebRequest uwr = UnityWebRequest.Get(url);
             uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
-            uwr.SetRequestHeader("Content-Type", "application/zip");
 
+            var sendTask = uwr.SendWebRequest();
+            while (!sendTask.isDone) {
+                await System.Threading.Tasks.Task.Delay(10);
+            }
+
+            if (uwr.result != UnityWebRequest.Result.Success) {
+                logger.Log($"ListWorldAssets error: {uwr.error}", this, Logging.LogType.Error);
+                throw new System.Exception(uwr.error);
+            }
+
+            var response = JsonUtility.FromJson<AssetListResponse>(uwr.downloadHandler.text);
+
+            List<string> modelIds = new();
+            foreach (var item in response.data.models) {
+                modelIds.Add(item.model_id);
+            }
+
+            return modelIds;
+        }
+
+        /// <summary>
+        ///  Downloads a specific asset model for a given world.
+        /// </summary>
+        /// <param name="worldId"></param>
+        /// <param name="modelId"></param>
+        /// <param name="accessToken"></param>
+        /// <param name="destinationFolder"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public IEnumerator DownloadModel(
+            string worldId,
+            string modelId,
+            string accessToken,
+            System.Action<byte[], string> callback
+        ) {
+            string url = $"{GetBaseUrl().TrimEnd('/')}/{worldId}/{modelId}";
+
+            UnityWebRequest uwr = UnityWebRequest.Get(url);
+            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+
+            uwr.downloadHandler = new DownloadHandlerBuffer();
             yield return uwr.SendWebRequest();
 
-            var responseText = uwr.downloadHandler == null ? uwr.error ?? string.Empty : $"Saved to {tempZipPath}";
-
-            if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError) {
-                logger.Log($"DownloadAssets error: {uwr.error}", this, Logging.LogType.Error);
-                try { if (File.Exists(tempZipPath)) File.Delete(tempZipPath); } catch { }
-                callback?.Invoke(uwr.error ?? "Download error");
+            if (uwr.result != UnityWebRequest.Result.Success) {
+                callback?.Invoke(null, uwr.error);
                 yield break;
             }
 
-
-            try {
-                if (!File.Exists(tempZipPath)) {
-                    var msg = "Downloaded zip not found.";
-                    logger.Log(msg, this, Logging.LogType.Error);
-                    callback?.Invoke(msg);
-                    yield break;
-                }
-
-                using (var archive = ZipFile.OpenRead(tempZipPath)) {
-                    foreach (var entry in archive.Entries) {
-                        var entryPath = Path.Combine(destinationPath, entry.FullName);
-                        // If entry is a directory
-                        if (string.IsNullOrEmpty(entry.Name)) {
-                            Directory.CreateDirectory(entryPath);
-                            continue;
-                        }
-                        Directory.CreateDirectory(Path.GetDirectoryName(entryPath) ?? destinationPath);
-                        entry.ExtractToFile(entryPath, true);
-                    }
-                }
-
-                logger.Log($"Assets extracted to: {destinationPath}", this);
-                callback?.Invoke(null);
-            } catch (System.Exception ex) {
-                logger.Log($"Error extracting zip: {ex.Message}", this, Logging.LogType.Error);
-                callback?.Invoke(ex.Message);
-            } finally {
-                // cleanup temp file
-                try { if (File.Exists(tempZipPath)) File.Delete(tempZipPath); } catch { }
-            }
+            callback?.Invoke(uwr.downloadHandler.data, null);
         }
+
+
 
         /// <summary>
         /// Uploads asset model & material files for a world.
@@ -115,14 +112,8 @@ namespace API {
 
                 form.AddField($"{prefix}.model_id", asset.Id);
                 form.AddField($"{prefix}.name", asset.Name);
-                form.AddField($"{prefix}.model_file", asset.ModelPath);
-                form.AddField($"{prefix}.model_file", asset.ModelPath);
-                form.AddField($"{prefix}.material_file", asset.MaterialPath);
-
-                // TODO: refactor this to store in the unity persistent data path
 
                 byte[] modelData = File.ReadAllBytes(Path.Combine(Application.dataPath, "Resources", asset.ModelPath));
-
                 form.AddBinaryData(
                     $"{prefix}.model_file",
                     modelData,
@@ -130,16 +121,21 @@ namespace API {
                     "application/octet-stream"
                 );
 
-                byte[] materialData = File.ReadAllBytes(Path.Combine(Application.dataPath, "Resources", asset.MaterialPath));
-                form.AddBinaryData(
-                    $"{prefix}.material_file",
-                    materialData,
-                    Path.GetFileName(asset.MaterialPath),
-                    "application/octet-stream"
-                );
+                if (!string.IsNullOrEmpty(asset.MaterialPath)) {
+                    form.AddField($"{prefix}.material_file", asset.MaterialPath);
+
+                    byte[] materialData = File.ReadAllBytes(Path.Combine(Application.dataPath, "Resources", asset.MaterialPath));
+                    form.AddBinaryData(
+                        $"{prefix}.material_file",
+                        materialData,
+                        Path.GetFileName(asset.MaterialPath),
+                        "application/octet-stream"
+                    );
+                }
             }
 
-            UnityWebRequest uwr = UnityWebRequest.Post(GetBaseUrl(), form);
+            var url = $"{GetBaseUrl().TrimEnd('/')}/{worldId}";
+            UnityWebRequest uwr = UnityWebRequest.Post(url, form);
             uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
             yield return uwr.SendWebRequest();
 
