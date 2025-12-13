@@ -12,5 +12,7 @@ namespace Models {
         public string worldName = "New World";
         [SerializeField]
         public List<PlacedAsset> objectPlacementData;
+        [SerializeField]
+        public List<ConsumableItem> consumableItems = new List<ConsumableItem>();
     }
 }
