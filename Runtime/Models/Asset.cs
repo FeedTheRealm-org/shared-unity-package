@@ -26,6 +26,30 @@ namespace Models {
             this.materialPath = materialPath;
         }
 
+        public Asset(string id, string name, Vector2Int size, GameObject assetModel) {
+            this.id = id;
+            this.name = name;
+            this.size = size;
+            this.assetModel = assetModel;
+            isModelLoaded = true;
+            ApplyCollisions(assetModel);
+        }
+
+        private void ApplyCollisions(GameObject gameObject) {
+            // Add Rigidbody if it doesn't exist
+            Rigidbody rb = gameObject.GetComponent<Rigidbody>();
+            if (rb == null) {
+                rb = gameObject.AddComponent<Rigidbody>();
+            }
+            rb.isKinematic = true;
+
+            // Ensure collider exists
+            Collider[] colliders = gameObject.GetComponentsInChildren<Collider>();
+            if (colliders.Length == 0) {
+                gameObject.AddComponent<BoxCollider>();
+            }
+        }
+
 
         private void LoadModel() {
             try {
@@ -50,7 +74,7 @@ namespace Models {
         }
 
 
-        private GameObject InstantiateModel() {
+        public GameObject InstantiateModel() {
             try {
                 GameObject prefab = GetPrefab();
                 if (prefab == null) {
@@ -59,11 +83,14 @@ namespace Models {
                 }
 
                 GameObject instance = UnityEngine.Object.Instantiate(prefab);
-                string pathWithoutExtension = System.IO.Path.ChangeExtension(materialPath, null);
 
+                if (materialPath == null || materialPath == "") {
+                    return instance;
+                }
+
+                string pathWithoutExtension = System.IO.Path.ChangeExtension(materialPath, null);
                 // Load material by path (not by object name inside)
                 Material material = Resources.Load<Material>(pathWithoutExtension);
-
                 if (material != null) {
                     Renderer[] renderers = instance.GetComponentsInChildren<Renderer>();
                     if (renderers.Length > 0) {
@@ -91,12 +118,9 @@ namespace Models {
         public Vector2Int Size => size;
         public string ModelPath => modelPath;
         public string MaterialPath => materialPath;
-        public GameObject AssetModelInstance => InstantiateModel();
-        public void SetRuntimeModel(GameObject go) {
-            assetModel = go;
-            isModelLoaded = true;
-        }
 
+        // TODO: remove this and use InstantiateModel directly (refactor in both repos)
+        public GameObject AssetModelInstance => InstantiateModel();
     }
 
 }

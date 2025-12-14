@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
-using System.IO.Compression;
 using System.Threading.Tasks;
 
 namespace API {
@@ -54,39 +53,6 @@ namespace API {
 
             return modelIds;
         }
-
-        /// <summary>
-        ///  Downloads a specific asset model for a given world.
-        /// </summary>
-        /// <param name="worldId"></param>
-        /// <param name="modelId"></param>
-        /// <param name="accessToken"></param>
-        /// <param name="destinationFolder"></param>
-        /// <param name="callback"></param>
-        /// <returns></returns>
-        public IEnumerator DownloadModel(
-            string worldId,
-            string modelId,
-            string accessToken,
-            System.Action<byte[], string> callback
-        ) {
-            string url = $"{GetBaseUrl().TrimEnd('/')}/{worldId}/{modelId}";
-
-            UnityWebRequest uwr = UnityWebRequest.Get(url);
-            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
-
-            uwr.downloadHandler = new DownloadHandlerBuffer();
-            yield return uwr.SendWebRequest();
-
-            if (uwr.result != UnityWebRequest.Result.Success) {
-                callback?.Invoke(null, uwr.error);
-                yield break;
-            }
-
-            callback?.Invoke(uwr.downloadHandler.data, null);
-        }
-
-
 
         /// <summary>
         /// Uploads asset model & material files for a world.
