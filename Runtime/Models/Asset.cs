@@ -83,6 +83,7 @@ namespace Models {
                 }
 
                 GameObject instance = UnityEngine.Object.Instantiate(prefab);
+                instance.transform.localScale = new Vector3(size.x, size.y, size.x);
 
                 if (materialPath == null || materialPath == "") {
                     return instance;
