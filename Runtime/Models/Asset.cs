@@ -83,7 +83,7 @@ namespace Models {
                 }
 
                 GameObject instance = UnityEngine.Object.Instantiate(prefab);
-                instance.transform.localScale = new Vector3(size.x, size.y, size.x);
+                //instance.transform.localScale = new Vector3(size.x, size.y, size.x);
 
                 if (materialPath == null || materialPath == "") {
                     return instance;
@@ -122,6 +122,13 @@ namespace Models {
 
         // TODO: remove this and use InstantiateModel directly (refactor in both repos)
         public GameObject AssetModelInstance => InstantiateModel();
-    }
 
+        public GameObject GetModelInstance() {
+            GameObject assetModel = GetPrefab();
+            GameObject instance = UnityEngine.Object.Instantiate(assetModel);
+            instance.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            instance.transform.localScale = Vector3.one;
+            return instance;
+        }
+    }
 }

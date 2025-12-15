@@ -34,10 +34,7 @@ namespace API {
             UnityWebRequest uwr = UnityWebRequest.Get(url);
             uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
 
-            var sendTask = uwr.SendWebRequest();
-            while (!sendTask.isDone) {
-                await System.Threading.Tasks.Task.Delay(10);
-            }
+            await uwr.SendWebRequest();
 
             if (uwr.result != UnityWebRequest.Result.Success) {
                 logger.Log($"ListWorldAssets error: {uwr.error}", this, Logging.LogType.Error);
