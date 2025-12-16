@@ -22,9 +22,9 @@ namespace Models
     [SerializeField]
     public int maxStack;
     [SerializeField]
-    public Sprite sprite;
+    public string spritePath;
 
-    public ConsumableItem(string name, string description, string effectType, int value, float duration, float cooldown, int maxStack, Sprite sprite)
+    public ConsumableItem(string name, string description, string effectType, int value, float duration, float cooldown, int maxStack, string spritePath)
     {
       this.name = name;
       this.description = description;
@@ -33,7 +33,7 @@ namespace Models
       this.duration = duration;
       this.cooldown = cooldown;
       this.maxStack = maxStack;
-      this.sprite = sprite;
+      this.spritePath = spritePath;
     }
   }
 }
