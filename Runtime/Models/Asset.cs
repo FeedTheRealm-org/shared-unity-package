@@ -18,12 +18,35 @@ namespace Models {
         [NonSerialized] private bool isModelLoaded = false;
 
 
+        // This constructor is used in the World Creator
         public Asset(string id, string name, Vector2Int size, string modelPath, string materialPath) {
             this.id = id;
             this.name = name;
             this.size = size;
             this.modelPath = modelPath;
             this.materialPath = materialPath;
+        }
+
+        // This constructor is used in the Client
+        public Asset(string id, string name, Vector2Int size, GameObject assetModel) {
+            this.id = id;
+            this.name = name;
+            this.size = size;
+            this.assetModel = assetModel;
+            isModelLoaded = true;
+            ApplyCollisions(assetModel);
+        }
+
+        private void ApplyCollisions(GameObject gameObject) {
+            Rigidbody rb = gameObject.GetComponent<Rigidbody>();
+            if (rb == null) {
+                rb = gameObject.AddComponent<Rigidbody>();
+            }
+            rb.isKinematic = true;
+            Collider[] colliders = gameObject.GetComponentsInChildren<Collider>();
+            if (colliders.Length == 0) {
+                gameObject.AddComponent<BoxCollider>();
+            }
         }
 
 
@@ -50,39 +73,40 @@ namespace Models {
         }
 
 
-        private GameObject InstantiateModel() {
+        public GameObject InstantiateModel() {
             try {
                 GameObject prefab = GetPrefab();
                 if (prefab == null) {
                     Debug.LogError($"Cannot instantiate model for {name}: prefab is null");
                     return null;
                 }
-
                 GameObject instance = UnityEngine.Object.Instantiate(prefab);
-                string pathWithoutExtension = System.IO.Path.ChangeExtension(materialPath, null);
-
-                // Load material by path (not by object name inside)
-                Material material = Resources.Load<Material>(pathWithoutExtension);
-
-                if (material != null) {
-                    Renderer[] renderers = instance.GetComponentsInChildren<Renderer>();
-                    if (renderers.Length > 0) {
-                        foreach (Renderer renderer in renderers) {
-                            Material matInstance = new Material(material);
-                            renderer.material = matInstance;
-                        }
-                        Debug.Log($"Applied material to {name} | material path: {materialPath}");
-                    } else {
-                        Debug.LogWarning($"No Renderer found on {name} or its children");
-                    }
-                } else {
-                    Debug.LogWarning($"Material not found for {name} at path: {materialPath}");
-                }
-
+                instance.transform.localScale = new Vector3(size.x, size.y, size.x);
+                ApplyMaterial(instance);
                 return instance;
             } catch (Exception e) {
                 Debug.LogError($"Error instantiating model for asset {name}: {e}");
                 return null;
+            }
+        }
+
+        private void ApplyMaterial(GameObject modelInstance) {
+            if (string.IsNullOrEmpty(materialPath)) {
+                return;
+            }
+            try {
+                string pathWithoutExtension = System.IO.Path.ChangeExtension(materialPath, null);
+                Material material = Resources.Load<Material>(pathWithoutExtension);
+                if (material == null) {
+                    Debug.LogError($"Asset {name} | Material not found at path: {materialPath}");
+                    return;
+                }
+                Renderer[] renderers = modelInstance.GetComponentsInChildren<Renderer>();
+                foreach (Renderer renderer in renderers) {
+                    renderer.material = material;
+                }
+            } catch (Exception e) {
+                Debug.LogError($"Material could not be applied for asset [{name}]: {e}");
             }
         }
 
@@ -91,8 +115,16 @@ namespace Models {
         public Vector2Int Size => size;
         public string ModelPath => modelPath;
         public string MaterialPath => materialPath;
+
         public GameObject AssetModelInstance => InstantiateModel();
 
+        // TODO: Check to remove this from ftr client
+        public GameObject GetModelInstance() {
+            GameObject assetModel = GetPrefab();
+            GameObject instance = UnityEngine.Object.Instantiate(assetModel);
+            instance.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            instance.transform.localScale = Vector3.one;
+            return instance;
+        }
     }
-
 }
