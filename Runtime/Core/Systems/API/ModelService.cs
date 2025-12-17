@@ -76,18 +76,23 @@ namespace API {
                 form.AddField($"{prefix}.model_id", asset.Id);
                 form.AddField($"{prefix}.name", asset.Name);
 
-                byte[] modelData = File.ReadAllBytes(Path.Combine(Application.dataPath, "Resources", asset.ModelPath));
+                byte[] modelData = File.ReadAllBytes(               // This is a temp fix, change later
+                    Path.Combine(Application.streamingAssetsPath, asset.ModelPath + ".glb")
+                );
+
                 form.AddBinaryData(
                     $"{prefix}.model_file",
                     modelData,
-                    Path.GetFileName(asset.ModelPath),
+                    Path.GetFileName(asset.ModelPath + ".glb"),
                     "application/octet-stream"
                 );
 
                 if (!string.IsNullOrEmpty(asset.MaterialPath)) {
                     form.AddField($"{prefix}.material_file", asset.MaterialPath);
 
-                    byte[] materialData = File.ReadAllBytes(Path.Combine(Application.dataPath, "Resources", asset.MaterialPath));
+                    byte[] materialData = File.ReadAllBytes(
+                        Path.Combine(Application.streamingAssetsPath, asset.MaterialPath)
+                    );
                     form.AddBinaryData(
                         $"{prefix}.material_file",
                         materialData,
