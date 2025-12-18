@@ -6,26 +6,22 @@ namespace Models {
   [Serializable]
   public class EnemySpawnAreaData {
     [SerializeField]
-    private Vector3 position;
+    public Vector3 position;
 
     [SerializeField]
-    private int maxEnemies = 3;
+    public int MaxEnemies = 3;
 
     [SerializeField]
-    private float spawnRate = 2f;
+    public float SpawnRate = 2f;
 
     [SerializeField]
-    private int resetAfterKills = 6;
+    public int ResetAfterKills = 6;
 
     [SerializeField]
-    private float resetDelay = 10f;
+    public float ResetDelay = 10f;
 
-    EnemySpawnAreaData(Vector3 position, int maxEnemies, float spawnRate, int resetAfterKills, float resetDelay) {
+    public EnemySpawnAreaData(Vector3 position) {
       this.position = position;
-      this.maxEnemies = maxEnemies;
-      this.spawnRate = spawnRate;
-      this.resetAfterKills = resetAfterKills;
-      this.resetDelay = resetDelay;
     }
   }
 }
