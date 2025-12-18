@@ -1,12 +1,15 @@
 
-namespace API {
+namespace API
+{
     [System.Serializable]
-    public class DataEnvelope<T> {
+    public class DataEnvelope<T>
+    {
         public T data;
     }
 
     [System.Serializable]
-    public class ErrorResponse {
+    public class ErrorResponse
+    {
         public string type;
         public string title;
         public int status;

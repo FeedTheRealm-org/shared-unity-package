@@ -14,5 +14,8 @@ namespace Models {
         public List<PlacedAsset> objectPlacementData;
         [SerializeField]
         public List<EnemySpawnAreaData> enemySpawnAreas;
+        [SerializeField]
+        public List<ConsumableItem> consumableItems = new List<ConsumableItem>();
+
     }
 }
