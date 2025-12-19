@@ -6,7 +6,7 @@ namespace Models {
   [Serializable]
   public class EnemySpawnAreaData {
     [SerializeField]
-    public Vector3 position;
+    public Vector3 Position;
 
     [SerializeField]
     public int MaxEnemies = 3;
@@ -21,7 +21,7 @@ namespace Models {
     public float ResetDelay = 10f;
 
     public EnemySpawnAreaData(Vector3 position) {
-      this.position = position;
+      this.Position = position;
     }
   }
 }
