@@ -129,6 +129,13 @@ namespace World {
             obj.transform.position = pos;
         }
 
+        public void PlaceEnemySpawnAreaAt(Vector3Int gridPosition, GameObject spawnAreaPrefab) {
+            Vector3 pos = grid.GetCellCenterWorld(gridPosition) + new Vector3(0, 0.05f, 0);
+            GameObject spawnAreaInstance = Instantiate(spawnAreaPrefab, pos, Quaternion.identity);
+            spawnAreaInstance.SetActive(true);
+            Debug.Log($"Placed Enemy Spawn Area at {gridPosition} (world pos: {pos})");
+        }
+
         public void RemoveObject(GameObject obj) {
             DestroyImmediate(obj, true);
         }
