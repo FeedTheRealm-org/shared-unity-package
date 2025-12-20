@@ -7,7 +7,7 @@ namespace Models {
     [Serializable]
     public class WorldData {
         [SerializeField]
-        public string id; // TODO: check if this breaks when publishing world
+        public string id;
         [SerializeField]
         public string worldName = "New World";
         [SerializeField]
