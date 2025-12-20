@@ -14,6 +14,8 @@ namespace Models {
       [SerializeField]
       public string name;
       [SerializeField]
+      public string description;
+      [SerializeField]
       
       public string updatedAt;
       [SerializeField]

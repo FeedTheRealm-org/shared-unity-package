@@ -19,13 +19,13 @@ namespace API {
         /// <summary>
         ///  Post a new world to the server.
         /// </summary>
-        public IEnumerator CreateWorld(Models.WorldData worldData, string accessToken, System.Action<string, string> handler) {
+        public IEnumerator CreateWorld(Models.WorldData worldData, string description, string accessToken, System.Action<string, string> handler) {
             // Read file content
 
             logger.Log($"Uploading world data with these objects: {worldData.objectPlacementData}", this);
 
             // Wrap into final payload with file_name
-            WorldRequest payload = new(worldData);
+            WorldRequest payload = new(worldData, description);
 
             string url = GetBaseUrl();
             string json = JsonUtility.ToJson(payload);
@@ -96,6 +96,7 @@ namespace API {
                         world.id = worldItem.id;
                         world.userId = worldItem.user_id;
                         world.name = worldItem.name;
+                        world.description = worldItem.description;
                         world.createdAt = worldItem.created_at;
                         world.updatedAt = worldItem.updated_at;
                         
@@ -114,6 +115,4 @@ namespace API {
         }
 
     }
-
-
 }
