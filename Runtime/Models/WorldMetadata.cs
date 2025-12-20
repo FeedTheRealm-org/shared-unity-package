@@ -16,11 +16,9 @@ namespace Models {
       [SerializeField]
       public string description;
       [SerializeField]
-      
       public string updatedAt;
       [SerializeField]
       public string userId;
-
       [SerializeField]
       public WorldData data;
     }
