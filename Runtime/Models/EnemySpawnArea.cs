@@ -8,6 +8,8 @@ namespace Models {
     [SerializeField]
     public Vector3 Position;
 
+    public int Size = 1;
+
     [SerializeField]
     public int MaxEnemies = 3;
 
@@ -20,8 +22,9 @@ namespace Models {
     [SerializeField]
     public float ResetDelay = 10f;
 
-    public EnemySpawnAreaData(Vector3 position) {
-      this.Position = position;
+    public EnemySpawnAreaData(Vector3 position, int size) {
+      Position = position;
+      Size = size;
     }
   }
 }
