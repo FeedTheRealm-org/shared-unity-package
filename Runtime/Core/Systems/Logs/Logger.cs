@@ -1,41 +1,56 @@
 using UnityEngine;
 
-namespace Logging {
-    public enum LogType {
+namespace Logging
+{
+    public enum LogType
+    {
         Info,
         Warning,
-        Error
+        Error,
     }
 
     /// <summary>
     /// Handles logging modularly and usable for different logger game objects.
     /// </summary>
     [CreateAssetMenu(fileName = "Logger", menuName = "Scriptable Objects/Logger")]
-    public class Logger : ScriptableObject {
+    public class Logger : ScriptableObject
+    {
         [Header("Settings")]
         [SerializeField]
-        private bool _showLogs;
+        private bool showLogs;
 
         [Header("Log Prefix")]
         [SerializeField]
-        private string _loggerPrefix;
+        private string loggerPrefix;
 
         [Header("Log Colors")]
         [SerializeField]
-        private Color _loggerColor;
+        private Color loggerColor;
+
+        [SerializeField]
+        private bool showColor;
 
         private string _stringColor;
-        private readonly string _resetColor = "</color>";
+        private string _resetColor;
 
-        private void OnEnable() {
-            // Format necessary strings once
-            _stringColor = $"<color=#{ColorUtility.ToHtmlStringRGB(_loggerColor)}>";
+        private void OnEnable()
+        {
+            if (showColor)
+            {
+                _stringColor = $"<color=#{ColorUtility.ToHtmlStringRGB(loggerColor)}>";
+                _resetColor = "</color>";
+            }
         }
 
-        public void Log(object msg, Object sender, LogType type = LogType.Info) {
-            if (_showLogs) {
-                string formatedMsg = $"{_stringColor}{_loggerPrefix} {msg}{_resetColor}";
-                switch (type) {
+        public void Log(object msg, Object sender, LogType type = LogType.Info)
+        {
+            if (showLogs)
+            {
+                var time = System.DateTime.Now.ToString("HH:mm:ss.fff");
+                string formatedMsg =
+                    $"{_stringColor}{time} | {type.ToString()} | {loggerPrefix} {msg}{_resetColor}";
+                switch (type)
+                {
                     case LogType.Info:
                         Debug.Log(formatedMsg, sender);
                         break;
