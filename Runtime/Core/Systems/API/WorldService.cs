@@ -19,13 +19,13 @@ namespace API {
         /// <summary>
         ///  Post a new world to the server.
         /// </summary>
-        public IEnumerator CreateWorld(Models.WorldData worldData, string accessToken, System.Action<string, string> handler) {
+        public IEnumerator CreateWorld(Models.WorldData worldData, string description, string accessToken, System.Action<string, string> handler) {
             // Read file content
 
             logger.Log($"Uploading world data with these objects: {worldData.objectPlacementData}", this);
 
             // Wrap into final payload with file_name
-            WorldRequest payload = new(worldData);
+            WorldRequest payload = new(worldData, description);
 
             string url = GetBaseUrl();
             string json = JsonUtility.ToJson(payload);
@@ -57,7 +57,7 @@ namespace API {
         /// <summary>
         /// Get a page of worlds from the server.
         /// </summary>
-        public IEnumerator GetWorldPage(int offset, int limit, string filter, string accessToken, System.Action<int, List<Models.WorldData>, string> handler) {
+        public IEnumerator GetWorldPage(int offset, int limit, string filter, string accessToken, System.Action<int, List<Models.WorldMetadata>, string> handler) {
             var url = $"{GetBaseUrl()}?offset={offset}&limit={limit}";
             if (!string.IsNullOrWhiteSpace(filter)) {
                 var trimmed = filter.Trim();
@@ -88,24 +88,31 @@ namespace API {
                     yield break;
                 }
 
-                var worldDataList = new List<Models.WorldData>();
+                var worlds = new List<Models.WorldMetadata>();
 
                 foreach (var worldItem in worldListResponse.worlds) {
                     try {
+                        var world = new Models.WorldMetadata();
+                        world.id = worldItem.id;
+                        world.userId = worldItem.user_id;
+                        world.name = worldItem.name;
+                        world.description = worldItem.description;
+                        world.createdAt = worldItem.created_at;
+                        world.updatedAt = worldItem.updated_at;
+                        
                         var worldData = JsonUtility.FromJson<Models.WorldData>(worldItem.data);
-                        worldData.id = worldItem.id;
-                        worldDataList.Add(worldData);
+                        world.data = worldData;
+                        
+                        worlds.Add(world);
                     } catch (System.Exception ex) {
                         logger.Log($"Failed to parse world data for {worldItem.id}: {ex.Message}", this, Logging.LogType.Error);
                     }
                 }
 
-                logger.Log($"GetWorldPage response: Loaded {worldDataList.Count} worlds", this);
-                handler?.Invoke(worldListResponse.amount, worldDataList, "");
+                logger.Log($"GetWorldPage response: Loaded {worlds.Count} worlds", this);
+                handler?.Invoke(worldListResponse.amount, worlds, "");
             }
         }
 
     }
-
-
 }
