@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Models {
@@ -31,7 +32,15 @@ namespace Models {
     [SerializeField]
     public string spriteId;
 
-    public EnemyData(string name, string description, int healthPoints, int damage, int speed, bool canMove, int range, string spriteId) {
+    // Loot items that this enemy can drop
+    [SerializeField]
+    public List<EnemyLootItem> lootItems = new List<EnemyLootItem>();
+
+    // Gold dropped by this enemy
+    [SerializeField]
+    public float goldAmount;
+
+    public EnemyData(string name, string description, int healthPoints, int damage, int speed, bool canMove, int range, string spriteId, List<EnemyLootItem> lootItems, float goldAmount) {
       this.name = name;
       this.description = description;
       this.healthPoints = healthPoints;
@@ -40,6 +49,8 @@ namespace Models {
       this.canMove = canMove;
       this.range = range;
       this.spriteId = spriteId;
+      this.lootItems = lootItems ?? new List<EnemyLootItem>();
+      this.goldAmount = goldAmount;
     }
   }
 }

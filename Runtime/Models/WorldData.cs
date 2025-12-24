@@ -12,8 +12,6 @@ namespace Models {
         [SerializeField] public List<EnemySpawnAreaData> enemySpawnAreas;
         [SerializeField] public List<PlayerSpawnAreaData> playerSpawnAreas;
         public List<ConsumableItem> consumableItems = new List<ConsumableItem>();
-
-        //[SerializeField]
         public List<EnemyData> enemies = new List<EnemyData>();
     }
 }
