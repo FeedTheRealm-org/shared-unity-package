@@ -10,6 +10,7 @@ public class PlayerInputReader : ScriptableObject, PlayerControls.IPlayerActions
     public event Action InventoryEvent;
     public event Action AttackEvent;
     public event Action CursorToggleEvent;
+    public event Action InteractEvent;
 
     private PlayerControls controls;
 
@@ -69,6 +70,14 @@ public class PlayerInputReader : ScriptableObject, PlayerControls.IPlayerActions
         if (context.performed)
         {
             AttackEvent?.Invoke();
+        }
+    }
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            InteractEvent?.Invoke();
         }
     }
 }
