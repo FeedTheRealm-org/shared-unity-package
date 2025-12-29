@@ -10,10 +10,10 @@ namespace Models
         [SerializeField]
         public Vector3 Position;
 
-    public int Size = 1;
+        public int Size = 1;
 
-    [SerializeField]
-    public int MaxEnemies = 3;
+        [SerializeField]
+        public int MaxEnemies = 3;
 
         [SerializeField]
         public float SpawnRate = 2f;
@@ -24,8 +24,10 @@ namespace Models
         [SerializeField]
         public float ResetDelay = 10f;
 
-    public EnemySpawnAreaData(Vector3 position, int size) {
-      Position = position;
-      Size = size;
+        public EnemySpawnAreaData(Vector3 position, int size)
+        {
+            Position = position;
+            Size = size;
+        }
     }
 }

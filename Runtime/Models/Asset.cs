@@ -8,14 +8,28 @@ namespace Models
     /// Assets are considered all kind of placeable objects in the world editor
     /// </summary>
     [Serializable]
-    public class Asset {
-        [SerializeField] private string id;
-        [SerializeField] private string name;
-        [SerializeField] private Vector3 size = Vector3.one;
-        [SerializeField] private string modelPath;
-        [SerializeField] private string materialPath;
-        [NonSerialized] private GameObject assetModel = null;
-        [NonSerialized] private bool isModelLoaded = false;
+    public class Asset
+    {
+        [SerializeField]
+        private string id;
+
+        [SerializeField]
+        private string name;
+
+        [SerializeField]
+        private Vector3 size = Vector3.one;
+
+        [SerializeField]
+        private string modelPath;
+
+        [SerializeField]
+        private string materialPath;
+
+        [NonSerialized]
+        private GameObject assetModel = null;
+
+        [NonSerialized]
+        private bool isModelLoaded = false;
 
         [NonSerialized]
         private bool isModelLoaded = false;
@@ -42,7 +56,8 @@ namespace Models
         }
 
         // TODO: this needs to be refactored inmediately, we cant have multiple constructors like this
-        public Asset(string id, string name, Vector3 size, GameObject assetModel) {
+        public Asset(string id, string name, Vector3 size, GameObject assetModel)
+        {
             this.id = id;
             this.name = name;
             this.size = size;
@@ -106,7 +121,8 @@ namespace Models
                     return null;
                 }
                 GameObject instance = UnityEngine.Object.Instantiate(prefab);
-                if (size.z == 0) size.z = 1;
+                if (size.z == 0)
+                    size.z = 1;
                 instance.transform.localScale = new Vector3(size.x, size.y, size.z);
                 ApplyMaterial(instance);
                 return instance;
