@@ -19,7 +19,7 @@ public class WorldControllerV2 : MonoBehaviour {
             _renderer = GetComponent<Renderer>();
 
         if (_renderer != null) {
-            _renderer.material.mainTextureScale = new Vector2(textureGranularity, textureGranularity);
+            _renderer.sharedMaterial.mainTextureScale = new Vector2(textureGranularity, textureGranularity);
         }
 
         transform.localScale = new Vector3(worldSize, worldHeight, worldSize);
