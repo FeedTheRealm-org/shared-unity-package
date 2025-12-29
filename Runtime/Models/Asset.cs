@@ -8,25 +8,14 @@ namespace Models
     /// Assets are considered all kind of placeable objects in the world editor
     /// </summary>
     [Serializable]
-    public class Asset
-    {
-        [SerializeField]
-        private string id;
-
-        [SerializeField]
-        private string name;
-
-        [SerializeField]
-        private Vector2Int size = Vector2Int.one;
-
-        [SerializeField]
-        private string modelPath;
-
-        [SerializeField]
-        private string materialPath;
-
-        [NonSerialized]
-        private GameObject assetModel = null;
+    public class Asset {
+        [SerializeField] private string id;
+        [SerializeField] private string name;
+        [SerializeField] private Vector3 size = Vector3.one;
+        [SerializeField] private string modelPath;
+        [SerializeField] private string materialPath;
+        [NonSerialized] private GameObject assetModel = null;
+        [NonSerialized] private bool isModelLoaded = false;
 
         [NonSerialized]
         private bool isModelLoaded = false;
@@ -36,7 +25,7 @@ namespace Models
         {
             this.id = id;
             this.name = name;
-            this.size = size;
+            this.size = new Vector3(size.x, 1, size.y);
             this.modelPath = modelPath;
             this.materialPath = materialPath;
         }
@@ -44,6 +33,16 @@ namespace Models
         // This constructor is used in the Client
         public Asset(string id, string name, Vector2Int size, GameObject assetModel)
         {
+            this.id = id;
+            this.name = name;
+            this.size = new Vector3(size.x, 1, size.y);
+            this.assetModel = assetModel;
+            isModelLoaded = true;
+            ApplyCollisions(assetModel);
+        }
+
+        // TODO: this needs to be refactored inmediately, we cant have multiple constructors like this
+        public Asset(string id, string name, Vector3 size, GameObject assetModel) {
             this.id = id;
             this.name = name;
             this.size = size;
@@ -107,7 +106,8 @@ namespace Models
                     return null;
                 }
                 GameObject instance = UnityEngine.Object.Instantiate(prefab);
-                instance.transform.localScale = new Vector3(size.x, size.y, size.x);
+                if (size.z == 0) size.z = 1;
+                instance.transform.localScale = new Vector3(size.x, size.y, size.z);
                 ApplyMaterial(instance);
                 return instance;
             }
@@ -147,7 +147,7 @@ namespace Models
 
         public string Id => id;
         public string Name => name;
-        public Vector2Int Size => size;
+        public Vector3 Size => size;
         public string ModelPath => modelPath;
         public string MaterialPath => materialPath;
 
