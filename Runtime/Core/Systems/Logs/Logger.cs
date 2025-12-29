@@ -30,8 +30,8 @@ namespace Logging
         [SerializeField]
         private bool showColor;
 
-        private string _stringColor;
-        private string _resetColor;
+        private string _stringColor = "";
+        private string _resetColor = "";
 
         private void OnEnable()
         {
@@ -47,18 +47,18 @@ namespace Logging
             if (showLogs)
             {
                 var time = System.DateTime.Now.ToString("HH:mm:ss.fff");
-                string formatedMsg =
+                string formattedMsg =
                     $"{_stringColor}{time} | {type.ToString()} | {loggerPrefix} {msg}{_resetColor}";
                 switch (type)
                 {
                     case LogType.Info:
-                        Debug.Log(formatedMsg, sender);
+                        Debug.Log(formattedMsg, sender);
                         break;
                     case LogType.Warning:
-                        Debug.LogWarning(formatedMsg, sender);
+                        Debug.LogWarning(formattedMsg, sender);
                         break;
                     case LogType.Error:
-                        Debug.LogError(formatedMsg, sender);
+                        Debug.LogError(formattedMsg, sender);
                         break;
                 }
             }
