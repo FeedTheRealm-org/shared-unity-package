@@ -31,9 +31,6 @@ namespace Models
         [NonSerialized]
         private bool isModelLoaded = false;
 
-        [NonSerialized]
-        private bool isModelLoaded = false;
-
         // This constructor is used in the World Creator
         public Asset(string id, string name, Vector2Int size, string modelPath, string materialPath)
         {
