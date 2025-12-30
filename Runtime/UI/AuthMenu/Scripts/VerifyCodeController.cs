@@ -1,8 +1,9 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
-public class VerifyCodeController : MonoBehaviour {
+public class VerifyCodeController : MonoBehaviour
+{
     [SerializeField]
     private API.AuthService authService;
 
@@ -28,11 +29,13 @@ public class VerifyCodeController : MonoBehaviour {
 
     private AsyncOperation preloadOperation;
 
-    private void Awake() {
+    private void Awake()
+    {
         ui = GetComponent<UIDocument>().rootVisualElement;
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         logger.Log("VerifyCodeController enabled.", this);
 
         _verifyCodeButton = ui.Q<Button>("VerifyCodeButton");
@@ -40,7 +43,8 @@ public class VerifyCodeController : MonoBehaviour {
 
         _changeButton = ui.Q<Label>("LoginBackButton");
         _changeButton = ui.Q<Label>("LoginBackButton");
-        _changeButton.RegisterCallback<ClickEvent>(evt => {
+        _changeButton.RegisterCallback<ClickEvent>(evt =>
+        {
             logger.Log("Navigating to " + backScene.SceneName + ".", this);
             SceneManager.LoadScene(backScene.SceneName);
         });
@@ -49,32 +53,58 @@ public class VerifyCodeController : MonoBehaviour {
         _messageError = ui.Q<Label>("MessageError");
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         if (_verifyCodeButton != null)
             _verifyCodeButton.clicked -= OnLoginClicked;
     }
 
-    private void OnLoginClicked() {
+    private void OnLoginClicked()
+    {
         logger.Log("Verify code Button Clicked", this);
         logger.Log("Email: " + session.Email, this);
         logger.Log("Code: " + _codeField.value, this);
 
-        StartCoroutine(authService.VerifyCode(session.Email, _codeField.value, (success, err) => {
-            if (success) {
-                logger.Log("Verify code successful", this);
-                StartCoroutine(authService.Login(session.Email, session.Password, (loginErr) => {
-                    if (string.IsNullOrEmpty(loginErr)) {
-                        logger.Log("Login after verify code successful", this);
-                        SceneManager.LoadScene(targetScene.SceneName);
-                    } else {
-                        logger.Log("Login after verify code failed", this, Logging.LogType.Error);
-                        _messageError.text = loginErr;
+        StartCoroutine(
+            authService.VerifyCode(
+                session.Email,
+                _codeField.value,
+                (success, err) =>
+                {
+                    if (success)
+                    {
+                        logger.Log("Verify code successful", this);
+                        StartCoroutine(
+                            authService.Login(
+                                session.Email,
+                                session.Password,
+                                (loginErr) =>
+                                {
+                                    if (string.IsNullOrEmpty(loginErr))
+                                    {
+                                        logger.Log("Login after verify code successful", this);
+                                        SceneManager.LoadScene(targetScene.SceneName);
+                                    }
+                                    else
+                                    {
+                                        logger.Log(
+                                            "Login after verify code failed",
+                                            this,
+                                            Logging.LogType.Error
+                                        );
+                                        _messageError.text = loginErr;
+                                    }
+                                }
+                            )
+                        );
                     }
-                }));
-            } else {
-                logger.Log("Verify code failed", this, Logging.LogType.Error);
-                _messageError.text = err;
-            }
-        }));
+                    else
+                    {
+                        logger.Log("Verify code failed", this, Logging.LogType.Error);
+                        _messageError.text = err;
+                    }
+                }
+            )
+        );
     }
 }
