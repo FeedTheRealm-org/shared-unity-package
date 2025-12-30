@@ -8,7 +8,7 @@ namespace Models {
     [SerializeField]
     public Vector3 Position;
 
-    public int Size = 1;
+    public float Size = 1f;
 
     [SerializeField]
     public int MaxEnemies = 3;
@@ -25,7 +25,7 @@ namespace Models {
     [SerializeField]
     public EnemyData EnemyForSpawn;
 
-    public EnemySpawnAreaData(Vector3 position, int size, int maxEnemies = 3, float spawnRate = 2f, int resetAfterKills = 6, float resetDelay = 10f, EnemyData enemyForSpawn = null) {
+    public EnemySpawnAreaData(Vector3 position, float size = 1f, int maxEnemies = 3, float spawnRate = 2f, int resetAfterKills = 6, float resetDelay = 10f, EnemyData enemyForSpawn = null) {
       Position = position;
       Size = size;
       MaxEnemies = maxEnemies;
