@@ -22,7 +22,7 @@ namespace Models {
     [SerializeField]
     public float ResetDelay = 10f;
 
-    public EnemySpawnAreaData(Vector3 position, int size, int maxEnemies, float spawnRate, int resetAfterKills, float resetDelay) {
+    public EnemySpawnAreaData(Vector3 position, int size, int maxEnemies = 3, float spawnRate = 2f, int resetAfterKills = 6, float resetDelay = 10f) {
       Position = position;
       Size = size;
       MaxEnemies = maxEnemies;
