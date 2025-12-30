@@ -3,6 +3,7 @@ using UnityEngine.Networking;
 using System.Collections;
 using System.Text;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace API {
     [CreateAssetMenu(fileName = "WorldService", menuName = "Scriptable Objects/API/WorldService")]
@@ -19,7 +20,8 @@ namespace API {
         /// <summary>
         ///  Post a new world to the server.
         /// </summary>
-        public IEnumerator CreateWorld(Models.WorldData worldData, string accessToken, System.Action<string, string> handler) {
+        public async Task PublishWorld(Models.WorldData worldData, string accessToken, System.Action<string, string> handler)
+        {
             // Read file content
 
             logger.Log($"Uploading world data with these objects: {worldData.objectPlacementData}", this);
@@ -39,15 +41,18 @@ namespace API {
 
             logger.Log($"Sending Request: {json}", this);
 
-            yield return uwr.SendWebRequest();
+            await uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
-            if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError) {
+            if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError)
+            {
                 var res = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<ErrorResponse>(responseText);
                 logger.Log($"CreateWorld error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}", this, Logging.LogType.Error);
                 handler?.Invoke("", res?.detail ?? responseText);
-            } else {
+            }
+            else
+            {
                 logger.Log($"CreateWorld response: {responseText}", this);
                 var res = JsonUtility.FromJson<DataEnvelope<WorldCreateResponse>>(responseText);
                 handler?.Invoke(res?.data?.id, "");
