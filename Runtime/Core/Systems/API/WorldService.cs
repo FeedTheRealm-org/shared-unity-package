@@ -25,20 +25,37 @@ namespace API
         /// <summary>
         ///  Post a new world to the server.
         /// </summary>
-        public IEnumerator CreateWorld(Models.WorldData worldData, string description, string accessToken, System.Action<string, string> handler) {
+        public IEnumerator CreateWorld(
+            Models.WorldData worldData,
+            string description,
+            string accessToken,
+            System.Action<string, string> handler
+        )
+        {
             // Debug Log
-            int placedCount = worldData.objectPlacementData != null ? worldData.objectPlacementData.Count : 0;
-            int consumablesCount = worldData.consumableItems != null ? worldData.consumableItems.Count : 0;
+            int placedCount =
+                worldData.objectPlacementData != null ? worldData.objectPlacementData.Count : 0;
+            int consumablesCount =
+                worldData.consumableItems != null ? worldData.consumableItems.Count : 0;
             int enemiesCount = worldData.enemies != null ? worldData.enemies.Count : 0;
 
-            logger.Log($"CreateWorld: uploading world '{worldData.worldName}' with {placedCount} placed objects, {consumablesCount} consumable items, {enemiesCount} enemies.", this);
+            logger.Log(
+                $"CreateWorld: uploading world '{worldData.worldName}' with {placedCount} placed objects, {consumablesCount} consumable items, {enemiesCount} enemies.",
+                this
+            );
 
-            if (enemiesCount > 0) {
-                for (int i = 0; i < worldData.enemies.Count; i++) {
+            if (enemiesCount > 0)
+            {
+                for (int i = 0; i < worldData.enemies.Count; i++)
+                {
                     var e = worldData.enemies[i];
-                    if (e == null) continue;
+                    if (e == null)
+                        continue;
                     int lootCount = e.lootItems != null ? e.lootItems.Count : 0;
-                    logger.Log($"CreateWorld: Enemy[{i}] name='{e.name}', HP={e.healthPoints}, DMG={e.damage}, LootItems={lootCount}, Gold={e.goldAmount}", this);
+                    logger.Log(
+                        $"CreateWorld: Enemy[{i}] name='{e.name}', HP={e.healthPoints}, DMG={e.damage}, LootItems={lootCount}, Gold={e.goldAmount}",
+                        this
+                    );
                 }
             }
 
