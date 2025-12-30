@@ -1,8 +1,9 @@
-using UnityEngine;
 using System;
+using UnityEngine;
 
 [Serializable]
-public class SceneReference {
+public class SceneReference
+{
     [SerializeField]
     private string sceneName;
 
@@ -14,15 +15,19 @@ public class SceneReference {
     public string SceneName => sceneName;
 
 #if UNITY_EDITOR
-    public UnityEditor.SceneAsset SceneAsset {
+    public UnityEditor.SceneAsset SceneAsset
+    {
         get => sceneAsset;
-        set {
+        set
+        {
             sceneAsset = value;
-            sceneName = value != null
-                ? System.IO.Path.GetFileNameWithoutExtension(UnityEditor.AssetDatabase.GetAssetPath(value))
-                : "";
+            sceneName =
+                value != null
+                    ? System.IO.Path.GetFileNameWithoutExtension(
+                        UnityEditor.AssetDatabase.GetAssetPath(value)
+                    )
+                    : "";
         }
     }
 #endif
 }
-

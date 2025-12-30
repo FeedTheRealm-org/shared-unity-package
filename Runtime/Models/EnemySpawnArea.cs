@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Models {
+namespace Models
+{
   [Serializable]
-  public class EnemySpawnAreaData {
+  public class EnemySpawnAreaData
+  {
     [SerializeField]
     public Vector3 Position;
 
@@ -25,7 +27,8 @@ namespace Models {
     [SerializeField]
     public EnemyData EnemyForSpawn;
 
-    public EnemySpawnAreaData(Vector3 position, float size = 1f, int maxEnemies = 3, float spawnRate = 2f, int resetAfterKills = 6, float resetDelay = 10f, EnemyData enemyForSpawn = null) {
+    public EnemySpawnAreaData(Vector3 position, float size = 1f, int maxEnemies = 3, float spawnRate = 2f, int resetAfterKills = 6, float resetDelay = 10f, EnemyData enemyForSpawn = null)
+    {
       Position = position;
       Size = size;
       MaxEnemies = maxEnemies;
