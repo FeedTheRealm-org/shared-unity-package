@@ -14,7 +14,9 @@ namespace Models
         public Vector3 offset;
         public Vector3 position;
         public string structureName;
-        public string structureFilepath { get; set; }
+
+        [NonSerialized]
+        public string structureFilepath;
         public StructureData(string id, string structureName, Vector3 size, Vector3 rotation, Vector3 offset, Vector3 position)
         {
             this.id = id;
