@@ -8,12 +8,12 @@ namespace Models
     {
         [SerializeField]
         public Vector3 Position;
-        public int Size = 1;
+        public float Radius;
 
-        public PlayerSpawnAreaData(Vector3 position, int size)
+        public PlayerSpawnAreaData(Vector3 position, float radius)
         {
             Position = position;
-            Size = size;
+            Radius = radius;
         }
     }
 }

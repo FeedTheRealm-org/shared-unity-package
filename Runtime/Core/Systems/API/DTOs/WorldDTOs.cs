@@ -8,13 +8,6 @@ namespace API
         public Models.WorldData data;
         public string description;
         public string file_name;
-
-        public WorldRequest(Models.WorldData data, string description)
-        {
-            this.data = data;
-            this.description = description;
-            file_name = $"{data.worldName}.world";
-        }
     }
 
     [System.Serializable]

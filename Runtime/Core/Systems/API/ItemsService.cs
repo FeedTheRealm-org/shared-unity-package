@@ -1,5 +1,6 @@
 using System.Collections;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -27,7 +28,7 @@ namespace API
         /// <summary>
         /// Upload an item sprite as multipart/form-data. The form field name used is `sprite`.
         /// </summary>
-        public IEnumerator UploadItemSprite(
+        public async Task UploadItemSprite(
             byte[] fileBytes,
             string filename,
             string mimeType,
@@ -51,7 +52,7 @@ namespace API
 
             logger.Log($"Sending multipart request for {filename}", this);
 
-            yield return uwr.SendWebRequest();
+            await uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 

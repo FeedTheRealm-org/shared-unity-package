@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -25,22 +26,24 @@ namespace API
         /// <summary>
         ///  Post a new world to the server.
         /// </summary>
-        public IEnumerator CreateWorld(
-            Models.WorldData worldData,
+        public async Task<(string id, string error)> PublishWorld(
+            Models.WorldData data,
+            string fileName,
             string description,
-            string accessToken,
-            System.Action<string, string> handler
+            string accessToken
         )
         {
-            // Read file content
-
             logger.Log(
-                $"Uploading world data with these objects: {worldData.objectPlacementData}",
+                $"Uploading world data with these objects: {data.objectPlacementData}",
                 this
             );
 
-            // Wrap into final payload with file_name
-            WorldRequest payload = new(worldData, description);
+            WorldRequest payload = new()
+            {
+                data = data,
+                file_name = fileName,
+                description = description,
+            };
 
             string url = GetBaseUrl();
             string json = JsonUtility.ToJson(payload);
@@ -53,9 +56,7 @@ namespace API
             uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
 
             logger.Log($"Sending Request: {json}", this);
-
-            yield return uwr.SendWebRequest();
-
+            await uwr.SendWebRequest();
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
             if (
@@ -63,21 +64,19 @@ namespace API
                 || uwr.result == UnityWebRequest.Result.ProtocolError
             )
             {
-                var res = string.IsNullOrEmpty(responseText)
-                    ? null
-                    : JsonUtility.FromJson<ErrorResponse>(responseText);
+                var res = JsonUtility.FromJson<ErrorResponse>(responseText);
                 logger.Log(
-                    $"CreateWorld error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}",
+                    $"CreateWorld error: {res?.title}: {res?.detail}",
                     this,
                     Logging.LogType.Error
                 );
-                handler?.Invoke("", res?.detail ?? responseText);
+                return ("", res?.detail ?? responseText);
             }
             else
             {
                 logger.Log($"CreateWorld response: {responseText}", this);
                 var res = JsonUtility.FromJson<DataEnvelope<WorldCreateResponse>>(responseText);
-                handler?.Invoke(res?.data?.id, "");
+                return (res?.data?.id ?? "", "");
             }
         }
 

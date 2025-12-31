@@ -11,16 +11,22 @@ namespace Models
         public string id;
 
         [SerializeField]
-        public string worldName = "NewWorld";
+        private string _worldName = "New_FTR_World";
 
         [SerializeField]
-        public List<PlacedAsset> objectPlacementData;
+        public List<StructureData> objectPlacementData = new();
 
         [SerializeField]
-        public List<EnemySpawnAreaData> enemySpawnAreas;
+        public List<EnemySpawnAreaData> enemySpawnAreas = new();
 
         [SerializeField]
-        public List<PlayerSpawnAreaData> playerSpawnAreas;
-        public List<ConsumableItem> consumableItems = new List<ConsumableItem>();
+        public List<PlayerSpawnAreaData> playerSpawnAreas = new();
+        public List<ConsumableItem> consumableItems = new();
+
+        public string worldName
+        {
+            get => _worldName;
+            set => _worldName = value?.Replace(" ", "_") ?? "New_FTR_World";
+        }
     }
 }
