@@ -8,7 +8,6 @@ namespace API
         public Models.WorldData data;
         public string description;
         public string file_name;
-        public string description;
     }
 
     [System.Serializable]

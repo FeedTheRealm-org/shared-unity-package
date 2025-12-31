@@ -1,15 +1,19 @@
 using System;
 using UnityEngine;
 
-namespace Models {
+namespace Models
+{
   [Serializable]
-  public class PlayerSpawnAreaData {
+  public class PlayerSpawnAreaData
+  {
     [SerializeField]
     public Vector3 Position;
     public float Radius;
 
-    public PlayerSpawnAreaData(Vector3 position, float radius) {
+    public PlayerSpawnAreaData(Vector3 position, float radius)
+    {
       Position = position;
       Radius = radius;
     }
+  }
 }
