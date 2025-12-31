@@ -26,15 +26,23 @@ namespace API
         /// <summary>
         ///  Post a new world to the server.
         /// </summary>
-        public async Task<(string id, string error)> PublishWorld(Models.WorldData data, string fileName, string description, string accessToken)
+        public async Task<(string id, string error)> PublishWorld(
+            Models.WorldData data,
+            string fileName,
+            string description,
+            string accessToken
+        )
         {
-            logger.Log($"Uploading world data with these objects: {data.objectPlacementData}", this);
+            logger.Log(
+                $"Uploading world data with these objects: {data.objectPlacementData}",
+                this
+            );
 
             WorldRequest payload = new()
             {
                 data = data,
                 file_name = fileName,
-                description = description
+                description = description,
             };
 
             string url = GetBaseUrl();
@@ -51,10 +59,17 @@ namespace API
             await uwr.SendWebRequest();
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
-            if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError)
+            if (
+                uwr.result == UnityWebRequest.Result.ConnectionError
+                || uwr.result == UnityWebRequest.Result.ProtocolError
+            )
             {
                 var res = JsonUtility.FromJson<ErrorResponse>(responseText);
-                logger.Log($"CreateWorld error: {res?.title}: {res?.detail}", this, Logging.LogType.Error);
+                logger.Log(
+                    $"CreateWorld error: {res?.title}: {res?.detail}",
+                    this,
+                    Logging.LogType.Error
+                );
                 return ("", res?.detail ?? responseText);
             }
             else

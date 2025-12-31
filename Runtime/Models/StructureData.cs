@@ -1,5 +1,3 @@
-
-
 using System;
 using UnityEngine;
 
@@ -17,7 +15,15 @@ namespace Models
 
         [NonSerialized]
         public string structureFilepath;
-        public StructureData(string id, string structureName, Vector3 size, Vector3 rotation, Vector3 offset, Vector3 position)
+
+        public StructureData(
+            string id,
+            string structureName,
+            Vector3 size,
+            Vector3 rotation,
+            Vector3 offset,
+            Vector3 position
+        )
         {
             this.id = id;
             this.structureName = structureName;

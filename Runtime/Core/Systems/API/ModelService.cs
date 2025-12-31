@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Models;
 using UnityEngine;
 using UnityEngine.Networking;
-using Models;
 
 namespace API
 {
@@ -27,10 +27,7 @@ namespace API
         /// <summary>
         ///  Lists all asset models for a given world.
         /// </summary>
-        public async Task<List<string>> ListWorldAssets(
-            string worldId,
-            string accessToken
-        )
+        public async Task<List<string>> ListWorldAssets(string worldId, string accessToken)
         {
             string url = $"{GetBaseUrl().TrimEnd('/')}/{worldId}";
 
@@ -59,7 +56,11 @@ namespace API
         /// <summary>
         /// Uploads asset model & material files for a world.
         /// </summary>
-        public async Task<string> UploadModels(List<StructureData> structureModels, string worldId, string accessToken)
+        public async Task<string> UploadModels(
+            List<StructureData> structureModels,
+            string worldId,
+            string accessToken
+        )
         {
             if (structureModels == null || structureModels.Count == 0)
             {
