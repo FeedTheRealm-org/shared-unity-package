@@ -6,11 +6,17 @@ namespace Models {
 
     [Serializable]
     public class WorldData {
-        [SerializeField] public string id; // TODO: check if this breaks when publishing world
-        [SerializeField] public string worldName = "NewWorld";
-        [SerializeField] public List<StructureData> objectPlacementData;
-        [SerializeField] public List<EnemySpawnAreaData> enemySpawnAreas;
-        [SerializeField] public List<PlayerSpawnAreaData> playerSpawnAreas;
-        public List<ConsumableItem> consumableItems = new List<ConsumableItem>();
+        [SerializeField] public string id;
+        [SerializeField] private string _worldName = "New_FTR_World";
+        [SerializeField] public List<StructureData> objectPlacementData = new();
+        [SerializeField] public List<EnemySpawnAreaData> enemySpawnAreas = new();
+        [SerializeField] public List<PlayerSpawnAreaData> playerSpawnAreas = new();
+        public List<ConsumableItem> consumableItems = new();
+
+        public string worldName
+        {
+            get => _worldName;
+            set => _worldName = value?.Replace(" ", "_") ?? "New_FTR_World";
+        }
     }
 }

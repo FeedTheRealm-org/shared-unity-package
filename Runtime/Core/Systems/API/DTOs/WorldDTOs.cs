@@ -5,11 +5,7 @@ namespace API {
     public class WorldRequest {
         public Models.WorldData data;
         public string file_name;
-
-        public WorldRequest(Models.WorldData data) {
-            this.data = data;
-            file_name = $"{data.worldName}.world";
-        }
+        public string description;
     }
 
     [System.Serializable]
