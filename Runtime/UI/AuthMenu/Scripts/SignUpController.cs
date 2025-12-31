@@ -1,8 +1,9 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
-public class SignUpController : MonoBehaviour {
+public class SignUpController : MonoBehaviour
+{
     [SerializeField]
     private API.AuthService authService;
 
@@ -29,18 +30,21 @@ public class SignUpController : MonoBehaviour {
 
     private AsyncOperation preloadOperation;
 
-    private void Awake() {
+    private void Awake()
+    {
         ui = GetComponent<UIDocument>().rootVisualElement;
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         logger.Log("SignUpController enabled.", this);
 
         _signUpButton = ui.Q<Button>("SignUpButton");
         _signUpButton.clicked += OnLoginClicked;
 
         _changeButton = ui.Q<Label>("LoginChangeButton");
-        _changeButton.RegisterCallback<ClickEvent>(evt => {
+        _changeButton.RegisterCallback<ClickEvent>(evt =>
+        {
             logger.Log("Navigating to " + otherFormScene.SceneName + ".", this);
             SceneManager.LoadScene(otherFormScene.SceneName);
         });
@@ -51,37 +55,53 @@ public class SignUpController : MonoBehaviour {
         _messageError = ui.Q<Label>("MessageError");
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         if (_signUpButton != null)
             _signUpButton.clicked -= OnLoginClicked;
     }
 
-    private void OnLoginClicked() {
+    private void OnLoginClicked()
+    {
         logger.Log("Login Button Clicked", this);
         logger.Log("Email: " + _emailField.value, this);
         logger.Log("Password: " + _passwordField.value, this);
 
-        if (_passwordField.value != _repeatedPasswordField.value) {
+        if (_passwordField.value != _repeatedPasswordField.value)
+        {
             logger.Log("Passwords do not match", this, Logging.LogType.Error);
             _messageError.text = "Passwords do not match.";
             return;
         }
 
-        StartCoroutine(authService.SignUp(_emailField.value, _passwordField.value, (success, err) => {
-            if (success) {
-                logger.Log("SignUp successful, email: " + _emailField.value, this);
-                session.SetEmail(_emailField.value);
-                session.SetPassword(_passwordField.value);
-                if (preloadOperation != null) {
-                    preloadOperation.allowSceneActivation = true;
-                    logger.Log("Activating preloaded " + targetScene.SceneName + ".", this);
-                } else {
-                    SceneManager.LoadScene(targetScene.SceneName);
+        StartCoroutine(
+            authService.SignUp(
+                _emailField.value,
+                _passwordField.value,
+                (success, err) =>
+                {
+                    if (success)
+                    {
+                        logger.Log("SignUp successful, email: " + _emailField.value, this);
+                        session.SetEmail(_emailField.value);
+                        session.SetPassword(_passwordField.value);
+                        if (preloadOperation != null)
+                        {
+                            preloadOperation.allowSceneActivation = true;
+                            logger.Log("Activating preloaded " + targetScene.SceneName + ".", this);
+                        }
+                        else
+                        {
+                            SceneManager.LoadScene(targetScene.SceneName);
+                        }
+                    }
+                    else
+                    {
+                        logger.Log("SignUp failed", this, Logging.LogType.Error);
+                        _messageError.text = err;
+                    }
                 }
-            } else {
-                logger.Log("SignUp failed", this, Logging.LogType.Error);
-                _messageError.text = err;
-            }
-        }));
+            )
+        );
     }
 }

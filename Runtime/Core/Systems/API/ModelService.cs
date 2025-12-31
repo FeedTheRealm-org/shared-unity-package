@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
@@ -12,22 +13,21 @@ namespace API
     public class ModelService : ScriptableObject
     {
         [Header("Server settings")]
-        [SerializeField] public string Hostname;
-        [SerializeField] public int Port;
+        [SerializeField]
+        public string Hostname;
+
+        [SerializeField]
+        public int Port;
 
         [Header("General settings")]
-        [SerializeField] private Logging.Logger logger;
+        [SerializeField]
+        private Logging.Logger logger;
 
         private string GetBaseUrl() => $"http://{Hostname}:{Port}/assets/models";
-
 
         /// <summary>
         ///  Lists all asset models for a given world.
         /// </summary>
-        /// <param name="worldId"></param>
-        /// <param name="accessToken"></param>
-        /// <param name="callback"></param>
-        /// <returns></returns>
         public async Task<List<string>> ListWorldAssets(
             string worldId,
             string accessToken
@@ -71,14 +71,12 @@ namespace API
 
             var form = new WWWForm();
 
-            // TODO: move the logic related to the object filename, location to the structure model
             for (int i = 0; i < structureModels.Count; i++)
             {
                 var structure = structureModels[i];
                 string prefix = $"models[{i}]";
                 form.AddField($"{prefix}.model_id", structure.id);
                 form.AddField($"{prefix}.name", structure.structureName);
-
                 byte[] modelData = File.ReadAllBytes(structure.structureFilepath);
 
                 form.AddBinaryData(
@@ -105,7 +103,5 @@ namespace API
                 return uwr.error;
             }
         }
-
-
     }
 }

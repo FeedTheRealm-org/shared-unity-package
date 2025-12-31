@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Models {
-
+namespace Models
+{
     [Serializable]
     public class WorldData {
         [SerializeField] public string id;

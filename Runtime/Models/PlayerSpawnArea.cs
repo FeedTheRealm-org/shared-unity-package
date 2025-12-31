@@ -12,5 +12,4 @@ namespace Models {
       Position = position;
       Radius = radius;
     }
-  }
 }

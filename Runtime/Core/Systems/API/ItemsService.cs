@@ -1,5 +1,3 @@
-using UnityEngine;
-using UnityEngine.Networking;
 using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
@@ -55,5 +53,4 @@ namespace API
         handler?.Invoke(envelope?.data, "");
       }
     }
-  }
 }

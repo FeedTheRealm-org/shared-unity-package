@@ -1,21 +1,24 @@
-
-namespace API {
+namespace API
+{
     /* --- Request --- */
     [System.Serializable]
-    public class LoginRequest {
+    public class LoginRequest
+    {
         public string email;
         public string password;
     }
 
     [System.Serializable]
-    public class VerifyCodeRequest {
+    public class VerifyCodeRequest
+    {
         public string email;
         public string code;
     }
 
     /* --- Responses --- */
     [System.Serializable]
-    public class LoginResponse {
+    public class LoginResponse
+    {
         public string access_token;
         public string id;
         public string email;
@@ -24,12 +27,14 @@ namespace API {
     }
 
     [System.Serializable]
-    public class SignUpResponse {
+    public class SignUpResponse
+    {
         public string email;
     }
 
     [System.Serializable]
-    public class VerifyCodeResponse {
+    public class VerifyCodeResponse
+    {
         public string email;
         public bool verified;
     }
