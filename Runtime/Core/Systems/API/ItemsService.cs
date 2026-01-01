@@ -1,11 +1,12 @@
-using UnityEngine;
-using UnityEngine.Networking;
 using System.Collections;
 using System.IO;
+using System.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.Networking;
 
 namespace API
 {
-  // NOTE: This ScriptableObject handles item sprite uploads.
+// NOTE: This ScriptableObject handles item sprite uploads.
   // It is intentionally named differently from the metadata ItemsService
   [CreateAssetMenu(fileName = "ItemSpritesService", menuName = "Scriptable Objects/API/ItemSpritesService")]
   public class ItemSpritesService : ScriptableObject
