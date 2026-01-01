@@ -5,8 +5,10 @@ using System.IO;
 
 namespace API
 {
-  [CreateAssetMenu(fileName = "ItemsService", menuName = "Scriptable Objects/API/ItemsService")]
-  public class ItemsService : ScriptableObject
+  // NOTE: This ScriptableObject handles item sprite uploads.
+  // It is intentionally named differently from the metadata ItemsService
+  [CreateAssetMenu(fileName = "ItemSpritesService", menuName = "Scriptable Objects/API/ItemSpritesService")]
+  public class ItemSpritesService : ScriptableObject
   {
     [Header("Server settings")]
     [SerializeField] public string Hostname;
