@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Models;
+using UnityEngine;
 
 namespace Worlds
 {
@@ -30,25 +31,101 @@ namespace Worlds
             consumablesBySpriteId.Clear();
             worldItemSpriteIds.Clear();
 
-            if (data == null || data.consumableItems == null)
+            if (data == null)
             {
+                Debug.LogWarning("[WorldItemsRegistry] RegisterWorldData called with null data");
                 return;
             }
 
-            foreach (var consumable in data.consumableItems)
+            int inputConsumablesCount =
+                data.consumableItems != null ? data.consumableItems.Count : 0;
+
+            if (data.consumableItems != null)
             {
-                if (consumable == null)
+                foreach (var consumable in data.consumableItems)
                 {
-                    continue;
+                    if (consumable == null)
+                    {
+                        continue;
+                    }
+
+                    if (string.IsNullOrEmpty(consumable.spriteId))
+                    {
+                        continue;
+                    }
+
+                    consumablesBySpriteId[consumable.spriteId] = consumable;
+                    worldItemSpriteIds.Add(consumable.spriteId);
+                }
+            }
+
+            int registeredConsumablesCount = consumablesBySpriteId.Count;
+
+            Debug.Log(
+                $"[WorldItemsRegistry] Registered {registeredConsumablesCount} world consumable items "
+                    + $"for world '{data.worldName}' (input list count = {inputConsumablesCount})."
+            );
+
+            // Validate that enemy loot references only consumables that exist in this world.
+            if (data.enemies != null && data.enemies.Count > 0)
+            {
+                int missingLootEntries = 0;
+
+                for (int i = 0; i < data.enemies.Count; i++)
+                {
+                    var enemy = data.enemies[i];
+                    if (enemy == null)
+                    {
+                        continue;
+                    }
+
+                    if (enemy.lootItems == null || enemy.lootItems.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    for (int j = 0; j < enemy.lootItems.Count; j++)
+                    {
+                        var loot = enemy.lootItems[j];
+                        if (loot == null)
+                        {
+                            continue;
+                        }
+
+                        if (string.IsNullOrEmpty(loot.spriteId))
+                        {
+                            continue;
+                        }
+
+                        if (!consumablesBySpriteId.ContainsKey(loot.spriteId))
+                        {
+                            missingLootEntries++;
+                            Debug.LogWarning(
+                                "[WorldItemsRegistry] Enemy loot item references missing consumable: "
+                                    + $"enemy='{enemy.name}', itemName='{loot.itemName}', spriteId='{loot.spriteId}'. "
+                                    + "This spriteId is not present in WorldData.consumableItems."
+                            );
+                        }
+                    }
                 }
 
-                if (string.IsNullOrEmpty(consumable.spriteId))
+                if (missingLootEntries == 0)
                 {
-                    continue;
+                    Debug.Log(
+                        "[WorldItemsRegistry] All enemy loot spriteIds have matching consumables in this world."
+                    );
                 }
-
-                consumablesBySpriteId[consumable.spriteId] = consumable;
-                worldItemSpriteIds.Add(consumable.spriteId);
+                else
+                {
+                    Debug.LogWarning(
+                        $"[WorldItemsRegistry] Found {missingLootEntries} enemy loot entries "
+                            + "without matching consumables. See warnings above for details."
+                    );
+                }
+            }
+            else
+            {
+                Debug.Log("[WorldItemsRegistry] No enemies defined in world data.");
             }
         }
 
