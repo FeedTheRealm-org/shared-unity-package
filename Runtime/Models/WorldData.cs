@@ -22,7 +22,9 @@ namespace Models
 
         [SerializeField]
         public List<PlayerSpawnAreaData> playerSpawnAreas = new();
+        [SerializeField]
         public List<ConsumableItem> consumableItems = new();
+        [SerializeField]
         public List<EnemyData> enemies = new ();
 
         public string worldName

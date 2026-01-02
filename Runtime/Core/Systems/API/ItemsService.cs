@@ -23,8 +23,9 @@ namespace API
 
     /// <summary>
     /// Upload an item sprite as multipart/form-data. The form field name used is `sprite`.
+    /// Returns a tuple with the created sprite (or null) and an error message (empty if ok).
     /// </summary>
-    public IEnumerator UploadItemSprite(byte[] fileBytes, string filename, string mimeType, System.Action<SpriteCreatedData, string> handler)
+    public async Task<(SpriteCreatedData data, string error)> UploadItemSpriteAsync(byte[] fileBytes, string filename, string mimeType)
     {
       logger.Log($"Uploading sprite '{filename}' ({(fileBytes?.Length ?? 0)} bytes) to {GetBaseUrl()}", this);
 
@@ -40,7 +41,7 @@ namespace API
 
       logger.Log($"Sending multipart request for {filename}", this);
 
-      yield return uwr.SendWebRequest();
+      await uwr.SendWebRequest();
 
       var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
@@ -48,13 +49,13 @@ namespace API
       {
         var res = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<ErrorResponse>(responseText);
         logger.Log($"UploadItemSprite error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}", this, Logging.LogType.Error);
-        handler?.Invoke(null, res?.detail ?? responseText);
+        return (null, res?.detail ?? responseText);
       }
       else
       {
         logger.Log($"UploadItemSprite response: {responseText}", this);
         var envelope = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<DataEnvelope<SpriteCreatedData>>(responseText);
-        handler?.Invoke(envelope?.data, "");
+        return (envelope?.data, "");
       }
     }
   }
