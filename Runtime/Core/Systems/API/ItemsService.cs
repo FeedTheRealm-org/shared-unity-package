@@ -6,56 +6,83 @@ using UnityEngine.Networking;
 
 namespace API
 {
-// NOTE: This ScriptableObject handles item sprite uploads.
-  // It is intentionally named differently from the metadata ItemsService
-  [CreateAssetMenu(fileName = "ItemSpritesService", menuName = "Scriptable Objects/API/ItemSpritesService")]
-  public class ItemSpritesService : ScriptableObject
-  {
-    [Header("Server settings")]
-    [SerializeField] public string Hostname;
-    [SerializeField] public int Port;
-
-    [Header("General settings")]
-    [SerializeField] private Logging.Logger logger;
-    [SerializeField] private Session.Session session;
-
-    private string GetBaseUrl() => $"http://{Hostname}:{Port}/assets/sprites/items";
-
-    /// <summary>
-    /// Upload an item sprite as multipart/form-data. The form field name used is `sprite`.
-    /// </summary>
-    public IEnumerator UploadItemSprite(byte[] fileBytes, string filename, string mimeType, System.Action<SpriteCreatedData, string> handler)
+    // NOTE: This ScriptableObject handles item sprite uploads.
+    // It is intentionally named differently from the metadata ItemsService
+    [CreateAssetMenu(
+        fileName = "ItemSpritesService",
+        menuName = "Scriptable Objects/API/ItemSpritesService"
+    )]
+    public class ItemSpritesService : ScriptableObject
     {
-      logger.Log($"Uploading sprite '{filename}' ({(fileBytes?.Length ?? 0)} bytes) to {GetBaseUrl()}", this);
+        [Header("Server settings")]
+        [SerializeField]
+        public string Hostname;
 
-      var form = new WWWForm();
-      form.AddBinaryData("sprite", fileBytes, filename, mimeType);
+        [SerializeField]
+        public int Port;
 
-      // Use UnityWebRequest.Post with the WWWForm (same approach as ModelService.UploadAssets)
-      var uwr = UnityWebRequest.Post(GetBaseUrl(), form);
-      if (!string.IsNullOrEmpty(session.APIToken))
-      {
-        uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
-      }
+        [Header("General settings")]
+        [SerializeField]
+        private Logging.Logger logger;
 
-      logger.Log($"Sending multipart request for {filename}", this);
+        [SerializeField]
+        private Session.Session session;
 
-      yield return uwr.SendWebRequest();
+        private string GetBaseUrl() => $"http://{Hostname}:{Port}/assets/sprites/items";
 
-      var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+        /// <summary>
+        /// Upload an item sprite as multipart/form-data. The form field name used is `sprite`.
+        /// </summary>
+        public async Task<(SpriteCreatedData, string)> UploadItemSprite(
+            byte[] fileBytes,
+            string filename,
+            string mimeType
+        )
+        {
+            logger.Log(
+                $"Uploading sprite '{filename}' ({(fileBytes?.Length ?? 0)} bytes) to {GetBaseUrl()}",
+                this
+            );
 
-      if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError)
-      {
-        var res = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<ErrorResponse>(responseText);
-        logger.Log($"UploadItemSprite error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}", this, Logging.LogType.Error);
-        handler?.Invoke(null, res?.detail ?? responseText);
-      }
-      else
-      {
-        logger.Log($"UploadItemSprite response: {responseText}", this);
-        var envelope = string.IsNullOrEmpty(responseText) ? null : JsonUtility.FromJson<DataEnvelope<SpriteCreatedData>>(responseText);
-        handler?.Invoke(envelope?.data, "");
-      }
+            var form = new WWWForm();
+            form.AddBinaryData("sprite", fileBytes, filename, mimeType);
+
+            // Use UnityWebRequest.Post with the WWWForm (same approach as ModelService.UploadAssets)
+            var uwr = UnityWebRequest.Post(GetBaseUrl(), form);
+            if (!string.IsNullOrEmpty(session.APIToken))
+            {
+                uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+            }
+
+            logger.Log($"Sending multipart request for {filename}", this);
+
+            await uwr.SendWebRequest();
+
+            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+
+            if (
+                uwr.result == UnityWebRequest.Result.ConnectionError
+                || uwr.result == UnityWebRequest.Result.ProtocolError
+            )
+            {
+                var res = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<ErrorResponse>(responseText);
+                logger.Log(
+                    $"UploadItemSprite error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (null, res?.detail ?? responseText);
+            }
+            else
+            {
+                logger.Log($"UploadItemSprite response: {responseText}", this);
+                var envelope = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<DataEnvelope<SpriteCreatedData>>(responseText);
+                return (envelope?.data, "");
+            }
+        }
     }
-  }
 }
