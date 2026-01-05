@@ -16,8 +16,8 @@ namespace Worlds
         /// </summary>
         public static WorldData CurrentWorldData { get; private set; }
 
-        private static readonly Dictionary<string, ConsumableItem> consumablesBySpriteId =
-            new Dictionary<string, ConsumableItem>();
+        private static readonly Dictionary<string, ConsumableItemData> consumablesBySpriteId =
+            new Dictionary<string, ConsumableItemData>();
 
         private static readonly HashSet<string> worldItemSpriteIds = new HashSet<string>();
 
@@ -140,7 +140,7 @@ namespace Worlds
         /// <summary>
         /// Get consumable definition by its spriteId. Returns null if not found.
         /// </summary>
-        public static ConsumableItem GetConsumableBySpriteId(string spriteId)
+        public static ConsumableItemData GetConsumableBySpriteId(string spriteId)
         {
             if (string.IsNullOrEmpty(spriteId))
             {
