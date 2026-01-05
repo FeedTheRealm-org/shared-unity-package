@@ -27,9 +27,6 @@ namespace Models
         // Movement speed of the enemy
         public int speed;
 
-        // Can the enemy move or is it stationary
-        public bool canMove;
-
         // Attack range of the enemy
         public int range;
 
@@ -65,7 +62,6 @@ namespace Models
             this.healthPoints = healthPoints;
             this.damage = damage;
             this.speed = speed;
-            this.canMove = canMove;
             this.range = range;
             this.spriteId = spriteId;
             this.lootItems = lootItems ?? new List<EnemyLootItemData>();

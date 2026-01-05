@@ -92,20 +92,20 @@ namespace Worlds
                             continue;
                         }
 
-                        if (string.IsNullOrEmpty(loot.spriteId))
-                        {
-                            continue;
-                        }
+                        // if (string.IsNullOrEmpty(loot.spriteId))
+                        // {
+                        //     continue;
+                        // }
 
-                        if (!consumablesBySpriteId.ContainsKey(loot.spriteId))
-                        {
-                            missingLootEntries++;
-                            Debug.LogWarning(
-                                "[WorldItemsRegistry] Enemy loot item references missing consumable: "
-                                    + $"enemy='{enemy.name}', itemName='{loot.itemName}', spriteId='{loot.spriteId}'. "
-                                    + "This spriteId is not present in WorldData.consumableItems."
-                            );
-                        }
+                        // if (!consumablesBySpriteId.ContainsKey(loot.spriteId))
+                        // {
+                        //     missingLootEntries++;
+                        //     Debug.LogWarning(
+                        //         "[WorldItemsRegistry] Enemy loot item references missing consumable: "
+                        //             + $"enemy='{enemy.name}', itemName='{loot.id}', spriteId='{loot.spriteId}'. "
+                        //             + "This spriteId is not present in WorldData.consumableItems."
+                        //     );
+                        // }
                     }
                 }
 

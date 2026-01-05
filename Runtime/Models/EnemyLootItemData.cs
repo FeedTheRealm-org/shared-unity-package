@@ -8,11 +8,7 @@ namespace Models
     {
         // Name of the item dropped
         [SerializeField]
-        public string itemName;
-
-        // Item sprite identifier/path
-        [SerializeField]
-        public string spriteId;
+        public string id;
 
         // Max Amount of this item dropped
         [SerializeField]
@@ -22,10 +18,9 @@ namespace Models
         [SerializeField]
         public int dropChance;
 
-        public EnemyLootItemData(string itemName, string spriteId, float maxAmount, int dropChance)
+        public EnemyLootItemData(string id, float maxAmount, int dropChance)
         {
-            this.itemName = itemName;
-            this.spriteId = spriteId;
+            this.id = id;
             this.maxAmount = maxAmount;
             this.dropChance = dropChance;
         }
