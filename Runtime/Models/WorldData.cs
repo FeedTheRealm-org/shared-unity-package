@@ -5,7 +5,6 @@ using UnityEngine;
 namespace Models
 {
     [Serializable]
-
     public class WorldData
     {
         [SerializeField]
@@ -22,10 +21,9 @@ namespace Models
 
         [SerializeField]
         public List<PlayerSpawnAreaData> playerSpawnAreas = new();
-        [SerializeField]
-        public List<ConsumableItem> consumableItems = new();
-        [SerializeField]
-        public List<EnemyData> enemies = new ();
+        public List<ConsumableItemData> consumableItems = new();
+        public List<EnemyData> enemies = new();
+        public List<LootTableData> lootTables = new();
 
         public string worldName
         {

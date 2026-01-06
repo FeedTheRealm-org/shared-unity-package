@@ -1,40 +1,55 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Models
 {
     [Serializable]
-    public class ConsumableItem
+    public enum EffectType
+    {
+        Heal,
+        Damage,
+        Buff,
+        Debuff,
+        RestoreMana,
+        DrainMana,
+        None,
+    }
+
+    [Serializable]
+    public class ConsumableItemData
     {
         [SerializeField]
-        public string name;
+        public string id;
 
         [SerializeField]
-        public string description;
+        public string name = "Consumable Item";
 
         [SerializeField]
-        public string effectType;
+        public string description = "";
 
         [SerializeField]
-        public int value;
+        public EffectType effectType = EffectType.None;
 
         [SerializeField]
-        public float duration;
+        public int value = 0;
 
         [SerializeField]
-        public float cooldown;
+        public float duration = 0f;
 
         [SerializeField]
-        public int maxStack;
+        public float cooldown = 0f;
 
         [SerializeField]
-        public string spriteId;
+        public int maxStack = 0;
 
-        public ConsumableItem(
+        [SerializeField]
+        public string spriteId = "None";
+
+        public ConsumableItemData(
+            string id,
             string name,
             string description,
-            string effectType,
+            EffectType effectType,
             int value,
             float duration,
             float cooldown,
@@ -42,6 +57,7 @@ namespace Models
             string spriteId
         )
         {
+            this.id = id;
             this.name = name;
             this.description = description;
             this.effectType = effectType;
