@@ -26,7 +26,6 @@ namespace API
         /// <summary>
         ///  Post a new world to the server.
         /// </summary>
-
         public async Task<(string id, string error)> PublishWorld(
             Models.WorldData data,
             string fileName,
@@ -44,14 +43,26 @@ namespace API
                 this
             );
 
-            if (enemiesCount > 0) {
-                for (int i = 0; i < data.enemies.Count; i++) {
+            if (enemiesCount > 0)
+            {
+                for (int i = 0; i < data.enemies.Count; i++)
+                {
                     var e = data.enemies[i];
-                    if (e == null) continue;
-                    if (e.lootTable != null) {
-                    logger.Log($"CreateWorld: Enemy[{i}] name='{e.name}', HP={e.healthPoints}, DMG={e.damage}, LootTableName={e.lootTable.name}, MaxGold={e.lootTable.maxGoldDropAmount}", this);
-                    } else {
-                        logger.Log($"CreateWorld: Enemy[{i}] name='{e.name}', HP={e.healthPoints}, DMG={e.damage}, LootTable not set", this);
+                    if (e == null)
+                        continue;
+                    if (e.lootTable != null)
+                    {
+                        logger.Log(
+                            $"CreateWorld: Enemy[{i}] name='{e.name}', HP={e.healthPoints}, DMG={e.damage}, LootTableName={e.lootTable.name}, MaxGold={e.lootTable.maxGoldDropAmount}",
+                            this
+                        );
+                    }
+                    else
+                    {
+                        logger.Log(
+                            $"CreateWorld: Enemy[{i}] name='{e.name}', HP={e.healthPoints}, DMG={e.damage}, LootTable not set",
+                            this
+                        );
                     }
                 }
             }
@@ -62,7 +73,6 @@ namespace API
                 file_name = fileName,
                 description = description,
             };
-
 
             string url = GetBaseUrl();
             string json = JsonUtility.ToJson(payload);
