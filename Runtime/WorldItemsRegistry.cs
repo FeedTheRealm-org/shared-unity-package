@@ -18,6 +18,8 @@ namespace Worlds
 
         private static readonly Dictionary<string, ConsumableItemData> consumablesBySpriteId =
             new Dictionary<string, ConsumableItemData>();
+        private static readonly Dictionary<string, ConsumableItemData> consumablesById =
+            new Dictionary<string, ConsumableItemData>();
 
         private static readonly HashSet<string> worldItemSpriteIds = new HashSet<string>();
 
@@ -29,6 +31,7 @@ namespace Worlds
             CurrentWorldData = data;
 
             consumablesBySpriteId.Clear();
+            consumablesById.Clear();
             worldItemSpriteIds.Clear();
 
             if (data == null)
@@ -48,14 +51,15 @@ namespace Worlds
                     {
                         continue;
                     }
-
-                    if (string.IsNullOrEmpty(consumable.spriteId))
+                    if (!string.IsNullOrEmpty(consumable.spriteId))
                     {
-                        continue;
+                        consumablesBySpriteId[consumable.spriteId] = consumable;
+                        worldItemSpriteIds.Add(consumable.spriteId);
                     }
-
-                    consumablesBySpriteId[consumable.spriteId] = consumable;
-                    worldItemSpriteIds.Add(consumable.spriteId);
+                    if (!string.IsNullOrEmpty(consumable.id))
+                    {
+                        consumablesById[consumable.id] = consumable;
+                    }
                 }
             }
 
@@ -124,8 +128,20 @@ namespace Worlds
             {
                 return null;
             }
-
             consumablesBySpriteId.TryGetValue(spriteId, out var consumable);
+            return consumable;
+        }
+
+        /// <summary>
+        /// Get consumable definition by its unique item id. Returns null if not found.
+        /// </summary>
+        public static ConsumableItemData GetConsumableById(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+            consumablesById.TryGetValue(id, out var consumable);
             return consumable;
         }
     }
