@@ -48,8 +48,11 @@ namespace API
                 for (int i = 0; i < data.enemies.Count; i++) {
                     var e = data.enemies[i];
                     if (e == null) continue;
-                    int lootCount = e.lootItems != null ? e.lootItems.Count : 0;
-                    logger.Log($"CreateWorld: Enemy[{i}] name='{e.name}', HP={e.healthPoints}, DMG={e.damage}, LootItems={lootCount}, Gold={e.goldAmount}", this);
+                    if (e.lootTable != null) {
+                    logger.Log($"CreateWorld: Enemy[{i}] name='{e.name}', HP={e.healthPoints}, DMG={e.damage}, LootTableName={e.lootTable.name}, MaxGold={e.lootTable.maxGoldDropAmount}", this);
+                    } else {
+                        logger.Log($"CreateWorld: Enemy[{i}] name='{e.name}', HP={e.healthPoints}, DMG={e.damage}, LootTable not set", this);
+                    }
                 }
             }
 

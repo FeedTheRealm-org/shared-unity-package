@@ -23,6 +23,7 @@ namespace Models
         public List<PlayerSpawnAreaData> playerSpawnAreas = new();
         public List<ConsumableItemData> consumableItems = new();
         public List<EnemyData> enemies = new();
+        public List<LootTableData> lootTables = new();
 
         public string worldName
         {

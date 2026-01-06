@@ -34,13 +34,9 @@ namespace Models
         [SerializeField]
         public string spriteId;
 
-        // Loot items that this enemy can drop
+        // Loot table that this enemy can drop
         [SerializeField]
-        public List<EnemyLootItemData> lootItems = new List<EnemyLootItemData>();
-
-        // Gold dropped by this enemy
-        [SerializeField]
-        public float goldAmount;
+        public LootTableData lootTable;
 
         public EnemyData(
             string id,
@@ -49,11 +45,9 @@ namespace Models
             int healthPoints,
             int damage,
             int speed,
-            bool canMove,
             int range,
             string spriteId,
-            List<EnemyLootItemData> lootItems,
-            float goldAmount
+            LootTableData lootTable
         )
         {
             this.id = id;
@@ -64,8 +58,7 @@ namespace Models
             this.speed = speed;
             this.range = range;
             this.spriteId = spriteId;
-            this.lootItems = lootItems ?? new List<EnemyLootItemData>();
-            this.goldAmount = goldAmount;
+            this.lootTable = lootTable;
         }
     }
 }

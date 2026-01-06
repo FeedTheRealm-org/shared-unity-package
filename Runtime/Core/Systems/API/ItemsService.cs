@@ -39,7 +39,7 @@ namespace API
             string mimeType
         )
         {
-            logger.Log(
+            logger?.Log(
                 $"Uploading sprite '{filename}' ({(fileBytes?.Length ?? 0)} bytes) to {GetBaseUrl()}",
                 this
             );
@@ -49,12 +49,12 @@ namespace API
 
             // Use UnityWebRequest.Post with the WWWForm (same approach as ModelService.UploadAssets)
             var uwr = UnityWebRequest.Post(GetBaseUrl(), form);
-            if (!string.IsNullOrEmpty(session.APIToken))
+            if (session != null && !string.IsNullOrEmpty(session.APIToken))
             {
                 uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
             }
 
-            logger.Log($"Sending multipart request for {filename}", this);
+            logger?.Log($"Sending multipart request for {filename}", this);
 
             await uwr.SendWebRequest();
 
@@ -68,7 +68,7 @@ namespace API
                 var res = string.IsNullOrEmpty(responseText)
                     ? null
                     : JsonUtility.FromJson<ErrorResponse>(responseText);
-                logger.Log(
+                logger?.Log(
                     $"UploadItemSprite error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}",
                     this,
                     Logging.LogType.Error
@@ -77,7 +77,7 @@ namespace API
             }
             else
             {
-                logger.Log($"UploadItemSprite response: {responseText}", this);
+                logger?.Log($"UploadItemSprite response: {responseText}", this);
                 var envelope = string.IsNullOrEmpty(responseText)
                     ? null
                     : JsonUtility.FromJson<DataEnvelope<SpriteCreatedData>>(responseText);

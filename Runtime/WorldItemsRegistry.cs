@@ -79,34 +79,12 @@ namespace Worlds
                         continue;
                     }
 
-                    if (enemy.lootItems == null || enemy.lootItems.Count == 0)
+                    if (enemy.lootTable == null)
                     {
                         continue;
                     }
 
-                    for (int j = 0; j < enemy.lootItems.Count; j++)
-                    {
-                        var loot = enemy.lootItems[j];
-                        if (loot == null)
-                        {
-                            continue;
-                        }
-
-                        // if (string.IsNullOrEmpty(loot.spriteId))
-                        // {
-                        //     continue;
-                        // }
-
-                        // if (!consumablesBySpriteId.ContainsKey(loot.spriteId))
-                        // {
-                        //     missingLootEntries++;
-                        //     Debug.LogWarning(
-                        //         "[WorldItemsRegistry] Enemy loot item references missing consumable: "
-                        //             + $"enemy='{enemy.name}', itemName='{loot.id}', spriteId='{loot.spriteId}'. "
-                        //             + "This spriteId is not present in WorldData.consumableItems."
-                        //     );
-                        // }
-                    }
+                    //TODO: ADD LOOT TABLE VALIDATION HERE IF NEEDED
                 }
 
                 if (missingLootEntries == 0)
