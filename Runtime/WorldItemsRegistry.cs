@@ -49,13 +49,13 @@ namespace Worlds
                         continue;
                     }
 
-                    if (string.IsNullOrEmpty(consumable.spriteId))
+                    if (string.IsNullOrEmpty(consumable.spriteFilepath))
                     {
                         continue;
                     }
 
-                    consumablesBySpriteId[consumable.spriteId] = consumable;
-                    worldItemSpriteIds.Add(consumable.spriteId);
+                    consumablesBySpriteId[consumable.spriteFilepath] = consumable;
+                    worldItemSpriteIds.Add(consumable.spriteFilepath);
                 }
             }
 
