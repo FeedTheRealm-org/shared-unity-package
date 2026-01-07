@@ -49,7 +49,11 @@ namespace API
 
                 if (spriteFilepath == null)
                 {
-                    logger.Log($"Sprite {i}: spriteFilepath is null", this, Logging.LogType.Warning);
+                    logger.Log(
+                        $"Sprite {i}: spriteFilepath is null",
+                        this,
+                        Logging.LogType.Warning
+                    );
                     continue;
                 }
 
@@ -59,19 +63,27 @@ namespace API
 
                 if (!File.Exists(absolutePath))
                 {
-                    logger.Log($"Sprite {i}: file does not exist at {absolutePath}", this, Logging.LogType.Warning);
+                    logger.Log(
+                        $"Sprite {i}: file does not exist at {absolutePath}",
+                        this,
+                        Logging.LogType.Warning
+                    );
                     continue;
                 }
                 if (string.IsNullOrEmpty(spriteId))
                 {
-                    logger.Log($"Sprite {i}: spriteId is null or empty", this, Logging.LogType.Warning);
+                    logger.Log(
+                        $"Sprite {i}: spriteId is null or empty",
+                        this,
+                        Logging.LogType.Warning
+                    );
                     continue;
                 }
 
-                form.AddField($"id[{i+1}]", spriteId);
+                form.AddField($"id[{i + 1}]", spriteId);
                 byte[] spriteData = File.ReadAllBytes(absolutePath);
                 form.AddBinaryData(
-                    $"sprite[{i+1}]",
+                    $"sprite[{i + 1}]",
                     spriteData,
                     Path.GetFileName(absolutePath),
                     "application/octet-stream"
