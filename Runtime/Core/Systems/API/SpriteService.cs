@@ -47,19 +47,33 @@ namespace API
             {
                 (string spriteId, string spriteFilepath) = sprites[i];
 
-                if (
-                    spriteFilepath == null
-                    || !File.Exists(spriteFilepath)
-                    || string.IsNullOrEmpty(spriteId)
-                )
+                if (spriteFilepath == null)
+                {
+                    logger.Log($"Sprite {i}: spriteFilepath is null", this, Logging.LogType.Warning);
                     continue;
+                }
 
-                form.AddField($"ids[]", spriteId);
-                byte[] spriteData = File.ReadAllBytes(spriteFilepath);
+                string absolutePath = spriteFilepath;
+                if (!Path.IsPathRooted(spriteFilepath))
+                    absolutePath = Path.Combine(Application.streamingAssetsPath, spriteFilepath);
+
+                if (!File.Exists(absolutePath))
+                {
+                    logger.Log($"Sprite {i}: file does not exist at {absolutePath}", this, Logging.LogType.Warning);
+                    continue;
+                }
+                if (string.IsNullOrEmpty(spriteId))
+                {
+                    logger.Log($"Sprite {i}: spriteId is null or empty", this, Logging.LogType.Warning);
+                    continue;
+                }
+
+                form.AddField($"id[{i+1}]", spriteId);
+                byte[] spriteData = File.ReadAllBytes(absolutePath);
                 form.AddBinaryData(
-                    $"sprites[]",
+                    $"sprite[{i+1}]",
                     spriteData,
-                    Path.GetFileName(spriteFilepath),
+                    Path.GetFileName(absolutePath),
                     "application/octet-stream"
                 );
             }

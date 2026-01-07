@@ -43,7 +43,7 @@ namespace Models
         public int maxStack = 0;
 
         [SerializeField]
-        public string spriteId = "None";
+        public string spriteFilepath = "None";
 
         public ConsumableItemData(
             string id,
@@ -54,7 +54,7 @@ namespace Models
             float duration,
             float cooldown,
             int maxStack,
-            string spriteId
+            string spriteFilepath
         )
         {
             this.id = id;
@@ -65,7 +65,7 @@ namespace Models
             this.duration = duration;
             this.cooldown = cooldown;
             this.maxStack = maxStack;
-            this.spriteId = spriteId;
+            this.spriteFilepath = spriteFilepath;
         }
     }
 }
