@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +19,7 @@ public class SettingsMenuController : MonoBehaviour
     private Button _homeButton;
     private Button _exitButton;
     private Button _closeSettingsButton;
+    private TabView _settingsTabView;
 
     /* Display settings */
     private DropdownField _resolutionSelect;
@@ -33,8 +35,14 @@ public class SettingsMenuController : MonoBehaviour
         _homeButton = root.Q<Button>("HomeButton");
         _exitButton = root.Q<Button>("ExitButton");
         _closeSettingsButton = root.Q<Button>("CloseButton");
+        _settingsTabView = root.Q<TabView>("SettingsTabView");
 
-        if (_homeButton == null || _exitButton == null || _closeSettingsButton == null)
+        if (
+            _homeButton == null
+            || _exitButton == null
+            || _closeSettingsButton == null
+            || _settingsTabView == null
+        )
         {
             logger.Log(
                 "One or more general settings UI elements not found in the UI Document.",
@@ -58,12 +66,40 @@ public class SettingsMenuController : MonoBehaviour
         }
 
         initializeDisplaySettings();
+        adjustUIToScreenSize();
         registerButtonCallbacks(true);
     }
 
     private void OnDisable()
     {
         registerButtonCallbacks(false);
+    }
+
+    private void adjustUIToScreenSize()
+    {
+        float scaleFactor = Screen.height / 800f;
+
+        float homeFontSize = _homeButton.resolvedStyle.fontSize;
+        float exitFontSize = _exitButton.resolvedStyle.fontSize;
+        float resolutionFontSize = _resolutionSelect.resolvedStyle.fontSize;
+        float fullscreenFontSize = _fullscreenToggle.resolvedStyle.fontSize;
+        float tabViewFontSize = _settingsTabView.resolvedStyle.fontSize;
+
+        _homeButton.style.fontSize = new StyleLength(
+            new Length(homeFontSize * scaleFactor, LengthUnit.Pixel)
+        );
+        _exitButton.style.fontSize = new StyleLength(
+            new Length(exitFontSize * scaleFactor, LengthUnit.Pixel)
+        );
+        _resolutionSelect.style.fontSize = new StyleLength(
+            new Length(resolutionFontSize * scaleFactor, LengthUnit.Pixel)
+        );
+        _fullscreenToggle.style.fontSize = new StyleLength(
+            new Length(fullscreenFontSize * scaleFactor, LengthUnit.Pixel)
+        );
+        _settingsTabView.style.fontSize = new StyleLength(
+            new Length(tabViewFontSize * scaleFactor, LengthUnit.Pixel)
+        );
     }
 
     private void initializeDisplaySettings()
