@@ -33,11 +33,6 @@ namespace API
             string accessToken
         )
         {
-            logger.Log(
-                $"Uploading world data with these objects: {data.objectPlacementData}",
-                this
-            );
-
             WorldRequest payload = new()
             {
                 data = data,
