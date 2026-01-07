@@ -47,7 +47,8 @@ namespace Worlds
                     {
                         continue;
                     }
-                    if (!string.IsNullOrEmpty(consumable.id))
+
+                    if (string.IsNullOrEmpty(consumable.spriteFilepath))
                     {
                         consumablesById[consumable.id] = consumable;
                         worldItemIds.Add(consumable.id);

@@ -7,35 +7,16 @@ namespace Models
     [Serializable]
     public class EnemyData
     {
-        [SerializeField]
-        public string id;
-
-        [SerializeField]
-        public string name;
-
-        [SerializeField]
-        public string description;
-
-        // Max health points of the enemy
-        [SerializeField]
-        public int healthPoints;
-
-        // Damage dealt by the enemy
-        [SerializeField]
-        public int damage;
-
-        // Movement speed of the enemy
-        public int speed;
-
-        // Attack range of the enemy
-        public int range;
-
-        // Optional sprite identifier/path
-        [SerializeField]
-        public string spriteFilepath;
+        public string id = "";
+        public string name = "";
+        public string description = "";
+        public int healthPoints = 0;
+        public int damage = 0;
+        public int speed = 0;
+        public int range = 0;
+        public string spriteFilepath = "";
 
         // Loot table that this enemy can drop
-        [SerializeField]
         public LootTableData lootTable;
 
         public EnemyData(

@@ -43,7 +43,7 @@ namespace Models
         public int maxStack = 0;
 
         [SerializeField]
-        public string spriteFilepath = "None";
+        public string spriteFilepath = "";
 
         public ConsumableItemData(
             string id,
