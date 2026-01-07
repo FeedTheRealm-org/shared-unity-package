@@ -49,11 +49,11 @@ namespace API
 
                 if (spriteFilepath == null)
                 {
-                    logger.Log(
+                    /*logger.Log(
                         $"Sprite {i}: spriteFilepath is null",
                         this,
                         Logging.LogType.Warning
-                    );
+                    );*/
                     continue;
                 }
 
@@ -63,11 +63,11 @@ namespace API
 
                 if (!File.Exists(absolutePath))
                 {
-                    logger.Log(
+                    /*logger.Log(
                         $"Sprite {i}: file does not exist at {absolutePath}",
                         this,
                         Logging.LogType.Warning
-                    );
+                    );*/
                     continue;
                 }
                 if (string.IsNullOrEmpty(spriteId))
