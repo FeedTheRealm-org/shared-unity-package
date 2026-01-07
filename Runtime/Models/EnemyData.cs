@@ -32,7 +32,7 @@ namespace Models
 
         // Optional sprite identifier/path
         [SerializeField]
-        public string spriteId;
+        public string spriteFilepath;
 
         // Loot table that this enemy can drop
         [SerializeField]
@@ -46,7 +46,7 @@ namespace Models
             int damage,
             int speed,
             int range,
-            string spriteId,
+            string spriteFilepath,
             LootTableData lootTable
         )
         {
@@ -57,7 +57,7 @@ namespace Models
             this.damage = damage;
             this.speed = speed;
             this.range = range;
-            this.spriteId = spriteId;
+            this.spriteFilepath = spriteFilepath;
             this.lootTable = lootTable;
         }
     }

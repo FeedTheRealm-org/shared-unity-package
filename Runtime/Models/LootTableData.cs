@@ -36,5 +36,36 @@ namespace Models
             this.maxGoldDropAmount = maxGoldDropAmount;
             this.lootItems = lootItems ?? new List<LootEntryData>();
         }
+
+        /// <summary>
+        /// Represents a single loot entry in a loot table.
+        /// Stores only the referenced consumable item id and its
+        /// individual drop probability (0-100).
+        ///
+        /// The id field refers to a ConsumableItemData.
+        /// </summary>
+        [Serializable]
+        public class LootEntryData
+        {
+            /// <summary>
+            /// Id of the consumable item this entry refers to.
+            /// </summary>
+            [SerializeField]
+            public string id;
+
+            /// <summary>
+            /// Per-item drop probability (0-100).
+            /// </summary>
+            [SerializeField]
+            public int dropProbability = 0;
+
+            public LootEntryData() { }
+
+            public LootEntryData(string id, int dropProbability)
+            {
+                this.id = id;
+                this.dropProbability = dropProbability;
+            }
+        }
     }
 }

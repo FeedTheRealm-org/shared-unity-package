@@ -33,40 +33,6 @@ namespace API
             string accessToken
         )
         {
-            // Debug Log
-            int placedCount = data.objectPlacementData != null ? data.objectPlacementData.Count : 0;
-            int consumablesCount = data.consumableItems != null ? data.consumableItems.Count : 0;
-            int enemiesCount = data.enemies != null ? data.enemies.Count : 0;
-
-            logger.Log(
-                $"Uploading world data with these objects: {data.objectPlacementData}",
-                this
-            );
-
-            if (enemiesCount > 0)
-            {
-                for (int i = 0; i < data.enemies.Count; i++)
-                {
-                    var e = data.enemies[i];
-                    if (e == null)
-                        continue;
-                    if (e.lootTable != null)
-                    {
-                        logger.Log(
-                            $"CreateWorld: Enemy[{i}] name='{e.name}', HP={e.healthPoints}, DMG={e.damage}, LootTableName={e.lootTable.name}, MaxGold={e.lootTable.maxGoldDropAmount}",
-                            this
-                        );
-                    }
-                    else
-                    {
-                        logger.Log(
-                            $"CreateWorld: Enemy[{i}] name='{e.name}', HP={e.healthPoints}, DMG={e.damage}, LootTable not set",
-                            this
-                        );
-                    }
-                }
-            }
-
             WorldRequest payload = new()
             {
                 data = data,
