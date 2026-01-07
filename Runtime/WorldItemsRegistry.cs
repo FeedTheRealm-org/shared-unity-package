@@ -7,7 +7,7 @@ namespace Worlds
     /// <summary>
     /// Static registry that exposes the current world's consumable items and enemies
     /// to gameplay systems (loot, inventory, tooltips).
-    /// Uses spriteId as the canonical identifier for world items.
+    /// Uses item ID as the canonical identifier for world items.
     /// </summary>
     public static class WorldItemsRegistry
     {
@@ -16,10 +16,9 @@ namespace Worlds
         /// </summary>
         public static WorldData CurrentWorldData { get; private set; }
 
-        private static readonly Dictionary<string, ConsumableItemData> consumablesBySpriteId =
+        private static readonly Dictionary<string, ConsumableItemData> consumablesById =
             new Dictionary<string, ConsumableItemData>();
-
-        private static readonly HashSet<string> worldItemSpriteIds = new HashSet<string>();
+        private static readonly HashSet<string> worldItemIds = new HashSet<string>();
 
         /// <summary>
         /// Register world data so that other systems can query items/enemies.
@@ -28,8 +27,8 @@ namespace Worlds
         {
             CurrentWorldData = data;
 
-            consumablesBySpriteId.Clear();
-            worldItemSpriteIds.Clear();
+            consumablesById.Clear();
+            worldItemIds.Clear();
 
             if (data == null)
             {
@@ -51,15 +50,13 @@ namespace Worlds
 
                     if (string.IsNullOrEmpty(consumable.spriteFilepath))
                     {
-                        continue;
+                        consumablesById[consumable.id] = consumable;
+                        worldItemIds.Add(consumable.id);
                     }
-
-                    consumablesBySpriteId[consumable.spriteFilepath] = consumable;
-                    worldItemSpriteIds.Add(consumable.spriteFilepath);
                 }
             }
 
-            int registeredConsumablesCount = consumablesBySpriteId.Count;
+            int registeredConsumablesCount = consumablesById.Count;
 
             Debug.Log(
                 $"[WorldItemsRegistry] Registered {registeredConsumablesCount} world consumable items "
@@ -79,18 +76,31 @@ namespace Worlds
                         continue;
                     }
 
-                    if (enemy.lootTable == null)
+                    if (enemy.lootTable == null || enemy.lootTable.lootItems == null)
                     {
                         continue;
                     }
 
-                    //TODO: ADD LOOT TABLE VALIDATION HERE IF NEEDED
+                    foreach (var lootItem in enemy.lootTable.lootItems)
+                    {
+                        if (lootItem == null || string.IsNullOrEmpty(lootItem.id))
+                        {
+                            continue;
+                        }
+                        if (!worldItemIds.Contains(lootItem.id))
+                        {
+                            Debug.LogWarning(
+                                $"[WorldItemsRegistry] Enemy '{enemy.name}' loot item id '{lootItem.id}' not found in world consumables."
+                            );
+                            missingLootEntries++;
+                        }
+                    }
                 }
 
                 if (missingLootEntries == 0)
                 {
                     Debug.Log(
-                        "[WorldItemsRegistry] All enemy loot spriteIds have matching consumables in this world."
+                        "[WorldItemsRegistry] All enemy loot item IDs have matching consumables in this world."
                     );
                 }
                 else
@@ -112,7 +122,7 @@ namespace Worlds
         /// </summary>
         public static bool IsWorldItem(string id)
         {
-            return !string.IsNullOrEmpty(id) && worldItemSpriteIds.Contains(id);
+            return !string.IsNullOrEmpty(id) && worldItemIds.Contains(id);
         }
 
         /// <summary>
@@ -120,12 +130,20 @@ namespace Worlds
         /// </summary>
         public static ConsumableItemData GetConsumableBySpriteId(string spriteId)
         {
-            if (string.IsNullOrEmpty(spriteId))
+            // Deprecated: Use GetConsumableById instead.
+            return GetConsumableById(spriteId);
+        }
+
+        /// <summary>
+        /// Get consumable definition by its unique item id. Returns null if not found.
+        /// </summary>
+        public static ConsumableItemData GetConsumableById(string id)
+        {
+            if (string.IsNullOrEmpty(id))
             {
                 return null;
             }
-
-            consumablesBySpriteId.TryGetValue(spriteId, out var consumable);
+            consumablesById.TryGetValue(id, out var consumable);
             return consumable;
         }
     }

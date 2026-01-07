@@ -125,6 +125,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23f8324870a50c41a8c26ec381f71206, type: 3}
   m_Name:
   m_EditorClassIdentifier: FeedTheRealm_Shared::WorldControllerV2
-  worldSize: 100
+  worldSize: 200
   worldHeight: 2
   textureGranularity: 100
