@@ -16,24 +16,31 @@
     width: 100%;
 }
 
+#Body > #Modal > .unity-tab-view > #GeneralTab > #GeneralContent > #unity-content-and-vertical-scroll-container {
+    height: 100%;
+    width: 100%;
+}
+
+#Body > #Modal > .unity-tab-view > #GeneralTab > #GeneralContent > #unity-content-and-vertical-scroll-container > #unity-content-viewport > #unity-content-container {
+    align-items: center;
+}
+
 .settings-button {
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
     border-bottom-left-radius: 20px;
-    width: 200px;
     background-color: rgba(255, 255, 255, 0);
     border-left-color: rgb(0, 0, 0);
     border-right-color: rgb(0, 0, 0);
     border-top-color: rgb(0, 0, 0);
     border-bottom-color: rgb(0, 0, 0);
     color: rgb(0, 0, 0);
+    font-size: 14px;
     transition-property: all;
     transition-duration: 0s;
     transition-timing-function: ease;
     transition-delay: 0s;
-}
-
-.settings-button {
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
 }
