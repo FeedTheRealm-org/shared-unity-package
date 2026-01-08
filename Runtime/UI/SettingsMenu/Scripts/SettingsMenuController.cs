@@ -26,6 +26,7 @@ public class SettingsMenuController : MonoBehaviour
     private Toggle _fullscreenToggle;
 
     private List<Resolution> _availableResolutions;
+    private const float baseHeight = 800f;
 
     private void OnEnable()
     {
@@ -77,7 +78,7 @@ public class SettingsMenuController : MonoBehaviour
 
     private void adjustUIToScreenSize()
     {
-        float scaleFactor = Screen.height / 800f;
+        float scaleFactor = Screen.height / baseHeight;
 
         float homeFontSize = _homeButton.resolvedStyle.fontSize;
         float exitFontSize = _exitButton.resolvedStyle.fontSize;
