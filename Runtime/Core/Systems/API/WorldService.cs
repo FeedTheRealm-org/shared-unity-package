@@ -7,6 +7,18 @@ using UnityEngine.Networking;
 
 namespace API
 {
+    [System.Serializable]
+    public class TempEnvelope
+    {
+        public InnerData data;
+    }
+
+    [System.Serializable]
+    public class InnerData
+    {
+        public string data;
+    }
+
     [CreateAssetMenu(fileName = "WorldService", menuName = "Scriptable Objects/API/WorldService")]
     public class WorldService : ScriptableObject
     {
@@ -33,11 +45,6 @@ namespace API
             string accessToken
         )
         {
-            logger.Log(
-                $"WorldService.PublishWorld called with local id='{data?.id}', name='{data?.worldName}', file='{fileName}'",
-                this
-            );
-
             WorldRequest payload = new()
             {
                 data = data,
@@ -45,102 +52,37 @@ namespace API
                 description = description,
             };
 
+            string url = GetBaseUrl();
             string json = JsonUtility.ToJson(payload);
+
+            var uwr = new UnityWebRequest(url, "POST");
             byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+            uwr.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            uwr.downloadHandler = new DownloadHandlerBuffer();
+            uwr.SetRequestHeader("Content-Type", "application/json");
+            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
 
-            bool hasExistingId = !string.IsNullOrEmpty(data?.id);
-
-            logger.Log($"WorldService.PublishWorld hasExistingId={hasExistingId}", this);
-
-            // If we already have an ID, try to update the existing world via PUT first.
-            if (hasExistingId)
-            {
-                var putUrl = $"{GetBaseUrl()}/{data.id}";
-                var putRequest = new UnityWebRequest(putUrl, "PUT");
-                putRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
-                putRequest.downloadHandler = new DownloadHandlerBuffer();
-                putRequest.SetRequestHeader("Content-Type", "application/json");
-                putRequest.SetRequestHeader("Authorization", $"Bearer {accessToken}");
-
-                logger.Log($"Sending UpdateWorld (PUT) Request for id {data.id}: {json}", this);
-                await putRequest.SendWebRequest();
-                var putResponseText = putRequest.downloadHandler?.text
-                    ?? putRequest.error
-                    ?? string.Empty;
-
-                logger.Log(
-                    $"UpdateWorld PUT completed: result={putRequest.result}, code={putRequest.responseCode}, body='{putResponseText}'",
-                    this
-                );
-
-                if (
-                    putRequest.result == UnityWebRequest.Result.ConnectionError
-                    || putRequest.result == UnityWebRequest.Result.ProtocolError
-                )
-                {
-                    // If the world does not exist on the server, fall back to POST.
-                    if (putRequest.responseCode == 404)
-                    {
-                        logger.Log(
-                            $"UpdateWorld returned 404 for id {data.id}, falling back to create (POST). Response: {putResponseText}",
-                            this,
-                            Logging.LogType.Warning
-                        );
-                    }
-                    else
-                    {
-                        var putError = JsonUtility.FromJson<ErrorResponse>(putResponseText);
-                        logger.Log(
-                            $"UpdateWorld error: {putError?.title}: {putError?.detail}",
-                            this,
-                            Logging.LogType.Error
-                        );
-                        return ("", putError?.detail ?? putResponseText);
-                    }
-                }
-                else
-                {
-                    logger.Log($"UpdateWorld response: {putResponseText}", this);
-                    return (data.id, "");
-                }
-            }
-
-            // No existing id, or PUT failed with 404: create a new world via POST.
-            var postUrl = GetBaseUrl();
-            var postRequest = new UnityWebRequest(postUrl, "POST");
-            postRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            postRequest.downloadHandler = new DownloadHandlerBuffer();
-            postRequest.SetRequestHeader("Content-Type", "application/json");
-            postRequest.SetRequestHeader("Authorization", $"Bearer {accessToken}");
-
-            logger.Log($"Sending CreateWorld (POST) Request: {json}", this);
-            await postRequest.SendWebRequest();
-            var postResponseText = postRequest.downloadHandler?.text
-                ?? postRequest.error
-                ?? string.Empty;
-
-            logger.Log(
-                $"CreateWorld POST completed: result={postRequest.result}, code={postRequest.responseCode}, body='{postResponseText}'",
-                this
-            );
+            logger.Log($"Sending Request: {json}", this);
+            await uwr.SendWebRequest();
+            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
             if (
-                postRequest.result == UnityWebRequest.Result.ConnectionError
-                || postRequest.result == UnityWebRequest.Result.ProtocolError
+                uwr.result == UnityWebRequest.Result.ConnectionError
+                || uwr.result == UnityWebRequest.Result.ProtocolError
             )
             {
-                var postError = JsonUtility.FromJson<ErrorResponse>(postResponseText);
+                var res = JsonUtility.FromJson<ErrorResponse>(responseText);
                 logger.Log(
-                    $"CreateWorld error: {postError?.title}: {postError?.detail}",
+                    $"CreateWorld error: {res?.title}: {res?.detail}",
                     this,
                     Logging.LogType.Error
                 );
-                return ("", postError?.detail ?? postResponseText);
+                return ("", res?.detail ?? responseText);
             }
             else
             {
-                logger.Log($"CreateWorld response: {postResponseText}", this);
-                var res = JsonUtility.FromJson<DataEnvelope<WorldCreateResponse>>(postResponseText);
+                logger.Log($"CreateWorld response: {responseText}", this);
+                var res = JsonUtility.FromJson<DataEnvelope<WorldCreateResponse>>(responseText);
                 return (res?.data?.id ?? "", "");
             }
         }
@@ -206,22 +148,90 @@ namespace API
 
                 foreach (var worldItem in worldListResponse.worlds)
                 {
-                    var world = new Models.WorldMetadata();
-                    world.id = worldItem.id;
-                    world.userId = worldItem.user_id;
-                    world.name = worldItem.name;
-                    world.description = worldItem.description;
-                    world.createdAt = worldItem.created_at;
-                    world.updatedAt = worldItem.updated_at;
+                    try
+                    {
+                        var world = new Models.WorldMetadata();
+                        world.id = worldItem.id;
+                        world.userId = worldItem.user_id;
+                        world.name = worldItem.name;
+                        world.description = worldItem.description;
+                        world.createdAt = worldItem.created_at;
+                        world.updatedAt = worldItem.updated_at;
 
-                    // The list endpoint now returns metadata only (no world data payload).
-                    world.data = null;
-
-                    worlds.Add(world);
+                        worlds.Add(world);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        logger.Log(
+                            $"Failed to parse world data for {worldItem.id}: {ex.Message}",
+                            this,
+                            Logging.LogType.Error
+                        );
+                    }
                 }
 
                 logger.Log($"GetWorldPage response: Loaded {worlds.Count} worlds", this);
                 handler?.Invoke(worldListResponse.amount, worlds, "");
+            }
+        }
+
+        /// <summary>
+        /// Get world data using its ID from the server.
+        /// </summary>
+        public async Task<(Models.WorldData, string)> GetWorldData(
+            string worldID,
+            string accessToken
+        )
+        {
+            var url = $"{GetBaseUrl()}/{worldID}";
+            logger.Log($"Fetching world data from URL: {url}", this);
+
+            var uwr = UnityWebRequest.Get(url);
+            uwr.SetRequestHeader("Content-Type", "application/json");
+            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+            logger.Log($"Using API Token: {accessToken}", this);
+
+            await uwr.SendWebRequest();
+
+            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+            logger.Log($"World data response text: {responseText}", this);
+
+            if (
+                uwr.result == UnityWebRequest.Result.ConnectionError
+                || uwr.result == UnityWebRequest.Result.ProtocolError
+            )
+            {
+                var res = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<ErrorResponse>(responseText);
+                logger.Log(
+                    $"GetWorldData error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (null, res?.detail ?? responseText);
+            }
+            else
+            {
+                var tempEnvelope = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<TempEnvelope>(responseText);
+                if (
+                    tempEnvelope == null
+                    || tempEnvelope.data == null
+                    || string.IsNullOrEmpty(tempEnvelope.data.data)
+                )
+                {
+                    return (null, "Failed to parse envelope");
+                }
+
+                var worldData = JsonUtility.FromJson<Models.WorldData>(tempEnvelope.data.data);
+                if (worldData == null)
+                {
+                    return (null, "Failed to parse world data");
+                }
+
+                return (worldData, "");
             }
         }
     }
