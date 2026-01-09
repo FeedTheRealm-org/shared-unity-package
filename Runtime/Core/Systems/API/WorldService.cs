@@ -33,6 +33,11 @@ namespace API
             string accessToken
         )
         {
+            logger.Log(
+                $"WorldService.PublishWorld called with local id='{data?.id}', name='{data?.worldName}', file='{fileName}'",
+                this
+            );
+
             WorldRequest payload = new()
             {
                 data = data,
@@ -40,37 +45,102 @@ namespace API
                 description = description,
             };
 
-            string url = GetBaseUrl();
             string json = JsonUtility.ToJson(payload);
-
-            var uwr = new UnityWebRequest(url, "POST");
             byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-            uwr.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            uwr.downloadHandler = new DownloadHandlerBuffer();
-            uwr.SetRequestHeader("Content-Type", "application/json");
-            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
 
-            logger.Log($"Sending Request: {json}", this);
-            await uwr.SendWebRequest();
-            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+            bool hasExistingId = !string.IsNullOrEmpty(data?.id);
+
+            logger.Log($"WorldService.PublishWorld hasExistingId={hasExistingId}", this);
+
+            // If we already have an ID, try to update the existing world via PUT first.
+            if (hasExistingId)
+            {
+                var putUrl = $"{GetBaseUrl()}/{data.id}";
+                var putRequest = new UnityWebRequest(putUrl, "PUT");
+                putRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                putRequest.downloadHandler = new DownloadHandlerBuffer();
+                putRequest.SetRequestHeader("Content-Type", "application/json");
+                putRequest.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+
+                logger.Log($"Sending UpdateWorld (PUT) Request for id {data.id}: {json}", this);
+                await putRequest.SendWebRequest();
+                var putResponseText = putRequest.downloadHandler?.text
+                    ?? putRequest.error
+                    ?? string.Empty;
+
+                logger.Log(
+                    $"UpdateWorld PUT completed: result={putRequest.result}, code={putRequest.responseCode}, body='{putResponseText}'",
+                    this
+                );
+
+                if (
+                    putRequest.result == UnityWebRequest.Result.ConnectionError
+                    || putRequest.result == UnityWebRequest.Result.ProtocolError
+                )
+                {
+                    // If the world does not exist on the server, fall back to POST.
+                    if (putRequest.responseCode == 404)
+                    {
+                        logger.Log(
+                            $"UpdateWorld returned 404 for id {data.id}, falling back to create (POST). Response: {putResponseText}",
+                            this,
+                            Logging.LogType.Warning
+                        );
+                    }
+                    else
+                    {
+                        var putError = JsonUtility.FromJson<ErrorResponse>(putResponseText);
+                        logger.Log(
+                            $"UpdateWorld error: {putError?.title}: {putError?.detail}",
+                            this,
+                            Logging.LogType.Error
+                        );
+                        return ("", putError?.detail ?? putResponseText);
+                    }
+                }
+                else
+                {
+                    logger.Log($"UpdateWorld response: {putResponseText}", this);
+                    return (data.id, "");
+                }
+            }
+
+            // No existing id, or PUT failed with 404: create a new world via POST.
+            var postUrl = GetBaseUrl();
+            var postRequest = new UnityWebRequest(postUrl, "POST");
+            postRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            postRequest.downloadHandler = new DownloadHandlerBuffer();
+            postRequest.SetRequestHeader("Content-Type", "application/json");
+            postRequest.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+
+            logger.Log($"Sending CreateWorld (POST) Request: {json}", this);
+            await postRequest.SendWebRequest();
+            var postResponseText = postRequest.downloadHandler?.text
+                ?? postRequest.error
+                ?? string.Empty;
+
+            logger.Log(
+                $"CreateWorld POST completed: result={postRequest.result}, code={postRequest.responseCode}, body='{postResponseText}'",
+                this
+            );
 
             if (
-                uwr.result == UnityWebRequest.Result.ConnectionError
-                || uwr.result == UnityWebRequest.Result.ProtocolError
+                postRequest.result == UnityWebRequest.Result.ConnectionError
+                || postRequest.result == UnityWebRequest.Result.ProtocolError
             )
             {
-                var res = JsonUtility.FromJson<ErrorResponse>(responseText);
+                var postError = JsonUtility.FromJson<ErrorResponse>(postResponseText);
                 logger.Log(
-                    $"CreateWorld error: {res?.title}: {res?.detail}",
+                    $"CreateWorld error: {postError?.title}: {postError?.detail}",
                     this,
                     Logging.LogType.Error
                 );
-                return ("", res?.detail ?? responseText);
+                return ("", postError?.detail ?? postResponseText);
             }
             else
             {
-                logger.Log($"CreateWorld response: {responseText}", this);
-                var res = JsonUtility.FromJson<DataEnvelope<WorldCreateResponse>>(responseText);
+                logger.Log($"CreateWorld response: {postResponseText}", this);
+                var res = JsonUtility.FromJson<DataEnvelope<WorldCreateResponse>>(postResponseText);
                 return (res?.data?.id ?? "", "");
             }
         }
@@ -136,29 +206,18 @@ namespace API
 
                 foreach (var worldItem in worldListResponse.worlds)
                 {
-                    try
-                    {
-                        var world = new Models.WorldMetadata();
-                        world.id = worldItem.id;
-                        world.userId = worldItem.user_id;
-                        world.name = worldItem.name;
-                        world.description = worldItem.description;
-                        world.createdAt = worldItem.created_at;
-                        world.updatedAt = worldItem.updated_at;
+                    var world = new Models.WorldMetadata();
+                    world.id = worldItem.id;
+                    world.userId = worldItem.user_id;
+                    world.name = worldItem.name;
+                    world.description = worldItem.description;
+                    world.createdAt = worldItem.created_at;
+                    world.updatedAt = worldItem.updated_at;
 
-                        var worldData = JsonUtility.FromJson<Models.WorldData>(worldItem.data);
-                        world.data = worldData;
+                    // The list endpoint now returns metadata only (no world data payload).
+                    world.data = null;
 
-                        worlds.Add(world);
-                    }
-                    catch (System.Exception ex)
-                    {
-                        logger.Log(
-                            $"Failed to parse world data for {worldItem.id}: {ex.Message}",
-                            this,
-                            Logging.LogType.Error
-                        );
-                    }
+                    worlds.Add(world);
                 }
 
                 logger.Log($"GetWorldPage response: Loaded {worlds.Count} worlds", this);
