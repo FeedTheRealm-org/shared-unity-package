@@ -16,6 +16,10 @@ namespace API
     [System.Serializable]
     public class InnerData
     {
+        public string id;
+        public string name;
+        public string description;
+        public string user_id;
         public string data;
     }
 
@@ -230,6 +234,8 @@ namespace API
                 {
                     return (null, "Failed to parse world data");
                 }
+                worldData.id = tempEnvelope.data.id;
+                worldData.worldName = tempEnvelope.data.name ?? worldData.worldName;
 
                 return (worldData, "");
             }

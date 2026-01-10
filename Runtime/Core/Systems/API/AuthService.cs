@@ -35,32 +35,44 @@ namespace API
 
             yield return uwr.SendWebRequest();
 
-            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+            try
+            {
+                var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
-            if (
-                uwr.result == UnityWebRequest.Result.ConnectionError
-                || uwr.result == UnityWebRequest.Result.ProtocolError
-            )
-            {
-                var res = string.IsNullOrEmpty(responseText)
-                    ? null
-                    : JsonUtility.FromJson<ErrorResponse>(responseText);
-                logger.Log(
-                    $"Login error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}",
-                    this,
-                    Logging.LogType.Error
-                );
-                handler?.Invoke(res.detail);
+                if (
+                    uwr.result == UnityWebRequest.Result.ConnectionError
+                    || uwr.result == UnityWebRequest.Result.ProtocolError
+                )
+                {
+                    var res = string.IsNullOrEmpty(responseText)
+                        ? null
+                        : JsonUtility.FromJson<ErrorResponse>(responseText);
+                    logger.Log(
+                        $"Login error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    handler?.Invoke(
+                        res != null && !string.IsNullOrEmpty(res.detail)
+                            ? res.detail
+                            : "Connection to the server failed."
+                    );
+                }
+                else
+                {
+                    var res = JsonUtility.FromJson<DataEnvelope<LoginResponse>>(responseText);
+                    logger.Log($"Login response: {responseText}", this);
+                    logger.Log($"Login successful UserID: {res.data.id}", this);
+                    session.SetUserId(res.data.id);
+                    session.SetAPIToken(res.data.access_token);
+                    session.SetEmail(res.data.email);
+                    handler?.Invoke("");
+                }
             }
-            else
+            catch (System.Exception ex)
             {
-                var res = JsonUtility.FromJson<DataEnvelope<LoginResponse>>(responseText);
-                logger.Log($"Login response: {responseText}", this);
-                logger.Log($"Login successful UserID: {res.data.id}", this);
-                session.SetUserId(res.data.id);
-                session.SetAPIToken(res.data.access_token);
-                session.SetEmail(res.data.email);
-                handler?.Invoke("");
+                logger.Log($"Login exception: {ex.Message}", this, Logging.LogType.Error);
+                handler?.Invoke("Connection to the server failed.");
             }
         }
 
