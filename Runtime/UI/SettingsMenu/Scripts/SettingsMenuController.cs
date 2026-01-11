@@ -160,18 +160,18 @@ public class SettingsMenuController : MonoBehaviour
 
         bool willBeActive = !gameObject.activeSelf;
 
-        if (willBeActive)
-        {
-            UnityEngine.Cursor.lockState = CursorLockMode.None;
-            UnityEngine.Cursor.visible = true;
-            logger.Log("Cursor shown (toggle)", this);
-        }
-        else
-        {
-            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-            UnityEngine.Cursor.visible = false;
-            logger.Log("Cursor hidden (toggle)", this);
-        }
+        // if (willBeActive)
+        // {
+        //     UnityEngine.Cursor.lockState = CursorLockMode.None;
+        //     UnityEngine.Cursor.visible = true;
+        //     logger.Log("Cursor shown (toggle)", this);
+        // }
+        // else
+        // {
+        //     UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        //     // UnityEngine.Cursor.visible = false;
+        //     logger.Log("Cursor hidden (toggle)", this);
+        // }
 
         gameObject.SetActive(willBeActive);
     }
