@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Models
 {
     [Serializable]
-    public class EnemySpawnAreaData
+    public class EnemySpawnerData
     {
         public Vector3 Position;
         public float Radius = 3f;
@@ -14,7 +14,7 @@ namespace Models
         public int ResetAfterKills = 6;
         public float ResetDelay = 10f;
 
-        public EnemySpawnAreaData(Vector3 position, float radius)
+        public EnemySpawnerData(Vector3 position, float radius)
         {
             Position = position;
             Radius = radius;

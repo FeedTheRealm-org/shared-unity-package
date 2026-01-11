@@ -17,10 +17,10 @@ namespace Models
         public List<StructureData> objectPlacementData = new();
 
         [SerializeField]
-        public List<EnemySpawnAreaData> enemySpawnAreas = new();
+        public List<EnemySpawnerData> enemySpawnAreas = new();
 
         [SerializeField]
-        public List<PlayerSpawnAreaData> playerSpawnAreas = new();
+        public List<PlayerSpawnerData> playerSpawnAreas = new();
         public List<ConsumableItemData> consumableItems = new();
         public List<EnemyData> enemies = new();
         public List<LootTableData> lootTables = new();
