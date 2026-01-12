@@ -8,13 +8,13 @@ using UnityEngine.Networking;
 namespace API
 {
     [System.Serializable]
-    public class TempEnvelope
+    public class WorldResponseEnvelope
     {
-        public InnerData data;
+        public WorldResponseData data;
     }
 
     [System.Serializable]
-    public class InnerData
+    public class WorldResponseData
     {
         public string id;
         public string name;
@@ -223,8 +223,15 @@ namespace API
         }
 
         /// <summary>
-        /// Get world data using its ID from the server.
+        /// Retrieves detailed world data from the server using the specified world ID.
         /// </summary>
+        /// <param name="worldID">The unique identifier of the world to retrieve. This should be a valid world ID string as returned by world creation or listing endpoints. Typically a GUID or database-generated string.</param>
+        /// <param name="accessToken">The access token for authenticating the request. Must be valid and authorized to access the specified world.</param>
+        /// <returns>
+        /// A tuple containing:
+        ///   - <see cref="Models.WorldData"/>: The deserialized world data object if retrieval and parsing succeed; otherwise, null.
+        ///   - <see cref="string"/>: An error message if an error occurs, or an empty string on success.
+        /// </returns>
         public async Task<(Models.WorldData, string)> GetWorldData(
             string worldID,
             string accessToken
@@ -257,25 +264,25 @@ namespace API
             }
             else
             {
-                var tempEnvelope = string.IsNullOrEmpty(responseText)
+                var worldEnvelope = string.IsNullOrEmpty(responseText)
                     ? null
-                    : JsonUtility.FromJson<TempEnvelope>(responseText);
+                    : JsonUtility.FromJson<WorldResponseEnvelope>(responseText);
                 if (
-                    tempEnvelope == null
-                    || tempEnvelope.data == null
-                    || string.IsNullOrEmpty(tempEnvelope.data.data)
+                    worldEnvelope == null
+                    || worldEnvelope.data == null
+                    || string.IsNullOrEmpty(worldEnvelope.data.data)
                 )
                 {
                     return (null, "Failed to parse envelope");
                 }
 
-                var worldData = JsonUtility.FromJson<Models.WorldData>(tempEnvelope.data.data);
+                var worldData = JsonUtility.FromJson<Models.WorldData>(worldEnvelope.data.data);
                 if (worldData == null)
                 {
                     return (null, "Failed to parse world data");
                 }
-                worldData.id = tempEnvelope.data.id;
-                worldData.worldName = tempEnvelope.data.name ?? worldData.worldName;
+                worldData.id = worldEnvelope.data.id;
+                worldData.worldName = worldEnvelope.data.name ?? worldData.worldName;
 
                 return (worldData, "");
             }
