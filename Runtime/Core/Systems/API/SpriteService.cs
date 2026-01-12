@@ -9,20 +9,14 @@ using UnityEngine.Networking;
 namespace API
 {
     [CreateAssetMenu(fileName = "SpriteService", menuName = "Scriptable Objects/API/SpriteService")]
-    public class SpriteService : ScriptableObject
+    public class SpriteService : BaseApiService
     {
-        [Header("Server settings")]
+        [Header("API Config")]
         [SerializeField]
-        public string Hostname;
+        private ApiConfig apiConfig;
 
-        [SerializeField]
-        public int Port;
-
-        [Header("General settings")]
-        [SerializeField]
-        private Logging.Logger logger;
-
-        private string GetBaseUrl() => $"http://{Hostname}:{Port}/assets/sprites";
+        private string GetBaseUrl() =>
+            $"http://{apiConfig.Hostname}:{apiConfig.Port}/assets/sprites";
 
         /// <summary>
         /// Uploads sprite files for a world.

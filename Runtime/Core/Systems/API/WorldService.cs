@@ -24,29 +24,83 @@ namespace API
     }
 
     [CreateAssetMenu(fileName = "WorldService", menuName = "Scriptable Objects/API/WorldService")]
-    public class WorldService : ScriptableObject
+    public class WorldService : BaseApiService
     {
-        [Header("Server settings")]
+        [Header("API Config")]
         [SerializeField]
-        public string Hostname;
+        private ApiConfig apiConfig;
 
-        [SerializeField]
-        public int Port;
-
-        [Header("General settings")]
-        [SerializeField]
-        private Logging.Logger logger;
-
-        private string GetBaseUrl() => $"http://{Hostname}:{Port}/world";
+        private string GetBaseUrl() => $"http://{apiConfig.Hostname}:{apiConfig.Port}/world";
 
         /// <summary>
-        ///  Post a new world to the server.
+        ///  Post a new world to the server or update an existing one if it has an id.
         /// </summary>
         public async Task<(string id, string error)> PublishWorld(
             Models.WorldData data,
             string fileName,
             string description,
             string accessToken
+        )
+        {
+            if (!string.IsNullOrEmpty(data.id))
+            {
+                return await UpdateWorld(data, fileName, description, accessToken);
+            }
+            else
+            {
+                return await CreateWorld(data, fileName, description, accessToken);
+            }
+        }
+
+        /// <summary>
+        ///  Post a new world to the server (POST).
+        /// </summary>
+        private Task<(string id, string error)> CreateWorld(
+            Models.WorldData data,
+            string fileName,
+            string description,
+            string accessToken
+        ) =>
+            SendWorldRequest(
+                GetBaseUrl(),
+                "POST",
+                data,
+                fileName,
+                description,
+                accessToken,
+                "CreateWorld"
+            );
+
+        /// <summary>
+        ///  Update an existing world on the server (PUT).
+        /// </summary>
+        private Task<(string id, string error)> UpdateWorld(
+            Models.WorldData data,
+            string fileName,
+            string description,
+            string accessToken
+        ) =>
+            SendWorldRequest(
+                $"{GetBaseUrl()}/{data.id}",
+                "PUT",
+                data,
+                fileName,
+                description,
+                accessToken,
+                "UpdateWorld"
+            );
+
+        /// <summary>
+        /// Send requests for creating or updating worlds.
+        /// </summary>
+        private async Task<(string id, string error)> SendWorldRequest(
+            string url,
+            string method,
+            Models.WorldData data,
+            string fileName,
+            string description,
+            string accessToken,
+            string logPrefix
         )
         {
             WorldRequest payload = new()
@@ -56,28 +110,24 @@ namespace API
                 description = description,
             };
 
-            string url = GetBaseUrl();
             string json = JsonUtility.ToJson(payload);
 
-            var uwr = new UnityWebRequest(url, "POST");
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-            uwr.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            uwr.downloadHandler = new DownloadHandlerBuffer();
-            uwr.SetRequestHeader("Content-Type", "application/json");
-            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
-
-            logger.Log($"Sending Request: {json}", this);
-            await uwr.SendWebRequest();
-            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+            var (responseText, result) = await SendRequestAsync(
+                url,
+                method,
+                accessToken,
+                json,
+                logPrefix
+            );
 
             if (
-                uwr.result == UnityWebRequest.Result.ConnectionError
-                || uwr.result == UnityWebRequest.Result.ProtocolError
+                result == UnityWebRequest.Result.ConnectionError
+                || result == UnityWebRequest.Result.ProtocolError
             )
             {
                 var res = JsonUtility.FromJson<ErrorResponse>(responseText);
                 logger.Log(
-                    $"CreateWorld error: {res?.title}: {res?.detail}",
+                    $"{logPrefix} error: {res?.title}: {res?.detail}",
                     this,
                     Logging.LogType.Error
                 );
@@ -85,9 +135,8 @@ namespace API
             }
             else
             {
-                logger.Log($"CreateWorld response: {responseText}", this);
                 var res = JsonUtility.FromJson<DataEnvelope<WorldCreateResponse>>(responseText);
-                return (res?.data?.id ?? "", "");
+                return (res?.data?.id ?? (method == "PUT" ? data.id : ""), "");
             }
         }
 
@@ -109,20 +158,14 @@ namespace API
                 url = $"{url}&filter={UnityWebRequest.EscapeURL(trimmed)}";
             }
             logger.Log($"Fetching worlds from URL: {url}", this);
-
-            var uwr = UnityWebRequest.Get(url);
-            uwr.SetRequestHeader("Content-Type", "application/json");
-            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
-            logger.Log($"Using API Token: {accessToken}", this);
-
-            yield return uwr.SendWebRequest();
-
-            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
-            logger.Log($"Worlds response text: {responseText}", this);
+            var task = SendRequestAsync(url, "GET", accessToken, null, "GetWorldPage");
+            while (!task.IsCompleted)
+                yield return null;
+            var (responseText, result) = task.Result;
 
             if (
-                uwr.result == UnityWebRequest.Result.ConnectionError
-                || uwr.result == UnityWebRequest.Result.ProtocolError
+                result == UnityWebRequest.Result.ConnectionError
+                || result == UnityWebRequest.Result.ProtocolError
             )
             {
                 var res = string.IsNullOrEmpty(responseText)
@@ -189,20 +232,17 @@ namespace API
         {
             var url = $"{GetBaseUrl()}/{worldID}";
             logger.Log($"Fetching world data from URL: {url}", this);
-
-            var uwr = UnityWebRequest.Get(url);
-            uwr.SetRequestHeader("Content-Type", "application/json");
-            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
-            logger.Log($"Using API Token: {accessToken}", this);
-
-            await uwr.SendWebRequest();
-
-            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
-            logger.Log($"World data response text: {responseText}", this);
+            var (responseText, result) = await SendRequestAsync(
+                url,
+                "GET",
+                accessToken,
+                null,
+                "GetWorldData"
+            );
 
             if (
-                uwr.result == UnityWebRequest.Result.ConnectionError
-                || uwr.result == UnityWebRequest.Result.ProtocolError
+                result == UnityWebRequest.Result.ConnectionError
+                || result == UnityWebRequest.Result.ProtocolError
             )
             {
                 var res = string.IsNullOrEmpty(responseText)
