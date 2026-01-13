@@ -16,17 +16,8 @@ namespace Models
     }
 
     [Serializable]
-    public class ConsumableItemData
+    public class ConsumableItemData : ItemData
     {
-        [SerializeField]
-        public string id;
-
-        [SerializeField]
-        public string name = "Consumable Item";
-
-        [SerializeField]
-        public string description = "";
-
         [SerializeField]
         public EffectType effectType = EffectType.None;
 
@@ -42,30 +33,21 @@ namespace Models
         [SerializeField]
         public int maxStack = 0;
 
-        [SerializeField]
-        public string spriteFilepath = "";
-
         public ConsumableItemData(
-            string id,
-            string name,
-            string description,
+            ItemData itemData,
             EffectType effectType,
             int value,
             float duration,
             float cooldown,
-            int maxStack,
-            string spriteFilepath
+            int maxStack
         )
+            : base(itemData.id, itemData.name, itemData.description, itemData.spriteFilepath)
         {
-            this.id = id;
-            this.name = name;
-            this.description = description;
             this.effectType = effectType;
             this.value = value;
             this.duration = duration;
             this.cooldown = cooldown;
             this.maxStack = maxStack;
-            this.spriteFilepath = spriteFilepath;
         }
     }
 }

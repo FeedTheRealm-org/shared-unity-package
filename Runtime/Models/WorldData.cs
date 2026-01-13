@@ -22,6 +22,7 @@ namespace Models
         [SerializeField]
         public List<PlayerSpawnerData> playerSpawnAreas = new();
         public List<ConsumableItemData> consumableItems = new();
+        public List<WeaponItemData> weaponItems = new();
         public List<EnemyData> enemies = new();
         public List<LootTableData> lootTables = new();
 
