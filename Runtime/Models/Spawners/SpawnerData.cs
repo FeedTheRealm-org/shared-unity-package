@@ -8,7 +8,7 @@ namespace Models
     {
         [SerializeField]
         public Vector3 Position;
-        public float Radius = 3f;
+        public float Radius;
 
         public SpawnerData(Vector3 position, float radius)
         {

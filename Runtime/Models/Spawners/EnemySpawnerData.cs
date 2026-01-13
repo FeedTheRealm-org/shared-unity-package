@@ -7,8 +7,6 @@ namespace Models
     [Serializable]
     public class EnemySpawnerData : SpawnerData
     {
-        public Vector3 Position;
-        public float Radius = 3f;
         public int MaxEnemies = 3;
         public float SpawnRate = 2f;
         public int ResetAfterKills = 6;
