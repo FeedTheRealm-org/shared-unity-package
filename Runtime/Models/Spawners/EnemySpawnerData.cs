@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Models
 {
     [Serializable]
-    public class EnemySpawnerData
+    public class EnemySpawnerData : SpawnerData
     {
         public Vector3 Position;
         public float Radius = 3f;
@@ -15,9 +15,6 @@ namespace Models
         public float ResetDelay = 10f;
 
         public EnemySpawnerData(Vector3 position, float radius)
-        {
-            Position = position;
-            Radius = radius;
-        }
+            : base(position, radius) { }
     }
 }
