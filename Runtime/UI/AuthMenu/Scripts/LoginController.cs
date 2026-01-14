@@ -54,6 +54,8 @@ public class LoginController : MonoBehaviour
         _emailField = ui.Q<TextField>("EmailField");
         _passwordField = ui.Q<TextField>("PasswordField");
         _messageError = ui.Q<Label>("MessageError");
+
+        HideErrorMessage();
     }
 
     private void OnDisable()
@@ -67,6 +69,8 @@ public class LoginController : MonoBehaviour
         logger.Log("Login Button Clicked", this);
         logger.Log("Email: " + _emailField.value, this);
         logger.Log("Password: " + _passwordField.value, this);
+
+        HideErrorMessage();
 
         StartCoroutine(
             authService.Login(
@@ -100,10 +104,45 @@ public class LoginController : MonoBehaviour
                             session.SetPassword(_passwordField.value);
                             SceneManager.LoadScene(verifyCodeScene.SceneName);
                         }
-                        _messageError.text = err;
+                        ShowErrorMessage(err);
                     }
                 }
             )
         );
+    }
+
+    private void ShowErrorMessage(string err)
+    {
+        if (_messageError == null)
+            return;
+        if (err.Contains("verify your email address"))
+        {
+            _messageError.text = "You must verify your email address.";
+        }
+        else if (err.ToLower().Contains("connection") || err.ToLower().Contains("server"))
+        {
+            _messageError.text = "Connection to the server failed.";
+        }
+        else if (
+            err.ToLower().Contains("credentials")
+            || err.ToLower().Contains("password")
+            || err.ToLower().Contains("email")
+        )
+        {
+            _messageError.text = "Wrong credentials.";
+        }
+        else
+        {
+            _messageError.text = err;
+        }
+        _messageError.style.display = UnityEngine.UIElements.DisplayStyle.Flex;
+    }
+
+    private void HideErrorMessage()
+    {
+        if (_messageError == null)
+            return;
+        _messageError.text = "";
+        _messageError.style.display = UnityEngine.UIElements.DisplayStyle.None;
     }
 }

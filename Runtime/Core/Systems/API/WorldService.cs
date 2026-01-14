@@ -8,30 +8,100 @@ using UnityEngine.Networking;
 
 namespace API
 {
-    [CreateAssetMenu(fileName = "WorldService", menuName = "Scriptable Objects/API/WorldService")]
-    public class WorldService : ScriptableObject
+    [System.Serializable]
+    public class WorldResponseEnvelope
     {
-        [Header("Server settings")]
-        [SerializeField]
-        public string Hostname;
+        public WorldResponseData data;
+    }
 
-        [SerializeField]
-        public int Port;
+    [System.Serializable]
+    public class WorldResponseData
+    {
+        public string id;
+        public string name;
+        public string description;
+        public string user_id;
+        public string data;
+    }
 
-        [Header("General settings")]
+    [CreateAssetMenu(fileName = "WorldService", menuName = "Scriptable Objects/API/WorldService")]
+    public class WorldService : BaseApiService
+    {
+        [Header("API Config")]
         [SerializeField]
-        private Logging.Logger logger;
+        private ApiConfig apiConfig;
 
-        private string GetBaseUrl() => $"http://{Hostname}:{Port}/world";
+        private string GetBaseUrl() => $"http://{apiConfig.Hostname}:{apiConfig.Port}/world";
 
         /// <summary>
-        ///  Post a new world to the server.
+        ///  Post a new world to the server or update an existing one if it has an id.
         /// </summary>
         public async Task<(string id, string error)> PublishWorld(
             WorldData data,
             string fileName,
             string description,
             string accessToken
+        )
+        {
+            if (!string.IsNullOrEmpty(data.id))
+            {
+                return await UpdateWorld(data, fileName, description, accessToken);
+            }
+            else
+            {
+                return await CreateWorld(data, fileName, description, accessToken);
+            }
+        }
+
+        /// <summary>
+        ///  Post a new world to the server (POST).
+        /// </summary>
+        private Task<(string id, string error)> CreateWorld(
+            Models.WorldData data,
+            string fileName,
+            string description,
+            string accessToken
+        ) =>
+            SendWorldRequest(
+                GetBaseUrl(),
+                "POST",
+                data,
+                fileName,
+                description,
+                accessToken,
+                "CreateWorld"
+            );
+
+        /// <summary>
+        ///  Update an existing world on the server (PUT).
+        /// </summary>
+        private Task<(string id, string error)> UpdateWorld(
+            Models.WorldData data,
+            string fileName,
+            string description,
+            string accessToken
+        ) =>
+            SendWorldRequest(
+                $"{GetBaseUrl()}/{data.id}",
+                "PUT",
+                data,
+                fileName,
+                description,
+                accessToken,
+                "UpdateWorld"
+            );
+
+        /// <summary>
+        /// Send requests for creating or updating worlds.
+        /// </summary>
+        private async Task<(string id, string error)> SendWorldRequest(
+            string url,
+            string method,
+            Models.WorldData data,
+            string fileName,
+            string description,
+            string accessToken,
+            string logPrefix
         )
         {
             WorldRequest payload = new()
@@ -41,28 +111,24 @@ namespace API
                 description = description,
             };
 
-            string url = GetBaseUrl();
             string json = JsonUtility.ToJson(payload);
 
-            var uwr = new UnityWebRequest(url, "POST");
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-            uwr.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            uwr.downloadHandler = new DownloadHandlerBuffer();
-            uwr.SetRequestHeader("Content-Type", "application/json");
-            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
-
-            logger.Log($"Sending Request: {json}", this);
-            await uwr.SendWebRequest();
-            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+            var (responseText, result) = await SendRequestAsync(
+                url,
+                method,
+                accessToken,
+                json,
+                logPrefix
+            );
 
             if (
-                uwr.result == UnityWebRequest.Result.ConnectionError
-                || uwr.result == UnityWebRequest.Result.ProtocolError
+                result == UnityWebRequest.Result.ConnectionError
+                || result == UnityWebRequest.Result.ProtocolError
             )
             {
                 var res = JsonUtility.FromJson<ErrorResponse>(responseText);
                 logger.Log(
-                    $"CreateWorld error: {res?.title}: {res?.detail}",
+                    $"{logPrefix} error: {res?.title}: {res?.detail}",
                     this,
                     Logging.LogType.Error
                 );
@@ -70,9 +136,8 @@ namespace API
             }
             else
             {
-                logger.Log($"CreateWorld response: {responseText}", this);
                 var res = JsonUtility.FromJson<DataEnvelope<WorldCreateResponse>>(responseText);
-                return (res?.data?.id ?? "", "");
+                return (res?.data?.id ?? (method == "PUT" ? data.id : ""), "");
             }
         }
 
@@ -149,20 +214,14 @@ namespace API
                 url = $"{url}&filter={UnityWebRequest.EscapeURL(trimmed)}";
             }
             logger.Log($"Fetching worlds from URL: {url}", this);
-
-            var uwr = UnityWebRequest.Get(url);
-            uwr.SetRequestHeader("Content-Type", "application/json");
-            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
-            logger.Log($"Using API Token: {accessToken}", this);
-
-            yield return uwr.SendWebRequest();
-
-            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
-            logger.Log($"Worlds response text: {responseText}", this);
+            var task = SendRequestAsync(url, "GET", accessToken, null, "GetWorldPage");
+            while (!task.IsCompleted)
+                yield return null;
+            var (responseText, result) = task.Result;
 
             if (
-                uwr.result == UnityWebRequest.Result.ConnectionError
-                || uwr.result == UnityWebRequest.Result.ProtocolError
+                result == UnityWebRequest.Result.ConnectionError
+                || result == UnityWebRequest.Result.ProtocolError
             )
             {
                 var res = string.IsNullOrEmpty(responseText)
@@ -201,10 +260,8 @@ namespace API
                         world.description = worldItem.description;
                         world.createdAt = worldItem.created_at;
                         world.updatedAt = worldItem.updated_at;
-
                         var worldData = JsonUtility.FromJson<WorldData>(worldItem.data);
                         world.data = worldData;
-
                         worlds.Add(world);
                     }
                     catch (System.Exception ex)
@@ -219,6 +276,72 @@ namespace API
 
                 logger.Log($"GetWorldPage response: Loaded {worlds.Count} worlds", this);
                 handler?.Invoke(worldListResponse.amount, worlds, "");
+            }
+        }
+
+        /// <summary>
+        /// Retrieves detailed world data from the server using the specified world ID.
+        /// </summary>
+        /// <param name="worldID">The unique identifier of the world to retrieve. This should be a valid world ID string as returned by world creation or listing endpoints. Typically a GUID or database-generated string.</param>
+        /// <param name="accessToken">The access token for authenticating the request. Must be valid and authorized to access the specified world.</param>
+        /// <returns>
+        /// A tuple containing:
+        ///   - <see cref="Models.WorldData"/>: The deserialized world data object if retrieval and parsing succeed; otherwise, null.
+        ///   - <see cref="string"/>: An error message if an error occurs, or an empty string on success.
+        /// </returns>
+        public async Task<(Models.WorldData, string)> GetWorldData(
+            string worldID,
+            string accessToken
+        )
+        {
+            var url = $"{GetBaseUrl()}/{worldID}";
+            logger.Log($"Fetching world data from URL: {url}", this);
+            var (responseText, result) = await SendRequestAsync(
+                url,
+                "GET",
+                accessToken,
+                null,
+                "GetWorldData"
+            );
+
+            if (
+                result == UnityWebRequest.Result.ConnectionError
+                || result == UnityWebRequest.Result.ProtocolError
+            )
+            {
+                var res = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<ErrorResponse>(responseText);
+                logger.Log(
+                    $"GetWorldData error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (null, res?.detail ?? responseText);
+            }
+            else
+            {
+                var worldEnvelope = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<WorldResponseEnvelope>(responseText);
+                if (
+                    worldEnvelope == null
+                    || worldEnvelope.data == null
+                    || string.IsNullOrEmpty(worldEnvelope.data.data)
+                )
+                {
+                    return (null, "Failed to parse envelope");
+                }
+
+                var worldData = JsonUtility.FromJson<Models.WorldData>(worldEnvelope.data.data);
+                if (worldData == null)
+                {
+                    return (null, "Failed to parse world data");
+                }
+                worldData.id = worldEnvelope.data.id;
+                worldData.worldName = worldEnvelope.data.name ?? worldData.worldName;
+
+                return (worldData, "");
             }
         }
     }

@@ -25,8 +25,5 @@ namespace Models
 
         [SerializeField]
         public string userId;
-
-        [SerializeField]
-        public WorldData data;
     }
 }

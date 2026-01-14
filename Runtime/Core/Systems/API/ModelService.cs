@@ -9,20 +9,14 @@ using UnityEngine.Networking;
 namespace API
 {
     [CreateAssetMenu(fileName = "ModelService", menuName = "Scriptable Objects/API/ModelService")]
-    public class ModelService : ScriptableObject
+    public class ModelService : BaseApiService
     {
-        [Header("Server settings")]
+        [Header("API Config")]
         [SerializeField]
-        public string Hostname;
+        private ApiConfig apiConfig;
 
-        [SerializeField]
-        public int Port;
-
-        [Header("General settings")]
-        [SerializeField]
-        private Logging.Logger logger;
-
-        private string GetBaseUrl() => $"http://{Hostname}:{Port}/assets/models";
+        private string GetBaseUrl() =>
+            $"http://{apiConfig.Hostname}:{apiConfig.Port}/assets/models";
 
         /// <summary>
         ///  Lists all asset models for a given world.
@@ -30,19 +24,21 @@ namespace API
         public async Task<List<string>> ListWorldAssets(string worldId, string accessToken)
         {
             string url = $"{GetBaseUrl().TrimEnd('/')}/{worldId}";
+            var (responseText, result) = await SendRequestAsync(
+                url,
+                "GET",
+                accessToken,
+                null,
+                "ListWorldAssets"
+            );
 
-            UnityWebRequest uwr = UnityWebRequest.Get(url);
-            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
-
-            await uwr.SendWebRequest();
-
-            if (uwr.result != UnityWebRequest.Result.Success)
+            if (result != UnityWebRequest.Result.Success)
             {
-                logger.Log($"ListWorldAssets error: {uwr.error}", this, Logging.LogType.Error);
-                throw new System.Exception(uwr.error);
+                logger.Log($"ListWorldAssets error: {responseText}", this, Logging.LogType.Error);
+                throw new System.Exception(responseText);
             }
 
-            var response = JsonUtility.FromJson<AssetListResponse>(uwr.downloadHandler.text);
+            var response = JsonUtility.FromJson<AssetListResponse>(responseText);
 
             List<string> modelIds = new();
             foreach (var item in response.data.models)
