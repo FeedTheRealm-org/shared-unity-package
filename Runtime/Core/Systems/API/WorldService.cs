@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Models;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -27,7 +28,7 @@ namespace API
         ///  Post a new world to the server.
         /// </summary>
         public async Task<(string id, string error)> PublishWorld(
-            Models.WorldData data,
+            WorldData data,
             string fileName,
             string description,
             string accessToken
@@ -76,6 +77,61 @@ namespace API
         }
 
         /// <summary>
+        /// Get a specific world by ID from the server.
+        /// </summary>
+        public async Task<WorldData> GetWorldData(string worldId, string accessToken)
+        {
+            try
+            {
+                string url = $"{GetBaseUrl()}/{worldId}";
+                logger.Log($"Fetching world from URL: {url}", this);
+
+                var uwr = UnityWebRequest.Get(url);
+                uwr.SetRequestHeader("Content-Type", "application/json");
+                uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+
+                await uwr.SendWebRequest();
+
+                var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+
+                if (
+                    uwr.result == UnityWebRequest.Result.ConnectionError
+                    || uwr.result == UnityWebRequest.Result.ProtocolError
+                )
+                {
+                    var res = JsonUtility.FromJson<ErrorResponse>(responseText);
+                    logger.Log(
+                        $"GetWorld error: {res?.title}: {res?.detail}",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    return null;
+                }
+                else
+                {
+                    logger.Log($"GetWorld response: {responseText}", this);
+                    var envelope = JsonUtility.FromJson<DataEnvelope<WorldCreateResponse>>(responseText);
+
+                    if (envelope?.data?.data != null)
+                    {
+                        return JsonUtility.FromJson<WorldData>(envelope.data.data);
+                    }
+
+                    return null;
+                }
+            }
+            catch (System.Exception ex)
+            {
+                logger.Log(
+                    $"Error fetching world {worldId}: {ex.Message}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Get a page of worlds from the server.
         /// </summary>
         public IEnumerator GetWorldPage(
@@ -83,7 +139,7 @@ namespace API
             int limit,
             string filter,
             string accessToken,
-            System.Action<int, List<Models.WorldMetadata>, string> handler
+            System.Action<int, List<WorldMetadata>, string> handler
         )
         {
             var url = $"{GetBaseUrl()}?offset={offset}&limit={limit}";
@@ -132,13 +188,13 @@ namespace API
                     yield break;
                 }
 
-                var worlds = new List<Models.WorldMetadata>();
+                var worlds = new List<WorldMetadata>();
 
                 foreach (var worldItem in worldListResponse.worlds)
                 {
                     try
                     {
-                        var world = new Models.WorldMetadata();
+                        var world = new WorldMetadata();
                         world.id = worldItem.id;
                         world.userId = worldItem.user_id;
                         world.name = worldItem.name;
@@ -146,7 +202,7 @@ namespace API
                         world.createdAt = worldItem.created_at;
                         world.updatedAt = worldItem.updated_at;
 
-                        var worldData = JsonUtility.FromJson<Models.WorldData>(worldItem.data);
+                        var worldData = JsonUtility.FromJson<WorldData>(worldItem.data);
                         world.data = worldData;
 
                         worlds.Add(world);
