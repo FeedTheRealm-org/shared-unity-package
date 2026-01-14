@@ -142,61 +142,6 @@ namespace API
         }
 
         /// <summary>
-        /// Get a specific world by ID from the server.
-        /// </summary>
-        public async Task<WorldData> GetWorldData(string worldId, string accessToken)
-        {
-            try
-            {
-                string url = $"{GetBaseUrl()}/{worldId}";
-                logger.Log($"Fetching world from URL: {url}", this);
-
-                var uwr = UnityWebRequest.Get(url);
-                uwr.SetRequestHeader("Content-Type", "application/json");
-                uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
-
-                await uwr.SendWebRequest();
-
-                var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
-
-                if (
-                    uwr.result == UnityWebRequest.Result.ConnectionError
-                    || uwr.result == UnityWebRequest.Result.ProtocolError
-                )
-                {
-                    var res = JsonUtility.FromJson<ErrorResponse>(responseText);
-                    logger.Log(
-                        $"GetWorld error: {res?.title}: {res?.detail}",
-                        this,
-                        Logging.LogType.Error
-                    );
-                    return null;
-                }
-                else
-                {
-                    logger.Log($"GetWorld response: {responseText}", this);
-                    var envelope = JsonUtility.FromJson<DataEnvelope<WorldCreateResponse>>(responseText);
-
-                    if (envelope?.data?.data != null)
-                    {
-                        return JsonUtility.FromJson<WorldData>(envelope.data.data);
-                    }
-
-                    return null;
-                }
-            }
-            catch (System.Exception ex)
-            {
-                logger.Log(
-                    $"Error fetching world {worldId}: {ex.Message}",
-                    this,
-                    Logging.LogType.Error
-                );
-                return null;
-            }
-        }
-
-        /// <summary>
         /// Get a page of worlds from the server.
         /// </summary>
         public IEnumerator GetWorldPage(
@@ -261,7 +206,6 @@ namespace API
                         world.createdAt = worldItem.created_at;
                         world.updatedAt = worldItem.updated_at;
                         var worldData = JsonUtility.FromJson<WorldData>(worldItem.data);
-                        world.data = worldData;
                         worlds.Add(world);
                     }
                     catch (System.Exception ex)
@@ -286,10 +230,10 @@ namespace API
         /// <param name="accessToken">The access token for authenticating the request. Must be valid and authorized to access the specified world.</param>
         /// <returns>
         /// A tuple containing:
-        ///   - <see cref="Models.WorldData"/>: The deserialized world data object if retrieval and parsing succeed; otherwise, null.
+        ///   - <see cref="WorldData"/>: The deserialized world data object if retrieval and parsing succeed; otherwise, null.
         ///   - <see cref="string"/>: An error message if an error occurs, or an empty string on success.
         /// </returns>
-        public async Task<(Models.WorldData, string)> GetWorldData(
+        public async Task<(WorldData, string)> GetWorldData(
             string worldID,
             string accessToken
         )
