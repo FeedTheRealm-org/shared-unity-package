@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Models;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -36,7 +37,7 @@ namespace API
         ///  Post a new world to the server or update an existing one if it has an id.
         /// </summary>
         public async Task<(string id, string error)> PublishWorld(
-            Models.WorldData data,
+            WorldData data,
             string fileName,
             string description,
             string accessToken
@@ -148,7 +149,7 @@ namespace API
             int limit,
             string filter,
             string accessToken,
-            System.Action<int, List<Models.WorldMetadata>, string> handler
+            System.Action<int, List<WorldMetadata>, string> handler
         )
         {
             var url = $"{GetBaseUrl()}?offset={offset}&limit={limit}";
@@ -191,20 +192,20 @@ namespace API
                     yield break;
                 }
 
-                var worlds = new List<Models.WorldMetadata>();
+                var worlds = new List<WorldMetadata>();
 
                 foreach (var worldItem in worldListResponse.worlds)
                 {
                     try
                     {
-                        var world = new Models.WorldMetadata();
+                        var world = new WorldMetadata();
                         world.id = worldItem.id;
                         world.userId = worldItem.user_id;
                         world.name = worldItem.name;
                         world.description = worldItem.description;
                         world.createdAt = worldItem.created_at;
                         world.updatedAt = worldItem.updated_at;
-
+                        var worldData = JsonUtility.FromJson<WorldData>(worldItem.data);
                         worlds.Add(world);
                     }
                     catch (System.Exception ex)
@@ -229,13 +230,10 @@ namespace API
         /// <param name="accessToken">The access token for authenticating the request. Must be valid and authorized to access the specified world.</param>
         /// <returns>
         /// A tuple containing:
-        ///   - <see cref="Models.WorldData"/>: The deserialized world data object if retrieval and parsing succeed; otherwise, null.
+        ///   - <see cref="WorldData"/>: The deserialized world data object if retrieval and parsing succeed; otherwise, null.
         ///   - <see cref="string"/>: An error message if an error occurs, or an empty string on success.
         /// </returns>
-        public async Task<(Models.WorldData, string)> GetWorldData(
-            string worldID,
-            string accessToken
-        )
+        public async Task<(WorldData, string)> GetWorldData(string worldID, string accessToken)
         {
             var url = $"{GetBaseUrl()}/{worldID}";
             logger.Log($"Fetching world data from URL: {url}", this);
