@@ -4,13 +4,13 @@ using UnityEngine;
 namespace Models
 {
     [Serializable]
-    public class PlayerSpawnerData
+    public class SpawnerData
     {
         [SerializeField]
         public Vector3 Position;
         public float Radius = 3f;
 
-        public PlayerSpawnerData(Vector3 position, float radius)
+        public SpawnerData(Vector3 position, float radius)
         {
             Position = position;
             Radius = radius;
