@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 [CreateAssetMenu(fileName = "PlayerInputReader", menuName = "Scriptable Objects/PlayerInputReader")]
 public class PlayerInputReader : ScriptableObject, PlayerControls.IPlayerActions
@@ -11,6 +12,7 @@ public class PlayerInputReader : ScriptableObject, PlayerControls.IPlayerActions
     public event Action AttackEvent;
     public event Action CursorToggleEvent;
     public event Action InteractEvent;
+    public event Action<int> QuickSlotEvent;
 
     private PlayerControls controls;
 
@@ -26,7 +28,7 @@ public class PlayerInputReader : ScriptableObject, PlayerControls.IPlayerActions
 
     private void OnDisable()
     {
-        controls.Player.Disable();
+        controls?.Player.Disable();
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -79,5 +81,56 @@ public class PlayerInputReader : ScriptableObject, PlayerControls.IPlayerActions
         {
             InteractEvent?.Invoke();
         }
+    }
+
+    public void OnQuickSlots(InputAction.CallbackContext context)
+    {
+        if (!context.performed)
+            return;
+
+        int slotIndex = GetQuickSlotIndex(context);
+        if (slotIndex <= 0)
+            return;
+
+        QuickSlotEvent?.Invoke(slotIndex);
+    }
+
+    private static int GetQuickSlotIndex(InputAction.CallbackContext context)
+    {
+        if (context.control is KeyControl keyControl)
+        {
+            switch (keyControl.keyCode)
+            {
+                case Key.Digit1:
+                case Key.Numpad1:
+                    return 1;
+                case Key.Digit2:
+                case Key.Numpad2:
+                    return 2;
+                case Key.Digit3:
+                case Key.Numpad3:
+                    return 3;
+                case Key.Digit4:
+                case Key.Numpad4:
+                    return 4;
+                case Key.Digit5:
+                case Key.Numpad5:
+                    return 5;
+                case Key.Digit6:
+                case Key.Numpad6:
+                    return 6;
+                case Key.Digit7:
+                case Key.Numpad7:
+                    return 7;
+                case Key.Digit8:
+                case Key.Numpad8:
+                    return 8;
+                case Key.Digit9:
+                case Key.Numpad9:
+                    return 9;
+            }
+        }
+
+        return 0;
     }
 }

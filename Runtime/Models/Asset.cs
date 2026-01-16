@@ -4,6 +4,7 @@ using UnityEngine;
 namespace Models
 {
     /// <summary>
+    /// ---------------- DEPRECATED ----------------
     /// This is the Asset Data type used to store Assets in the Database
     /// Assets are considered all kind of placeable objects in the world editor
     /// </summary>
