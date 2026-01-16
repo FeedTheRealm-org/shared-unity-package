@@ -128,7 +128,11 @@ namespace API
                     this,
                     Logging.LogType.Error
                 );
-                return ("", "Unable to connect to server. Please check your internet connection.", 0);
+                return (
+                    "",
+                    "Unable to connect to server. Please check your internet connection.",
+                    0
+                );
             }
             else if (result == UnityWebRequest.Result.ProtocolError)
             {
@@ -186,7 +190,11 @@ namespace API
                     this,
                     Logging.LogType.Error
                 );
-                handler?.Invoke(0, null, "Unable to connect to server. Please check your internet connection.");
+                handler?.Invoke(
+                    0,
+                    null,
+                    "Unable to connect to server. Please check your internet connection."
+                );
             }
             else if (result == UnityWebRequest.Result.ProtocolError)
             {
@@ -263,7 +271,10 @@ namespace API
         ///   - <see cref="WorldData"/>: The deserialized world data object if retrieval and parsing succeed; otherwise, null.
         ///   - <see cref="string"/>: An error message if an error occurs, or an empty string on success.
         /// </returns>
-        public async Task<(WorldData, string, long)> GetWorldData(string worldID, string accessToken)
+        public async Task<(WorldData, string, long)> GetWorldData(
+            string worldID,
+            string accessToken
+        )
         {
             var url = $"{GetBaseUrl()}/{worldID}";
             logger.Log($"Fetching world data from URL: {url}", this);
@@ -282,7 +293,11 @@ namespace API
                     this,
                     Logging.LogType.Error
                 );
-                return (null, "Unable to connect to server. Please check your internet connection.", 0);
+                return (
+                    null,
+                    "Unable to connect to server. Please check your internet connection.",
+                    0
+                );
             }
             else if (result == UnityWebRequest.Result.ProtocolError)
             {

@@ -36,7 +36,9 @@ namespace API
                         this,
                         Logging.LogType.Error
                     );
-                    handler?.Invoke("Unable to connect to server. Please check your internet connection.");
+                    handler?.Invoke(
+                        "Unable to connect to server. Please check your internet connection."
+                    );
                 }
                 else if (result == UnityWebRequest.Result.ProtocolError)
                 {
@@ -94,12 +96,11 @@ namespace API
 
             if (result == UnityWebRequest.Result.ConnectionError)
             {
-                logger.Log(
-                    $"SignUp connection error: {responseText}",
-                    this,
-                    Logging.LogType.Error
+                logger.Log($"SignUp connection error: {responseText}", this, Logging.LogType.Error);
+                handler?.Invoke(
+                    false,
+                    "Unable to connect to server. Please check your internet connection."
                 );
-                handler?.Invoke(false, "Unable to connect to server. Please check your internet connection.");
             }
             else if (result == UnityWebRequest.Result.ProtocolError)
             {
@@ -149,7 +150,10 @@ namespace API
                     this,
                     Logging.LogType.Error
                 );
-                handler?.Invoke(false, "Unable to connect to server. Please check your internet connection.");
+                handler?.Invoke(
+                    false,
+                    "Unable to connect to server. Please check your internet connection."
+                );
             }
             else if (result == UnityWebRequest.Result.ProtocolError)
             {

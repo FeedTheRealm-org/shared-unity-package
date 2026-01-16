@@ -39,7 +39,9 @@ namespace API
                     this,
                     Logging.LogType.Error
                 );
-                throw new System.Exception("Unable to connect to server. Please check your internet connection.");
+                throw new System.Exception(
+                    "Unable to connect to server. Please check your internet connection."
+                );
             }
             else if (result == UnityWebRequest.Result.ProtocolError)
             {

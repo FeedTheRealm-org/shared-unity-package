@@ -1,6 +1,6 @@
 # 🚀 Toast Notification Message plugin for Unity
 
-This asset is available in the __Unity Asset Store__. Access by [clicking here](https://assetstore.com.br). 
+This asset is available in the __Unity Asset Store__. Access by [clicking here](https://assetstore.com.br).
 
 Please help rate the plugin if you find it useful.
 This _readme_ is part of the Unity Asset Store description. Use the GitHub repository as a means of contributing to the evolution of this asset, as it is free (and always will be). Feel free to create your Fork and develop your own plugin from this.
@@ -30,19 +30,19 @@ With a user-friendly interface and flexible customization options, the Toast Not
 ### ⭐ Examples:
 - Simple message:
     ```csharp
-    ToastNotification.Show("Hello, world!"); 
+    ToastNotification.Show("Hello, world!");
 
 - With icon:
     ```csharp
-    ToastNotification.Show("Hello, world!", "info"); 
+    ToastNotification.Show("Hello, world!", "info");
 
 - Custom time:
     ```csharp
-    ToastNotification.Show("Hello, world!", 6.5f); 
+    ToastNotification.Show("Hello, world!", 6.5f);
 
 - Complete message with time and icon:
     ```csharp
-    ToastNotification.Show("Hello, world!", 5f, "error"); 
+    ToastNotification.Show("Hello, world!", 5f, "error");
 
 
 ## 🌠 Utilities:

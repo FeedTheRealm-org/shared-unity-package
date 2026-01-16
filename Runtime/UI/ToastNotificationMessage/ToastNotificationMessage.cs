@@ -3,14 +3,16 @@ using UnityEngine;
 /// <summary>
 /// Control of the message that is created within the ToastNotification Hierarchy.
 /// It is possible to access the controls of this class, but it is not recommended, as it is manipulated directly
-/// by the class ToastNotification. 
+/// by the class ToastNotification.
 /// </summary>
 public class ToastNotificationMessage : MonoBehaviour
 {
     [HideInInspector]
     public float messageTime; // Receives the time this message should be displayed on the screen
+
     [HideInInspector]
     public RectTransform timerRectTransform; // Receives the timer render component
+
     [HideInInspector]
     public bool leftToRight = true; // Which side will the timer decrease to which side?
 
@@ -18,29 +20,29 @@ public class ToastNotificationMessage : MonoBehaviour
     private float initialWidth;
     private float timeElapsed;
 
-
     // If the Start method is disturbing some part of your game's code, you can change it to Awake
     void Start()
     {
         messageTime = messageTime <= -1 ? ToastNotification.minimumMessageTime : messageTime;
 
         RectTransform messageRect = transform.parent.GetComponent<RectTransform>();
-        timerRectTransform.sizeDelta = new Vector2(messageRect.sizeDelta.x, messageRect.sizeDelta.y * 0.07f );
+        timerRectTransform.sizeDelta = new Vector2(
+            messageRect.sizeDelta.x,
+            messageRect.sizeDelta.y * 0.07f
+        );
 
         // Resets the position of the message on Canvas to be correctly positioned where it should be
-        timerRectTransform.anchorMin = new Vector2(1,1);
-        timerRectTransform.anchorMax = new Vector2(1,1);
-        timerRectTransform.pivot = new Vector2(1,1);
+        timerRectTransform.anchorMin = new Vector2(1, 1);
+        timerRectTransform.anchorMax = new Vector2(1, 1);
+        timerRectTransform.pivot = new Vector2(1, 1);
         timerRectTransform.anchoredPosition = Vector3.zero;
 
         initialWidth = timerRectTransform.sizeDelta.x;
     }
 
-
     // You can change FixedUpdate to Update. But I recommend keeping it this way to consume less processing
     void FixedUpdate()
     {
-
         // FixedUpdate here basically works by checking whether the message has timed out,
         // and then calls the ToastNotification Hide command
 
@@ -48,7 +50,7 @@ public class ToastNotificationMessage : MonoBehaviour
             return;
 
         // Check for inifite messages
-        if( messageTime != 0)
+        if (messageTime != 0)
         {
             if (timeElapsed > messageTime)
             {
@@ -63,7 +65,6 @@ public class ToastNotificationMessage : MonoBehaviour
 
             RenderTimer();
         }
-
     }
 
     // Renders the decreasing timer rectangle on the screen over the message
@@ -78,8 +79,10 @@ public class ToastNotificationMessage : MonoBehaviour
         // Changes the calculation depending on which side the timer is going to reduce
         timerRectTransform.sizeDelta = new Vector2(newWidth, timerRectTransform.sizeDelta.y);
         if (leftToRight == false)
-            timerRectTransform.anchoredPosition = new Vector2(-initialWidth + timerRectTransform.sizeDelta.x, timerRectTransform.anchoredPosition.y );
-
+            timerRectTransform.anchoredPosition = new Vector2(
+                -initialWidth + timerRectTransform.sizeDelta.x,
+                timerRectTransform.anchoredPosition.y
+            );
     }
 
     //Checks whether the hideOnClick variable is enabled in ToastNotification, so that it can only be closed when clicked
@@ -91,5 +94,4 @@ public class ToastNotificationMessage : MonoBehaviour
         if (ToastNotification.hideOnClick)
             ToastNotification.Hide();
     }
-
 }

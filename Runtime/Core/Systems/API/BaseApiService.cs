@@ -18,7 +18,11 @@ namespace API
         /// <summary>
         /// Logic to send HTTP requests with authentication and logging.
         /// </summary>
-        protected async Task<(string responseText, UnityWebRequest.Result result, long responseCode)> SendRequestAsync(
+        protected async Task<(
+            string responseText,
+            UnityWebRequest.Result result,
+            long responseCode
+        )> SendRequestAsync(
             string url,
             string method,
             string accessToken,
