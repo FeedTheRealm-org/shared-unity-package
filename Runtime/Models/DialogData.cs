@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Models
@@ -15,11 +16,15 @@ namespace Models
         [SerializeField]
         public string npc;
 
+        [SerializeField]
+        public List<MessageData> messages = new();
+
         public DialogData(string id, string name, string npc)
         {
             this.id = id;
             this.name = name;
             this.npc = npc;
+            this.messages = new List<MessageData>();
         }
     }
 }
