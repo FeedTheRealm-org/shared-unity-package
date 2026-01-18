@@ -9,5 +9,7 @@
   ],
   "excludePlatforms": [],
   "defineConstraints": [],
-  "allowUnsafeCode": false
+  "allowUnsafeCode": false,
+  "languageVersion": "10.0"
+
 }
