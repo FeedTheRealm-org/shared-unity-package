@@ -10,16 +10,27 @@ namespace Models
         public string id;
 
         [SerializeField]
-        public string sender = "";
+        private string _sender = "";
 
         [SerializeField]
-        public string content = "";
+        private string _content = "fdfsfdsfsd";
 
         public MessageData(string id, string sender, string content)
         {
             this.id = id;
-            this.sender = sender;
-            this.content = content;
+            _sender = sender;
+            _content = content;
+        }
+
+        public string Sender
+        {
+            get => _sender;
+            set => _sender = value;
+        }
+
+        public string Content
+        {
+            get => _content;
         }
     }
 }
