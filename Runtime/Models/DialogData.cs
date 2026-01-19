@@ -11,7 +11,7 @@ namespace Models
         public string id;
 
         [SerializeField]
-        public string name = "Item";
+        public string name = "Dialog";
 
         [SerializeField]
         public string npc;
