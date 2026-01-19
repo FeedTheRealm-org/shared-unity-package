@@ -13,7 +13,7 @@ namespace Models
         private string _sender = "";
 
         [SerializeField]
-        private string _content = "fdfsfdsfsd";
+        private string _content = "";
 
         public MessageData(string id, string sender, string content)
         {
