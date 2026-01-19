@@ -29,6 +29,8 @@ namespace Models
         public List<EnemyData> enemies = new();
         public List<LootTableData> lootTables = new();
 
+        public ShopData shopData = new();
+
         public string worldName
         {
             get => _worldName;
