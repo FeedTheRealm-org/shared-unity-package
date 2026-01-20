@@ -6,16 +6,9 @@ namespace Models
     [Serializable]
     public class ItemData
     {
-        [SerializeField]
         public string id;
-
-        [SerializeField]
         public string name = "Item";
-
-        [SerializeField]
-        public string description = "";
-
-        [SerializeField]
+        public string description = ""; // TODO: this is not necesary and will be removed later
         public string spriteFilepath = "";
 
         public ItemData(string id, string name, string description, string spriteFilepath)
