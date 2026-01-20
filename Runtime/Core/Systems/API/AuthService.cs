@@ -25,28 +25,41 @@ namespace API
             var task = SendRequestAsync(url, "POST", null, json, "Login");
             while (!task.IsCompleted)
                 yield return null;
-            var (responseText, result) = task.Result;
+            var (responseText, result, statusCode) = task.Result;
 
             try
             {
-                if (
-                    result == UnityWebRequest.Result.ConnectionError
-                    || result == UnityWebRequest.Result.ProtocolError
-                )
+                if (result == UnityWebRequest.Result.ConnectionError)
                 {
-                    var res = string.IsNullOrEmpty(responseText)
-                        ? null
-                        : JsonUtility.FromJson<ErrorResponse>(responseText);
                     logger.Log(
-                        $"Login error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}",
+                        $"Login connection error: {responseText}",
                         this,
                         Logging.LogType.Error
                     );
                     handler?.Invoke(
-                        res != null && !string.IsNullOrEmpty(res.detail)
-                            ? res.detail
-                            : "Connection to the server failed."
+                        "Unable to connect to server. Please check your internet connection."
                     );
+                }
+                else if (result == UnityWebRequest.Result.ProtocolError)
+                {
+                    var res = string.IsNullOrEmpty(responseText)
+                        ? null
+                        : JsonUtility.FromJson<ErrorResponse>(responseText);
+                    string errorMessage = res?.detail ?? responseText;
+                    if (statusCode == 401)
+                    {
+                        errorMessage = "Invalid email or password.";
+                    }
+                    else if (statusCode >= 500)
+                    {
+                        errorMessage = "Server error. Please try again later.";
+                    }
+                    logger.Log(
+                        $"Login error ({statusCode}): {(res != null ? $"{res.title}: {errorMessage}" : responseText)}",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    handler?.Invoke(errorMessage);
                 }
                 else
                 {
@@ -79,22 +92,32 @@ namespace API
             var task = SendRequestAsync(url, "POST", null, json, "SignUp");
             while (!task.IsCompleted)
                 yield return null;
-            var (responseText, result) = task.Result;
+            var (responseText, result, statusCode) = task.Result;
 
-            if (
-                result == UnityWebRequest.Result.ConnectionError
-                || result == UnityWebRequest.Result.ProtocolError
-            )
+            if (result == UnityWebRequest.Result.ConnectionError)
+            {
+                logger.Log($"SignUp connection error: {responseText}", this, Logging.LogType.Error);
+                handler?.Invoke(
+                    false,
+                    "Unable to connect to server. Please check your internet connection."
+                );
+            }
+            else if (result == UnityWebRequest.Result.ProtocolError)
             {
                 var res = string.IsNullOrEmpty(responseText)
                     ? null
                     : JsonUtility.FromJson<ErrorResponse>(responseText);
+                string errorMessage = res?.detail ?? responseText;
+                if (statusCode >= 500)
+                {
+                    errorMessage = "Server error. Please try again later.";
+                }
                 logger.Log(
-                    $"SignUp error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}",
+                    $"SignUp error ({statusCode}): {(res != null ? $"{res.title}: {errorMessage}" : responseText)}",
                     this,
                     Logging.LogType.Error
                 );
-                handler?.Invoke(false, res?.detail ?? responseText);
+                handler?.Invoke(false, errorMessage);
             }
             else
             {
@@ -118,22 +141,36 @@ namespace API
             var task = SendRequestAsync(url, "POST", null, json, "VerifyCode");
             while (!task.IsCompleted)
                 yield return null;
-            var (responseText, result) = task.Result;
+            var (responseText, result, statusCode) = task.Result;
 
-            if (
-                result == UnityWebRequest.Result.ConnectionError
-                || result == UnityWebRequest.Result.ProtocolError
-            )
+            if (result == UnityWebRequest.Result.ConnectionError)
+            {
+                logger.Log(
+                    $"Verify Code connection error: {responseText}",
+                    this,
+                    Logging.LogType.Error
+                );
+                handler?.Invoke(
+                    false,
+                    "Unable to connect to server. Please check your internet connection."
+                );
+            }
+            else if (result == UnityWebRequest.Result.ProtocolError)
             {
                 var res = string.IsNullOrEmpty(responseText)
                     ? null
                     : JsonUtility.FromJson<ErrorResponse>(responseText);
+                string errorMessage = res?.detail ?? responseText;
+                if (statusCode >= 500)
+                {
+                    errorMessage = "Server error. Please try again later.";
+                }
                 logger.Log(
-                    $"Verify Code error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}",
+                    $"Verify Code error ({statusCode}): {(res != null ? $"{res.title}: {errorMessage}" : responseText)}",
                     this,
                     Logging.LogType.Error
                 );
-                handler?.Invoke(false, res?.detail ?? responseText);
+                handler?.Invoke(false, errorMessage);
             }
             else
             {

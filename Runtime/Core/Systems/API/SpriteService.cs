@@ -37,6 +37,8 @@ namespace API
 
             var form = new WWWForm();
 
+            var validSprites = new List<(string spriteId, string absolutePath)>();
+
             for (int i = 0; i < sprites.Count; i++)
             {
                 (string spriteId, string spriteFilepath) = sprites[i];
@@ -74,10 +76,17 @@ namespace API
                     continue;
                 }
 
-                form.AddField($"id[{i + 1}]", spriteId);
+                validSprites.Add((spriteId, absolutePath));
+            }
+
+            for (int j = 0; j < validSprites.Count; j++)
+            {
+                var (spriteId, absolutePath) = validSprites[j];
+
+                form.AddField($"id[{j + 1}]", spriteId);
                 byte[] spriteData = File.ReadAllBytes(absolutePath);
                 form.AddBinaryData(
-                    $"sprite[{i + 1}]",
+                    $"sprite[{j + 1}]",
                     spriteData,
                     Path.GetFileName(absolutePath),
                     "application/octet-stream"
