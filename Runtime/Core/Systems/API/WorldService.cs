@@ -36,7 +36,7 @@ namespace API
         /// <summary>
         ///  Post a new world to the server or update an existing one if it has an id.
         /// </summary>
-        public async Task<(string id, string error)> PublishWorld(
+        public async Task<(string id, string error, long statusCode)> PublishWorld(
             WorldData data,
             string fileName,
             string description,
@@ -56,7 +56,7 @@ namespace API
         /// <summary>
         ///  Post a new world to the server (POST).
         /// </summary>
-        private Task<(string id, string error)> CreateWorld(
+        private Task<(string id, string error, long statusCode)> CreateWorld(
             Models.WorldData data,
             string fileName,
             string description,
@@ -75,7 +75,7 @@ namespace API
         /// <summary>
         ///  Update an existing world on the server (PUT).
         /// </summary>
-        private Task<(string id, string error)> UpdateWorld(
+        private Task<(string id, string error, long statusCode)> UpdateWorld(
             Models.WorldData data,
             string fileName,
             string description,
@@ -94,7 +94,7 @@ namespace API
         /// <summary>
         /// Send requests for creating or updating worlds.
         /// </summary>
-        private async Task<(string id, string error)> SendWorldRequest(
+        private async Task<(string id, string error, long statusCode)> SendWorldRequest(
             string url,
             string method,
             Models.WorldData data,
@@ -113,7 +113,7 @@ namespace API
 
             string json = JsonUtility.ToJson(payload);
 
-            var (responseText, result) = await SendRequestAsync(
+            var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 method,
                 accessToken,
@@ -121,23 +121,42 @@ namespace API
                 logPrefix
             );
 
-            if (
-                result == UnityWebRequest.Result.ConnectionError
-                || result == UnityWebRequest.Result.ProtocolError
-            )
+            if (result == UnityWebRequest.Result.ConnectionError)
             {
-                var res = JsonUtility.FromJson<ErrorResponse>(responseText);
                 logger.Log(
-                    $"{logPrefix} error: {res?.title}: {res?.detail}",
+                    $"{logPrefix} connection error: {responseText}",
                     this,
                     Logging.LogType.Error
                 );
-                return ("", res?.detail ?? responseText);
+                return (
+                    "",
+                    "Unable to connect to server. Please check your internet connection.",
+                    0
+                );
+            }
+            else if (result == UnityWebRequest.Result.ProtocolError)
+            {
+                var res = JsonUtility.FromJson<ErrorResponse>(responseText);
+                string errorMessage = res?.detail ?? responseText;
+                if (statusCode == 401)
+                {
+                    errorMessage = "Session expired. Please log in again.";
+                }
+                else if (statusCode >= 500)
+                {
+                    errorMessage = "Server error. Please try again later.";
+                }
+                logger.Log(
+                    $"{logPrefix} error ({statusCode}): {res?.title}: {errorMessage}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return ("", errorMessage, statusCode);
             }
             else
             {
                 var res = JsonUtility.FromJson<DataEnvelope<WorldCreateResponse>>(responseText);
-                return (res?.data?.id ?? (method == "PUT" ? data.id : ""), "");
+                return (res?.data?.id ?? (method == "PUT" ? data.id : ""), "", statusCode);
             }
         }
 
@@ -162,22 +181,41 @@ namespace API
             var task = SendRequestAsync(url, "GET", accessToken, null, "GetWorldPage");
             while (!task.IsCompleted)
                 yield return null;
-            var (responseText, result) = task.Result;
+            var (responseText, result, statusCode) = task.Result;
 
-            if (
-                result == UnityWebRequest.Result.ConnectionError
-                || result == UnityWebRequest.Result.ProtocolError
-            )
+            if (result == UnityWebRequest.Result.ConnectionError)
+            {
+                logger.Log(
+                    $"GetWorldPage connection error: {responseText}",
+                    this,
+                    Logging.LogType.Error
+                );
+                handler?.Invoke(
+                    0,
+                    null,
+                    "Unable to connect to server. Please check your internet connection."
+                );
+            }
+            else if (result == UnityWebRequest.Result.ProtocolError)
             {
                 var res = string.IsNullOrEmpty(responseText)
                     ? null
                     : JsonUtility.FromJson<ErrorResponse>(responseText);
+                string errorMessage = res?.detail ?? responseText;
+                if (statusCode == 401)
+                {
+                    errorMessage = "Session expired. Please log in again.";
+                }
+                else if (statusCode >= 500)
+                {
+                    errorMessage = "Server error. Please try again later.";
+                }
                 logger.Log(
-                    $"GetWorldPage error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}",
+                    $"GetWorldPage error ({statusCode}): {(res != null ? $"{res.title}: {errorMessage}" : responseText)}",
                     this,
                     Logging.LogType.Error
                 );
-                handler?.Invoke(0, null, res?.detail ?? responseText);
+                handler?.Invoke(0, null, errorMessage);
             }
             else
             {
@@ -233,11 +271,14 @@ namespace API
         ///   - <see cref="WorldData"/>: The deserialized world data object if retrieval and parsing succeed; otherwise, null.
         ///   - <see cref="string"/>: An error message if an error occurs, or an empty string on success.
         /// </returns>
-        public async Task<(WorldData, string)> GetWorldData(string worldID, string accessToken)
+        public async Task<(WorldData, string, long)> GetWorldData(
+            string worldID,
+            string accessToken
+        )
         {
             var url = $"{GetBaseUrl()}/{worldID}";
             logger.Log($"Fetching world data from URL: {url}", this);
-            var (responseText, result) = await SendRequestAsync(
+            var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "GET",
                 accessToken,
@@ -245,20 +286,39 @@ namespace API
                 "GetWorldData"
             );
 
-            if (
-                result == UnityWebRequest.Result.ConnectionError
-                || result == UnityWebRequest.Result.ProtocolError
-            )
+            if (result == UnityWebRequest.Result.ConnectionError)
+            {
+                logger.Log(
+                    $"GetWorldData connection error: {responseText}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (
+                    null,
+                    "Unable to connect to server. Please check your internet connection.",
+                    0
+                );
+            }
+            else if (result == UnityWebRequest.Result.ProtocolError)
             {
                 var res = string.IsNullOrEmpty(responseText)
                     ? null
                     : JsonUtility.FromJson<ErrorResponse>(responseText);
+                string errorMessage = res?.detail ?? responseText;
+                if (statusCode == 401)
+                {
+                    errorMessage = "Session expired. Please log in again.";
+                }
+                else if (statusCode >= 500)
+                {
+                    errorMessage = "Server error. Please try again later.";
+                }
                 logger.Log(
-                    $"GetWorldData error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}",
+                    $"GetWorldData error ({statusCode}): {(res != null ? $"{res.title}: {errorMessage}" : responseText)}",
                     this,
                     Logging.LogType.Error
                 );
-                return (null, res?.detail ?? responseText);
+                return (null, errorMessage, statusCode);
             }
             else
             {
@@ -271,18 +331,18 @@ namespace API
                     || string.IsNullOrEmpty(worldEnvelope.data.data)
                 )
                 {
-                    return (null, "Failed to parse envelope");
+                    return (null, "Failed to parse envelope", statusCode);
                 }
 
                 var worldData = JsonUtility.FromJson<Models.WorldData>(worldEnvelope.data.data);
                 if (worldData == null)
                 {
-                    return (null, "Failed to parse world data");
+                    return (null, "Failed to parse world data", statusCode);
                 }
                 worldData.id = worldEnvelope.data.id;
                 worldData.worldName = worldEnvelope.data.name ?? worldData.worldName;
 
-                return (worldData, "");
+                return (worldData, "", statusCode);
             }
         }
     }

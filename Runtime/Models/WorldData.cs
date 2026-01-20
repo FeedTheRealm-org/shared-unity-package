@@ -30,6 +30,8 @@ namespace Models
         public List<LootTableData> lootTables = new();
         public List<DialogData> dialogs = new();
 
+        public ShopData shopData = new();
+
         public string worldName
         {
             get => _worldName;

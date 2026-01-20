@@ -24,7 +24,7 @@ namespace API
         public async Task<List<string>> ListWorldAssets(string worldId, string accessToken)
         {
             string url = $"{GetBaseUrl().TrimEnd('/')}/{worldId}";
-            var (responseText, result) = await SendRequestAsync(
+            var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "GET",
                 accessToken,
@@ -32,10 +32,34 @@ namespace API
                 "ListWorldAssets"
             );
 
-            if (result != UnityWebRequest.Result.Success)
+            if (result == UnityWebRequest.Result.ConnectionError)
             {
-                logger.Log($"ListWorldAssets error: {responseText}", this, Logging.LogType.Error);
-                throw new System.Exception(responseText);
+                logger.Log(
+                    $"ListWorldAssets connection error: {responseText}",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new System.Exception(
+                    "Unable to connect to server. Please check your internet connection."
+                );
+            }
+            else if (result == UnityWebRequest.Result.ProtocolError)
+            {
+                string errorMessage = responseText;
+                if (statusCode == 401)
+                {
+                    errorMessage = "Session expired. Please log in again.";
+                }
+                else if (statusCode >= 500)
+                {
+                    errorMessage = "Server error. Please try again later.";
+                }
+                logger.Log(
+                    $"ListWorldAssets error ({statusCode}): {errorMessage}",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new System.Exception(errorMessage);
             }
 
             var response = JsonUtility.FromJson<AssetListResponse>(responseText);
