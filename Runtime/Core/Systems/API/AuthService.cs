@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -16,16 +17,20 @@ namespace API
 
         private string GetBaseUrl() => $"http://{apiConfig.Hostname}:{apiConfig.Port}/auth";
 
-        public IEnumerator Login(string email, string password, System.Action<string> handler)
+        public async Task<string> Login(string email, string password)
         {
-            var url = $"{GetBaseUrl()}/login";
-            var payload = new LoginRequest { email = email, password = password };
-            var json = JsonUtility.ToJson(payload);
+            string url = $"{GetBaseUrl()}/login";
+            LoginRequest payload = new LoginRequest { email = email, password = password };
+            string json = JsonUtility.ToJson(payload);
 
-            var task = SendRequestAsync(url, "POST", null, json, "Login");
-            while (!task.IsCompleted)
-                yield return null;
-            var (responseText, result, statusCode) = task.Result;
+            Task<(string, UnityWebRequest.Result, long)> task = SendRequestAsync(
+                url,
+                "POST",
+                null,
+                json,
+                "Login"
+            );
+            (string responseText, UnityWebRequest.Result result, long statusCode) = await task;
 
             try
             {
@@ -36,13 +41,11 @@ namespace API
                         this,
                         Logging.LogType.Error
                     );
-                    handler?.Invoke(
-                        "Unable to connect to server. Please check your internet connection."
-                    );
+                    return "Unable to connect to server. Please check your internet connection.";
                 }
                 else if (result == UnityWebRequest.Result.ProtocolError)
                 {
-                    var res = string.IsNullOrEmpty(responseText)
+                    ErrorResponse res = string.IsNullOrEmpty(responseText)
                         ? null
                         : JsonUtility.FromJson<ErrorResponse>(responseText);
                     string errorMessage = res?.detail ?? responseText;
@@ -59,52 +62,54 @@ namespace API
                         this,
                         Logging.LogType.Error
                     );
-                    handler?.Invoke(errorMessage);
+                    return errorMessage;
                 }
                 else
                 {
-                    var res = JsonUtility.FromJson<DataEnvelope<LoginResponse>>(responseText);
+                    DataEnvelope<LoginResponse> res = JsonUtility.FromJson<
+                        DataEnvelope<LoginResponse>
+                    >(responseText);
                     logger.Log($"Login response: {responseText}", this);
                     logger.Log($"Login successful UserID: {res.data.id}", this);
                     session.SetUserId(res.data.id);
                     session.SetAPIToken(res.data.access_token);
                     session.SetEmail(res.data.email);
-                    handler?.Invoke("");
+                    return "";
                 }
             }
             catch (System.Exception ex)
             {
                 logger.Log($"Login exception: {ex.Message}", this, Logging.LogType.Error);
-                handler?.Invoke("Connection to the server failed.");
+                return "Connection to the server failed.";
             }
         }
 
-        public IEnumerator SignUp(
-            string email,
-            string password,
-            System.Action<bool, string> handler
-        )
+        public async Task<(bool success, string message)> SignUp(string email, string password)
         {
-            var url = $"{GetBaseUrl()}/signup";
-            var payload = new LoginRequest { email = email, password = password };
-            var json = JsonUtility.ToJson(payload);
+            string url = $"{GetBaseUrl()}/signup";
+            LoginRequest payload = new LoginRequest { email = email, password = password };
+            string json = JsonUtility.ToJson(payload);
 
-            var task = SendRequestAsync(url, "POST", null, json, "SignUp");
-            while (!task.IsCompleted)
-                yield return null;
-            var (responseText, result, statusCode) = task.Result;
+            Task<(string, UnityWebRequest.Result, long)> task = SendRequestAsync(
+                url,
+                "POST",
+                null,
+                json,
+                "SignUp"
+            );
+            (string responseText, UnityWebRequest.Result result, long statusCode) = await task;
 
             if (result == UnityWebRequest.Result.ConnectionError)
             {
                 logger.Log($"SignUp connection error: {responseText}", this, Logging.LogType.Error);
-                handler?.Invoke(
+                return (
                     false,
                     "Unable to connect to server. Please check your internet connection."
                 );
             }
             else if (result == UnityWebRequest.Result.ProtocolError)
             {
-                var res = string.IsNullOrEmpty(responseText)
+                ErrorResponse res = string.IsNullOrEmpty(responseText)
                     ? null
                     : JsonUtility.FromJson<ErrorResponse>(responseText);
                 string errorMessage = res?.detail ?? responseText;
@@ -117,31 +122,33 @@ namespace API
                     this,
                     Logging.LogType.Error
                 );
-                handler?.Invoke(false, errorMessage);
+                return (false, errorMessage);
             }
             else
             {
-                var res = JsonUtility.FromJson<DataEnvelope<SignUpResponse>>(responseText);
+                DataEnvelope<SignUpResponse> res = JsonUtility.FromJson<
+                    DataEnvelope<SignUpResponse>
+                >(responseText);
                 logger.Log($"SignUp response: {responseText}", this);
                 logger.Log($"SignUp successful: {res.data.email}", this);
-                handler?.Invoke(res.data.email == email, "");
+                return (res.data.email == email, "");
             }
         }
 
-        public IEnumerator VerifyCode(
-            string email,
-            string code,
-            System.Action<bool, string> handler
-        )
+        public async Task<(bool success, string message)> VerifyCode(string email, string code)
         {
-            var url = $"{GetBaseUrl()}/verify";
-            var payload = new VerifyCodeRequest { email = email, code = code };
-            var json = JsonUtility.ToJson(payload);
+            string url = $"{GetBaseUrl()}/verify";
+            VerifyCodeRequest payload = new VerifyCodeRequest { email = email, code = code };
+            string json = JsonUtility.ToJson(payload);
 
-            var task = SendRequestAsync(url, "POST", null, json, "VerifyCode");
-            while (!task.IsCompleted)
-                yield return null;
-            var (responseText, result, statusCode) = task.Result;
+            Task<(string, UnityWebRequest.Result, long)> task = SendRequestAsync(
+                url,
+                "POST",
+                null,
+                json,
+                "VerifyCode"
+            );
+            (string responseText, UnityWebRequest.Result result, long statusCode) = await task;
 
             if (result == UnityWebRequest.Result.ConnectionError)
             {
@@ -150,14 +157,14 @@ namespace API
                     this,
                     Logging.LogType.Error
                 );
-                handler?.Invoke(
+                return (
                     false,
                     "Unable to connect to server. Please check your internet connection."
                 );
             }
             else if (result == UnityWebRequest.Result.ProtocolError)
             {
-                var res = string.IsNullOrEmpty(responseText)
+                ErrorResponse res = string.IsNullOrEmpty(responseText)
                     ? null
                     : JsonUtility.FromJson<ErrorResponse>(responseText);
                 string errorMessage = res?.detail ?? responseText;
@@ -170,13 +177,15 @@ namespace API
                     this,
                     Logging.LogType.Error
                 );
-                handler?.Invoke(false, errorMessage);
+                return (false, errorMessage);
             }
             else
             {
-                var res = JsonUtility.FromJson<DataEnvelope<VerifyCodeResponse>>(responseText);
+                DataEnvelope<VerifyCodeResponse> res = JsonUtility.FromJson<
+                    DataEnvelope<VerifyCodeResponse>
+                >(responseText);
                 logger.Log($"Verify Code response: {responseText}", this);
-                handler?.Invoke(res.data.verified, "");
+                return (res.data.verified, "");
             }
         }
     }

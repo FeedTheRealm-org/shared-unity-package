@@ -27,8 +27,6 @@ public class VerifyCodeController : MonoBehaviour
     private Label _changeButton;
     private Label _messageError;
 
-    private AsyncOperation preloadOperation;
-
     private void Awake()
     {
         ui = GetComponent<UIDocument>().rootVisualElement;
@@ -59,52 +57,24 @@ public class VerifyCodeController : MonoBehaviour
             _verifyCodeButton.clicked -= OnLoginClicked;
     }
 
-    private void OnLoginClicked()
+    private async void OnLoginClicked()
     {
-        logger.Log("Verify code Button Clicked", this);
-        logger.Log("Email: " + session.Email, this);
-        logger.Log("Code: " + _codeField.value, this);
-
-        StartCoroutine(
-            authService.VerifyCode(
-                session.Email,
-                _codeField.value,
-                (success, err) =>
-                {
-                    if (success)
-                    {
-                        logger.Log("Verify code successful", this);
-                        StartCoroutine(
-                            authService.Login(
-                                session.Email,
-                                session.Password,
-                                (loginErr) =>
-                                {
-                                    if (string.IsNullOrEmpty(loginErr))
-                                    {
-                                        logger.Log("Login after verify code successful", this);
-                                        SceneManager.LoadScene(targetScene.SceneName);
-                                    }
-                                    else
-                                    {
-                                        logger.Log(
-                                            "Login after verify code failed",
-                                            this,
-                                            Logging.LogType.Error
-                                        );
-                                        _messageError.text = loginErr;
-                                    }
-                                }
-                            )
-                        );
-                    }
-                    else
-                    {
-                        logger.Log("Verify code failed", this, Logging.LogType.Error);
-                        _messageError.text = err;
-                    }
-                }
-            )
+        logger.Log(
+            $"Verify code Button Clicked - Email: {session.Email}, Code: {_codeField.value}",
+            this
         );
+
+        var (success, err) = await authService.VerifyCode(session.Email, _codeField.value);
+
+        if (!success)
+        {
+            _messageError.text = err;
+            return;
+        }
+        var loginErr = await authService.Login(session.Email, session.Password);
+        if (string.IsNullOrEmpty(loginErr))
+            SceneManager.LoadScene(targetScene.SceneName);
+        else
+            _messageError.text = loginErr;
     }
 }
