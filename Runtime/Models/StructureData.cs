@@ -13,6 +13,8 @@ namespace Models
         public Vector3 position;
         public string structureName;
 
+        public bool isShop = false;
+
         [NonSerialized]
         public string structureFilepath;
 
@@ -22,7 +24,8 @@ namespace Models
             Vector3 size,
             Vector3 rotation,
             Vector3 offset,
-            Vector3 position
+            Vector3 position,
+            bool isShop = false
         )
         {
             this.id = id;
@@ -31,11 +34,12 @@ namespace Models
             this.rotation = rotation;
             this.offset = offset;
             this.position = position;
+            this.isShop = isShop;
         }
 
         public override string ToString()
         {
-            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, Offset: {offset}, Filepath: {structureFilepath}";
+            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, Offset: {offset}, Filepath: {structureFilepath}, IsShop: {isShop}";
         }
     }
 }

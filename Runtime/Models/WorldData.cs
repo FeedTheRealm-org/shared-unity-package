@@ -28,6 +28,9 @@ namespace Models
         public List<WeaponItemData> weaponItems = new();
         public List<EnemyData> enemies = new();
         public List<LootTableData> lootTables = new();
+        public List<DialogData> dialogs = new();
+
+        public ShopData shopData = new();
 
         public string worldName
         {

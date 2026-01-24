@@ -30,8 +30,6 @@ public class LoginController : MonoBehaviour
     private Label _changeButton;
     private Label _messageError;
 
-    private AsyncOperation preloadOperation;
-
     private void Awake()
     {
         ui = GetComponent<UIDocument>().rootVisualElement;
@@ -64,7 +62,7 @@ public class LoginController : MonoBehaviour
             _loginButton.clicked -= OnLoginClicked;
     }
 
-    private void OnLoginClicked()
+    private async void OnLoginClicked()
     {
         logger.Log("Login Button Clicked", this);
         logger.Log("Email: " + _emailField.value, this);
@@ -72,70 +70,46 @@ public class LoginController : MonoBehaviour
 
         HideErrorMessage();
 
-        StartCoroutine(
-            authService.Login(
-                _emailField.value,
-                _passwordField.value,
-                (err) =>
-                {
-                    if (string.IsNullOrEmpty(err))
-                    {
-                        logger.Log($"Navigating to {session.APIToken}", this);
-                        if (preloadOperation != null)
-                        {
-                            preloadOperation.allowSceneActivation = true;
-                            logger.Log("Activating preloaded " + targetScene.SceneName + ".", this);
-                        }
-                        else
-                        {
-                            SceneManager.LoadScene(targetScene.SceneName);
-                        }
-                    }
-                    else
-                    {
-                        logger.Log("Login failed", this, Logging.LogType.Error);
-                        if (err == "You must verify your email address before you can log in.")
-                        {
-                            logger.Log(
-                                "Navigating to " + verifyCodeScene.SceneName + " for verification.",
-                                this
-                            );
-                            session.SetEmail(_emailField.value);
-                            session.SetPassword(_passwordField.value);
-                            SceneManager.LoadScene(verifyCodeScene.SceneName);
-                        }
-                        ShowErrorMessage(err);
-                    }
-                }
-            )
-        );
+        string err = await authService.Login(_emailField.value, _passwordField.value);
+
+        if (!string.IsNullOrEmpty(err))
+        {
+            logger.Log("Login failed", this, Logging.LogType.Error);
+            if (err == "You must verify your email address before you can log in.")
+            {
+                logger.Log(
+                    "Navigating to " + verifyCodeScene.SceneName + " for verification.",
+                    this
+                );
+                session.SetEmail(_emailField.value);
+                session.SetPassword(_passwordField.value);
+                SceneManager.LoadScene(verifyCodeScene.SceneName);
+            }
+            ShowErrorMessage(err);
+            return;
+        }
+        SceneManager.LoadScene(targetScene.SceneName);
     }
 
     private void ShowErrorMessage(string err)
     {
         if (_messageError == null)
             return;
-        if (err.Contains("verify your email address"))
+
+        _messageError.text = err switch
         {
-            _messageError.text = "You must verify your email address.";
-        }
-        else if (err.ToLower().Contains("connection") || err.ToLower().Contains("server"))
-        {
-            _messageError.text = "Connection to the server failed.";
-        }
-        else if (
-            err.ToLower().Contains("credentials")
-            || err.ToLower().Contains("password")
-            || err.ToLower().Contains("email")
-        )
-        {
-            _messageError.text = "Wrong credentials.";
-        }
-        else
-        {
-            _messageError.text = err;
-        }
-        _messageError.style.display = UnityEngine.UIElements.DisplayStyle.Flex;
+            var e when e.Contains("verify your email address") =>
+                "You must verify your email address.",
+            var e when e.ToLower().Contains("connection") || e.ToLower().Contains("server") =>
+                "Connection to the server failed.",
+            var e
+                when e.ToLower().Contains("credentials")
+                    || e.ToLower().Contains("password")
+                    || e.ToLower().Contains("email") => "Wrong credentials.",
+            _ => err,
+        };
+
+        _messageError.style.display = DisplayStyle.Flex;
     }
 
     private void HideErrorMessage()
@@ -143,6 +117,6 @@ public class LoginController : MonoBehaviour
         if (_messageError == null)
             return;
         _messageError.text = "";
-        _messageError.style.display = UnityEngine.UIElements.DisplayStyle.None;
+        _messageError.style.display = DisplayStyle.None;
     }
 }

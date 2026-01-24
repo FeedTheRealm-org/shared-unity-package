@@ -28,8 +28,6 @@ public class SignUpController : MonoBehaviour
     private Label _messageError;
     private Label _changeButton;
 
-    private AsyncOperation preloadOperation;
-
     private void Awake()
     {
         ui = GetComponent<UIDocument>().rootVisualElement;
@@ -61,7 +59,7 @@ public class SignUpController : MonoBehaviour
             _signUpButton.clicked -= OnLoginClicked;
     }
 
-    private void OnLoginClicked()
+    private async void OnLoginClicked()
     {
         logger.Log("Login Button Clicked", this);
         logger.Log("Email: " + _emailField.value, this);
@@ -74,34 +72,22 @@ public class SignUpController : MonoBehaviour
             return;
         }
 
-        StartCoroutine(
-            authService.SignUp(
-                _emailField.value,
-                _passwordField.value,
-                (success, err) =>
-                {
-                    if (success)
-                    {
-                        logger.Log("SignUp successful, email: " + _emailField.value, this);
-                        session.SetEmail(_emailField.value);
-                        session.SetPassword(_passwordField.value);
-                        if (preloadOperation != null)
-                        {
-                            preloadOperation.allowSceneActivation = true;
-                            logger.Log("Activating preloaded " + targetScene.SceneName + ".", this);
-                        }
-                        else
-                        {
-                            SceneManager.LoadScene(targetScene.SceneName);
-                        }
-                    }
-                    else
-                    {
-                        logger.Log("SignUp failed", this, Logging.LogType.Error);
-                        _messageError.text = err;
-                    }
-                }
-            )
+        (bool success, string err) = await authService.SignUp(
+            _emailField.value,
+            _passwordField.value
         );
+
+        if (success)
+        {
+            logger.Log("SignUp successful, email: " + _emailField.value, this);
+            session.SetEmail(_emailField.value);
+            session.SetPassword(_passwordField.value);
+            SceneManager.LoadScene(targetScene.SceneName);
+        }
+        else
+        {
+            logger.Log("SignUp failed", this, Logging.LogType.Error);
+            _messageError.text = err;
+        }
     }
 }
