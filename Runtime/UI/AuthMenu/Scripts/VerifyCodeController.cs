@@ -46,7 +46,6 @@ public class VerifyCodeController : MonoBehaviour
             _refreshCodeButton.RegisterCallback<ClickEvent>(evt => OnRefreshCodeClicked());
 
         _changeButton = ui.Q<Label>("LoginBackButton");
-        _changeButton = ui.Q<Label>("LoginBackButton");
         _changeButton.RegisterCallback<ClickEvent>(evt =>
         {
             logger.Log("Navigating to " + backScene.SceneName + ".", this);
