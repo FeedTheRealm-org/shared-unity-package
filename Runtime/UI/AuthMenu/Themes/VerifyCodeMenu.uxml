@@ -6,6 +6,7 @@
             <ui:Label text="Verify code" name="FormTitle" class="AuthFormTitle" />
             <ui:Label name="MessageError" class="AuthChangeButton AuthMessageError" />
             <ui:Label text="Go back to Login" name="LoginBackButton" class="AuthChangeButton" />
+            <ui:Label text="Refresh code" name="RefreshCodeButton" class="AuthChangeButton" />
             <ui:Button text="Verify code" name="VerifyCodeButton" class="AuthFormButton" />
         </ui:VisualElement>
     </ui:VisualElement>

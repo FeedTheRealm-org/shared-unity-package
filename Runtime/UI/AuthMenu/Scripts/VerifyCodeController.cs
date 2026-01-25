@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -26,6 +27,7 @@ public class VerifyCodeController : MonoBehaviour
     private TextField _codeField;
     private Label _changeButton;
     private Label _messageError;
+    private Label _refreshCodeButton;
 
     private void Awake()
     {
@@ -38,6 +40,10 @@ public class VerifyCodeController : MonoBehaviour
 
         _verifyCodeButton = ui.Q<Button>("VerifyCodeButton");
         _verifyCodeButton.clicked += OnLoginClicked;
+
+        _refreshCodeButton = ui.Q<Label>("RefreshCodeButton");
+        if (_refreshCodeButton != null)
+            _refreshCodeButton.RegisterCallback<ClickEvent>(evt => OnRefreshCodeClicked());
 
         _changeButton = ui.Q<Label>("LoginBackButton");
         _changeButton = ui.Q<Label>("LoginBackButton");
@@ -55,6 +61,8 @@ public class VerifyCodeController : MonoBehaviour
     {
         if (_verifyCodeButton != null)
             _verifyCodeButton.clicked -= OnLoginClicked;
+        if (_refreshCodeButton != null)
+            _refreshCodeButton.UnregisterCallback<ClickEvent>(evt => OnRefreshCodeClicked());
     }
 
     private async void OnLoginClicked()
@@ -76,5 +84,30 @@ public class VerifyCodeController : MonoBehaviour
             SceneManager.LoadScene(targetScene.SceneName);
         else
             _messageError.text = loginErr;
+    }
+
+    private async void OnRefreshCodeClicked()
+    {
+        logger.Log($"Refresh code Button Clicked - Email: {session.Email}", this);
+
+        var (success, err) = await authService.RefreshVerification(session.Email);
+
+        if (success)
+        {
+            _messageError.text = "Sending you a new verification code.";
+        }
+        else
+        {
+            _messageError.text = err;
+        }
+
+        StartCoroutine(ClearMessageAfterSeconds(3f));
+    }
+
+    private IEnumerator ClearMessageAfterSeconds(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        if (_messageError != null)
+            _messageError.text = "";
     }
 }
