@@ -38,4 +38,16 @@ namespace API
         public string email;
         public bool verified;
     }
+
+    [System.Serializable]
+    public class RefreshVerificationRequest
+    {
+        public string email;
+    }
+
+    [System.Serializable]
+    public class RefreshVerificationResponse
+    {
+        public string email;
+    }
 }
