@@ -177,7 +177,6 @@ namespace API
                 var trimmed = filter.Trim();
                 url = $"{url}&filter={UnityWebRequest.EscapeURL(trimmed)}";
             }
-            logger.Log($"Fetching worlds from URL: {url}", this);
             var task = SendRequestAsync(url, "GET", accessToken, null, "GetWorldPage");
             while (!task.IsCompleted)
                 yield return null;
@@ -277,7 +276,6 @@ namespace API
         )
         {
             var url = $"{GetBaseUrl()}/{worldID}";
-            logger.Log($"Fetching world data from URL: {url}", this);
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "GET",

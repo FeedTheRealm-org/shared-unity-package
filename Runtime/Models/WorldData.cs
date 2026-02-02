@@ -37,5 +37,14 @@ namespace Models
             get => _worldName;
             set => _worldName = value?.Replace(" ", "_") ?? "New_FTR_World";
         }
+
+        public override string ToString()
+        {
+            return $"World Name: {worldName}\n" +
+               $"Structures: {objectPlacementData.Count}\n" +
+               $"Enemy Spawners: {enemies.Count}\n" +
+               $"NPC Spawners: {npcSpawnAreas.Count}\n" +
+               $"Player Spawners: {playerSpawnAreas.Count}";
+        }
     }
 }
