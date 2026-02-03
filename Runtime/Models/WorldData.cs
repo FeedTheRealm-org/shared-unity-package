@@ -40,11 +40,11 @@ namespace Models
 
         public override string ToString()
         {
-            return $"World Name: {worldName}\n" +
-               $"Structures: {objectPlacementData.Count}\n" +
-               $"Enemy Spawners: {enemies.Count}\n" +
-               $"NPC Spawners: {npcSpawnAreas.Count}\n" +
-               $"Player Spawners: {playerSpawnAreas.Count}";
+            return $"World Name: {worldName}\n"
+                + $"Structures: {objectPlacementData.Count}\n"
+                + $"Enemy Spawners: {enemies.Count}\n"
+                + $"NPC Spawners: {npcSpawnAreas.Count}\n"
+                + $"Player Spawners: {playerSpawnAreas.Count}";
         }
     }
 }
