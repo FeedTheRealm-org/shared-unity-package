@@ -15,6 +15,9 @@ namespace Models
 
         public bool isShop = false;
 
+        public Vector3 colliderSize;
+        public Vector3 colliderCenter;
+
         [NonSerialized]
         public string structureFilepath;
 
@@ -25,7 +28,9 @@ namespace Models
             Vector3 rotation,
             Vector3 offset,
             Vector3 position,
-            bool isShop = false
+            bool isShop = false,
+            Vector3 colliderSize = default,
+            Vector3 colliderCenter = default
         )
         {
             this.id = id;
@@ -35,6 +40,8 @@ namespace Models
             this.offset = offset;
             this.position = position;
             this.isShop = isShop;
+            this.colliderSize = colliderSize;
+            this.colliderCenter = colliderCenter;
         }
 
         public override string ToString()
