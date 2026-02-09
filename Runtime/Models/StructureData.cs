@@ -18,6 +18,8 @@ namespace Models
         public Vector3 colliderSize;
         public Vector3 colliderCenter;
 
+        public bool hasCustomCollider;
+
         [NonSerialized]
         public string structureFilepath;
 
@@ -42,11 +44,21 @@ namespace Models
             this.isShop = isShop;
             this.colliderSize = colliderSize;
             this.colliderCenter = colliderCenter;
+
+            if (colliderSize == default)
+            {
+                this.colliderSize = Vector3.zero;
+                hasCustomCollider = false;
+            }
+            else
+            {
+                hasCustomCollider = true;
+            }
         }
 
         public override string ToString()
         {
-            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, Offset: {offset}, Filepath: {structureFilepath}, IsShop: {isShop}";
+            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, Offset: {offset}, Filepath: {structureFilepath}, IsShop: {isShop}, ColliderSize: {colliderSize}, HasCustomCollider: {hasCustomCollider}";
         }
     }
 }
