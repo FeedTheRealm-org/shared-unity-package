@@ -58,7 +58,7 @@ namespace Models
 
         public override string ToString()
         {
-            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, Offset: {offset}, Filepath: {structureFilepath}, IsShop: {isShop}, ColliderSize: {colliderSize}, HasCustomCollider: {hasCustomCollider}";
+            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, Offset: {offset}, Filepath: {structureFilepath}, IsShop: {isShop}, ColliderSize: {colliderSize}, ColliderCenter: {colliderCenter}, HasCustomCollider: {hasCustomCollider}";
         }
     }
 }
