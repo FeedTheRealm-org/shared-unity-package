@@ -9,7 +9,11 @@
   ],
   "excludePlatforms": [],
   "defineConstraints": [],
+  "autoReferenced": true,
+  "noEngineReferences": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "versionDefines": [],
   "allowUnsafeCode": false,
   "languageVersion": "10.0"
-
 }
