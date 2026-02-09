@@ -29,6 +29,7 @@ namespace Models
         public List<EnemyData> enemies = new();
         public List<LootTableData> lootTables = new();
         public List<DialogData> dialogs = new();
+        public List<NPCData> npcs = new();
 
         public ShopData shopData = new();
 
