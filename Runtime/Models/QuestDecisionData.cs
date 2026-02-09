@@ -1,4 +1,4 @@
-namespace Game.Core.Quests
+namespace Models
 {
     public class QuestDecisionData
     {
