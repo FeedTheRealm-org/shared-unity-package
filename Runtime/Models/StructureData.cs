@@ -15,6 +15,11 @@ namespace Models
 
         public bool isShop = false;
 
+        public Vector3 colliderSize;
+        public Vector3 colliderCenter;
+
+        public bool hasCustomCollider;
+
         [NonSerialized]
         public string structureFilepath;
 
@@ -25,7 +30,9 @@ namespace Models
             Vector3 rotation,
             Vector3 offset,
             Vector3 position,
-            bool isShop = false
+            bool isShop = false,
+            Vector3 colliderSize = default,
+            Vector3 colliderCenter = default
         )
         {
             this.id = id;
@@ -35,11 +42,23 @@ namespace Models
             this.offset = offset;
             this.position = position;
             this.isShop = isShop;
+            this.colliderSize = colliderSize;
+            this.colliderCenter = colliderCenter;
+
+            if (colliderSize == default)
+            {
+                this.colliderSize = Vector3.zero;
+                hasCustomCollider = false;
+            }
+            else
+            {
+                hasCustomCollider = true;
+            }
         }
 
         public override string ToString()
         {
-            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, Offset: {offset}, Filepath: {structureFilepath}, IsShop: {isShop}";
+            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, Offset: {offset}, Filepath: {structureFilepath}, IsShop: {isShop}, ColliderSize: {colliderSize}, ColliderCenter: {colliderCenter}, HasCustomCollider: {hasCustomCollider}";
         }
     }
 }

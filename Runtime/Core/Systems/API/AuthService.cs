@@ -188,5 +188,59 @@ namespace API
                 return (res.data.verified, "");
             }
         }
+
+        public async Task<(bool success, string message)> RefreshVerification(string email)
+        {
+            string url = $"{GetBaseUrl()}/refresh";
+            RefreshVerificationRequest payload = new RefreshVerificationRequest { email = email };
+            string json = JsonUtility.ToJson(payload);
+
+            Task<(string, UnityWebRequest.Result, long)> task = SendRequestAsync(
+                url,
+                "POST",
+                null,
+                json,
+                "RefreshVerification"
+            );
+            (string responseText, UnityWebRequest.Result result, long statusCode) = await task;
+
+            if (result == UnityWebRequest.Result.ConnectionError)
+            {
+                logger.Log(
+                    $"Refresh Verification connection error: {responseText}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (
+                    false,
+                    "Unable to connect to server. Please check your internet connection."
+                );
+            }
+            else if (result == UnityWebRequest.Result.ProtocolError)
+            {
+                ErrorResponse res = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<ErrorResponse>(responseText);
+                string errorMessage = res?.detail ?? responseText;
+                if (statusCode >= 500)
+                {
+                    errorMessage = "Server error. Please try again later.";
+                }
+                logger.Log(
+                    $"Refresh Verification error ({statusCode}): {(res != null ? $"{res.title}: {errorMessage}" : responseText)}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (false, errorMessage);
+            }
+            else
+            {
+                DataEnvelope<RefreshVerificationResponse> res = JsonUtility.FromJson<
+                    DataEnvelope<RefreshVerificationResponse>
+                >(responseText);
+                logger.Log($"Refresh Verification response: {responseText}", this);
+                return (true, "Your code has been refreshed.");
+            }
+        }
     }
 }
