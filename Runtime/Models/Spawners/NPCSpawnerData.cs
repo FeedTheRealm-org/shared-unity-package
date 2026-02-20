@@ -8,9 +8,6 @@ namespace Models
     {
         public string npcId = "";
 
-        public NPCSpawnerData(Vector3 position, float radius)
-            : base(position, radius) { }
-
         public NPCSpawnerData(Vector3 position, float radius, string npcId)
             : base(position, radius)
         {
