@@ -9,7 +9,7 @@ MonoImporter:
   - targetScene: {fileID: 102900000, guid: abd87fe87e8b55f40820f171267a39bc, type: 3}
   - logger: {fileID: 11400000, guid: 544ea290701b4455595d55f3c34b4fc5, type: 2}
   executionOrder: 0
-  icon: {instanceID: 0}
+  icon: {fileID: 2800000, guid: 69b61ed5fefec04a886f291d790c9521, type: 3}
   userData:
   assetBundleName:
   assetBundleVariant:
