@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Models
+namespace FTRShared.Runtime.Models
 {
     [Serializable]
     public class SpawnerData

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using UnityEngine;
 
-namespace Models
+namespace FTRShared.Runtime.Models
 {
     [Serializable]
     public class WorldMetadata

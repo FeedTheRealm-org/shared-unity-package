@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Models
+namespace FTRShared.Runtime.Models
 {
     [Serializable]
     public class ProductData
