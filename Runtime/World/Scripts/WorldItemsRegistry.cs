@@ -64,8 +64,8 @@ namespace Worlds
                     if (
                         !string.IsNullOrEmpty(consumable.id)
                         && (
-                            string.IsNullOrEmpty(consumable.spriteFilepath)
-                            || !string.IsNullOrEmpty(consumable.spriteFilepath)
+                            string.IsNullOrEmpty(consumable.spriteFilePath)
+                            || !string.IsNullOrEmpty(consumable.spriteFilePath)
                         )
                     )
                     {
@@ -111,7 +111,7 @@ namespace Worlds
                         continue;
                     }
 
-                    if (enemy.lootTableID == null)
+                    if (string.IsNullOrEmpty(enemy.lootTableId))
                     {
                         continue;
                     }

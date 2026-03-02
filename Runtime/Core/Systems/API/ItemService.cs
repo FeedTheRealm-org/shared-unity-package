@@ -1,9 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using Models;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -42,16 +39,16 @@ namespace API
 
             for (int i = 0; i < sprites.Count; i++)
             {
-                (string spriteId, string spriteFilepath) = sprites[i];
+                (string spriteId, string spriteFilePath) = sprites[i];
 
-                if (spriteFilepath == null)
+                if (spriteFilePath == null)
                 {
                     continue;
                 }
 
-                string absolutePath = spriteFilepath;
-                if (!Path.IsPathRooted(spriteFilepath))
-                    absolutePath = Path.Combine(Application.streamingAssetsPath, spriteFilepath);
+                string absolutePath = spriteFilePath;
+                if (!Path.IsPathRooted(spriteFilePath))
+                    absolutePath = Path.Combine(Application.streamingAssetsPath, spriteFilePath);
 
                 if (!File.Exists(absolutePath))
                 {
@@ -76,9 +73,7 @@ namespace API
 
                 form.AddField($"id[{j + 1}]", spriteId);
                 byte[] spriteData = File.ReadAllBytes(absolutePath);
-                UnityEngine.Debug.Log(
-                    $"Adding sprite to form: {spriteId}, path: {absolutePath}, size: {spriteData.Length} bytes"
-                );
+                logger.Log($"Adding sprite to form: {spriteId} (index {j + 1})", this);
                 form.AddBinaryData(
                     $"sprite[{j + 1}]",
                     spriteData,

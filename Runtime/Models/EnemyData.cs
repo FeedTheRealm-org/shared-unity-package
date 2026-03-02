@@ -14,10 +14,10 @@ namespace Models
         public int damage = 0;
         public int speed = 0;
         public int range = 0;
-        public string spriteFilepath = "";
+        public string spriteFilePath = "";
 
         // Loot table that this enemy can drop
-        public string lootTableID = "";
+        public string lootTableId = "";
 
         public EnemyData(
             string id,
@@ -27,8 +27,8 @@ namespace Models
             int damage,
             int speed,
             int range,
-            string spriteFilepath,
-            string lootTableID
+            string spriteFilePath,
+            string lootTableId
         )
         {
             this.id = id;
@@ -38,8 +38,8 @@ namespace Models
             this.damage = damage;
             this.speed = speed;
             this.range = range;
-            this.spriteFilepath = spriteFilepath;
-            this.lootTableID = lootTableID;
+            this.spriteFilePath = spriteFilePath;
+            this.lootTableId = lootTableId;
         }
     }
 }

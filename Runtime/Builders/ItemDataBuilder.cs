@@ -11,10 +11,10 @@ namespace Builders
             string id,
             string name,
             string description,
-            string spriteFilepath
+            string spriteFilePath
         )
         {
-            itemData = new Models.ItemData(id, name, description, spriteFilepath);
+            itemData = new Models.ItemData(id, name, description, spriteFilePath);
 
             return this;
         }

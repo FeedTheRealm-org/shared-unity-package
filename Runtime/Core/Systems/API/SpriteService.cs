@@ -41,21 +41,21 @@ namespace API
 
             for (int i = 0; i < sprites.Count; i++)
             {
-                (string spriteId, string spriteFilepath) = sprites[i];
+                (string spriteId, string spriteFilePath) = sprites[i];
 
-                if (spriteFilepath == null)
+                if (spriteFilePath == null)
                 {
                     /*logger.Log(
-                        $"Sprite {i}: spriteFilepath is null",
+                        $"Sprite {i}: spriteFilePath is null",
                         this,
                         Logging.LogType.Warning
                     );*/
                     continue;
                 }
 
-                string absolutePath = spriteFilepath;
-                if (!Path.IsPathRooted(spriteFilepath))
-                    absolutePath = Path.Combine(Application.streamingAssetsPath, spriteFilepath);
+                string absolutePath = spriteFilePath;
+                if (!Path.IsPathRooted(spriteFilePath))
+                    absolutePath = Path.Combine(Application.streamingAssetsPath, spriteFilePath);
 
                 if (!File.Exists(absolutePath))
                 {
