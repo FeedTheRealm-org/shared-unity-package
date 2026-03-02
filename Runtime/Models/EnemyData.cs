@@ -17,7 +17,7 @@ namespace Models
         public string spriteFilepath = "";
 
         // Loot table that this enemy can drop
-        public LootTableData lootTable;
+        public string lootTableID = "";
 
         public EnemyData(
             string id,
@@ -28,7 +28,7 @@ namespace Models
             int speed,
             int range,
             string spriteFilepath,
-            LootTableData lootTable
+            string lootTableID
         )
         {
             this.id = id;
@@ -39,7 +39,7 @@ namespace Models
             this.speed = speed;
             this.range = range;
             this.spriteFilepath = spriteFilepath;
-            this.lootTable = lootTable;
+            this.lootTableID = lootTableID;
         }
     }
 }

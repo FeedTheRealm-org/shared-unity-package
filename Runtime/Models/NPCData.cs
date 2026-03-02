@@ -17,7 +17,7 @@ namespace Models
         /// (for example, a Resources path, Addressables key, or relative path,
         /// depending on the project's asset loading strategy).
         /// </summary>
-        public string spriteFilepath = "";
+        public string spriteFilePath = "";
         public NPCDialogData npcDialog = null;
 
         public NPCData(
@@ -31,7 +31,7 @@ namespace Models
             this.id = id;
             this.name = name;
             this.description = description;
-            this.spriteFilepath = spriteFilePath;
+            this.spriteFilePath = spriteFilePath;
             this.npcDialog = npcDialog;
         }
     }
