@@ -12,7 +12,12 @@ namespace Models
         public int ResetAfterKills = 6;
         public float ResetDelay = 10f;
 
-        public EnemySpawnerData(Vector3 position, float radius)
-            : base(position, radius) { }
+        public string EnemyId = "";
+
+        public EnemySpawnerData(Vector3 position, float radius, string enemyId = "")
+            : base(position, radius)
+        {
+            EnemyId = enemyId;
+        }
     }
 }
