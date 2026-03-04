@@ -19,11 +19,19 @@ namespace Models
     [Serializable]
     public class ShopData
     {
-        public List<ProductData> products = new List<ProductData>();
+        public string id;
+        public string displayName;
+        public List<ProductData> products = new();
 
         public override string ToString()
         {
             return $"ShopData: {products.Count} products available.";
         }
+    }
+
+    [Serializable]
+    public class WorldShopsData
+    {
+        public List<ShopData> shops = new();
     }
 }

@@ -31,8 +31,7 @@ namespace Models
         public List<DialogData> dialogs = new();
         public List<NPCData> npcs = new();
         public List<QuestData> quests = new();
-
-        public ShopData shopData = new();
+        public WorldShopsData worldShopsData = new();
 
         public string worldName
         {
