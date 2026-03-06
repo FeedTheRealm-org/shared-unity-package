@@ -1,9 +1,8 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-public class VerifyCodeController : MonoBehaviour
+public class VerifyCodeController : MonoBehaviour, IAuthUIController
 {
     [SerializeField]
     private API.AuthService authService;
@@ -18,6 +17,7 @@ public class VerifyCodeController : MonoBehaviour
     [SerializeField]
     private Logging.Logger logger;
 
+    private GameObject _backgroundInstance;
     private VisualElement ui;
 
     private Button _verifyCodeButton;
@@ -26,6 +26,8 @@ public class VerifyCodeController : MonoBehaviour
     private Label _changeButton;
     private Label _messageError;
     private Label _refreshCodeButton;
+
+    public void SetBackground(GameObject bg) => _backgroundInstance = bg;
 
     private void Awake()
     {
@@ -47,9 +49,7 @@ public class VerifyCodeController : MonoBehaviour
         _changeButton.RegisterCallback<ClickEvent>(evt =>
         {
             logger.Log("Switching to Login UI.", this);
-            Destroy(gameObject);
-            if (loginUI != null)
-                Instantiate(loginUI);
+            SwitchTo(loginUI);
         });
 
         _codeField = ui.Q<TextField>("CodeField");
@@ -81,10 +81,13 @@ public class VerifyCodeController : MonoBehaviour
         var loginErr = await authService.Login(session.Email, session.Password);
         if (string.IsNullOrEmpty(loginErr))
         {
-            logger.Log("Verification successful, switching to Login UI.", this);
+            logger.Log("Verification and login successful.", this);
+            if (_backgroundInstance != null)
+            {
+                Destroy(_backgroundInstance);
+                _backgroundInstance = null;
+            }
             Destroy(gameObject);
-            if (loginUI != null)
-                Instantiate(loginUI);
         }
         else
         {
@@ -115,5 +118,15 @@ public class VerifyCodeController : MonoBehaviour
         yield return new WaitForSeconds(seconds);
         if (_messageError != null)
             _messageError.text = "";
+    }
+
+    private void SwitchTo(GameObject prefab)
+    {
+        if (prefab == null)
+            return;
+        var go = Instantiate(prefab);
+        go.GetComponent<IAuthUIController>()?.SetBackground(_backgroundInstance);
+        _backgroundInstance = null;
+        Destroy(gameObject);
     }
 }

@@ -1,8 +1,7 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-public class LoginController : MonoBehaviour
+public class LoginController : MonoBehaviour, IAuthUIController
 {
     [SerializeField]
     private API.AuthService authService;
@@ -19,8 +18,9 @@ public class LoginController : MonoBehaviour
 
     [SerializeField]
     private GameObject loginBackgroundPrefab;
-    private GameObject loginBackgroundInstance;
+
     public bool showBackground = true;
+    private GameObject _backgroundInstance;
 
     [SerializeField]
     private Logging.Logger logger;
@@ -38,6 +38,14 @@ public class LoginController : MonoBehaviour
         ui = GetComponent<UIDocument>().rootVisualElement;
     }
 
+    private void Start()
+    {
+        if (showBackground && loginBackgroundPrefab != null && _backgroundInstance == null)
+            _backgroundInstance = Instantiate(loginBackgroundPrefab);
+    }
+
+    public void SetBackground(GameObject bg) => _backgroundInstance = bg;
+
     private void OnEnable()
     {
         logger.Log("LoginController enabled.", this);
@@ -49,9 +57,7 @@ public class LoginController : MonoBehaviour
         _changeButton.RegisterCallback<ClickEvent>(evt =>
         {
             logger.Log("Switching to SignUp UI.", this);
-            Destroy(gameObject);
-            if (signUpUI != null)
-                Instantiate(signUpUI);
+            SwitchTo(signUpUI);
         });
 
         _emailField = ui.Q<TextField>("EmailField");
@@ -85,18 +91,16 @@ public class LoginController : MonoBehaviour
                 logger.Log("Switching to VerifyCode UI for verification.", this);
                 session.SetEmail(_emailField.value);
                 session.SetPassword(_passwordField.value);
-                Destroy(gameObject);
-                if (verifyCodeUI != null)
-                    Instantiate(verifyCodeUI);
+                SwitchTo(verifyCodeUI);
             }
             ShowErrorMessage(err);
             return;
         }
-        logger.Log("Login successful, switching to main UI.", this);
-        if (loginBackgroundInstance != null)
+        logger.Log("Login successful.", this);
+        if (_backgroundInstance != null)
         {
-            Destroy(loginBackgroundInstance);
-            loginBackgroundInstance = null;
+            Destroy(_backgroundInstance);
+            _backgroundInstance = null;
         }
         Destroy(gameObject);
     }
@@ -122,14 +126,14 @@ public class LoginController : MonoBehaviour
         _messageError.style.display = DisplayStyle.Flex;
     }
 
-    public void InitializeBackground(bool show)
+    private void SwitchTo(GameObject prefab)
     {
-        showBackground = show;
-        if (showBackground && loginBackgroundPrefab != null && loginBackgroundInstance == null)
-        {
-            loginBackgroundInstance = Instantiate(loginBackgroundPrefab);
-            loginBackgroundInstance.SetActive(true);
-        }
+        if (prefab == null)
+            return;
+        var go = Instantiate(prefab);
+        go.GetComponent<IAuthUIController>()?.SetBackground(_backgroundInstance);
+        _backgroundInstance = null;
+        Destroy(gameObject);
     }
 
     private void HideErrorMessage()
