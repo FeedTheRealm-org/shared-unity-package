@@ -19,23 +19,24 @@ namespace API
             $"http://{apiConfig.Hostname}:{apiConfig.Port}/assets/models";
 
         /// <summary>
-        ///  Lists all asset models for a given world.
+        /// Lists all asset models for a given world.
+        /// Returns dictionary of model info with model_id as key.
         /// </summary>
-        public async Task<List<string>> ListWorldAssets(string worldId, string accessToken)
+        public async Task<Dictionary<string, ModelInfo>> ListWorldModels(string worldId, string accessToken)
         {
-            string url = $"{GetBaseUrl().TrimEnd('/')}/{worldId}";
+            string url = $"{GetBaseUrl().TrimEnd('/')}/world/{worldId}";
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "GET",
                 accessToken,
                 null,
-                "ListWorldAssets"
+                "ListWorldModels"
             );
 
             if (result == UnityWebRequest.Result.ConnectionError)
             {
                 logger.Log(
-                    $"ListWorldAssets connection error: {responseText}",
+                    $"ListWorldModels connection error: {responseText}",
                     this,
                     Logging.LogType.Error
                 );
@@ -55,22 +56,22 @@ namespace API
                     errorMessage = "Server error. Please try again later.";
                 }
                 logger.Log(
-                    $"ListWorldAssets error ({statusCode}): {errorMessage}",
+                    $"ListWorldModels error ({statusCode}): {errorMessage}",
                     this,
                     Logging.LogType.Error
                 );
                 throw new System.Exception(errorMessage);
             }
 
-            var response = JsonUtility.FromJson<AssetListResponse>(responseText);
+            var response = JsonUtility.FromJson<WorldModelsResponse>(responseText);
 
-            List<string> modelIds = new();
-            foreach (var item in response.data.models)
+            Dictionary<string, ModelInfo> models = new();
+            foreach (var model in response.data.models)
             {
-                modelIds.Add(item.model_id);
+                models[model.model_id] = model;
             }
 
-            return modelIds;
+            return models;
         }
 
         /// <summary>

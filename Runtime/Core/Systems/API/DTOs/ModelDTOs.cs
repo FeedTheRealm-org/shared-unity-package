@@ -21,4 +21,24 @@ namespace API
         public string model_id;
         public string name;
     }
+
+    [System.Serializable]
+    public class ModelInfo
+    {
+        public string model_id;
+        public string url;
+    }
+
+    [System.Serializable]
+    public class WorldModelsData
+    {
+        public string world_id;
+        public ModelInfo[] models;
+    }
+
+    [System.Serializable]
+    public class WorldModelsResponse
+    {
+        public WorldModelsData data;
+    }
 }
