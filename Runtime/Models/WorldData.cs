@@ -29,6 +29,8 @@ namespace FTRShared.Runtime.Models
         public List<EnemyData> enemies = new();
         public List<LootTableData> lootTables = new();
         public List<DialogData> dialogs = new();
+        public List<NPCData> npcs = new();
+        public List<QuestData> quests = new();
 
         public ShopData shopData = new();
 
