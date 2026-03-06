@@ -18,6 +18,11 @@ public class LoginController : MonoBehaviour
     private GameObject verifyCodeUI;
 
     [SerializeField]
+    private GameObject loginBackgroundPrefab;
+    private GameObject loginBackgroundInstance;
+    public bool showBackground = true;
+
+    [SerializeField]
     private Logging.Logger logger;
 
     private VisualElement ui;
@@ -88,6 +93,11 @@ public class LoginController : MonoBehaviour
             return;
         }
         logger.Log("Login successful, switching to main UI.", this);
+        if (loginBackgroundInstance != null)
+        {
+            Destroy(loginBackgroundInstance);
+            loginBackgroundInstance = null;
+        }
         Destroy(gameObject);
     }
 
@@ -110,6 +120,16 @@ public class LoginController : MonoBehaviour
         };
 
         _messageError.style.display = DisplayStyle.Flex;
+    }
+
+    public void InitializeBackground(bool show)
+    {
+        showBackground = show;
+        if (showBackground && loginBackgroundPrefab != null && loginBackgroundInstance == null)
+        {
+            loginBackgroundInstance = Instantiate(loginBackgroundPrefab);
+            loginBackgroundInstance.SetActive(true);
+        }
     }
 
     private void HideErrorMessage()
