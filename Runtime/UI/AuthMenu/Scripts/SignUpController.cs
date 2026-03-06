@@ -10,11 +10,12 @@ public class SignUpController : MonoBehaviour
     [SerializeField]
     private Session.Session session;
 
+    [Header("UI Prefabs")]
     [SerializeField]
-    private SceneReference targetScene;
+    private GameObject loginUI;
 
     [SerializeField]
-    private SceneReference otherFormScene;
+    private GameObject verifyCodeUI;
 
     [SerializeField]
     private Logging.Logger logger;
@@ -43,8 +44,10 @@ public class SignUpController : MonoBehaviour
         _changeButton = ui.Q<Label>("LoginChangeButton");
         _changeButton.RegisterCallback<ClickEvent>(evt =>
         {
-            logger.Log("Navigating to " + otherFormScene.SceneName + ".", this);
-            SceneManager.LoadScene(otherFormScene.SceneName);
+            logger.Log("Switching to Login UI.", this);
+            Destroy(gameObject);
+            if (loginUI != null)
+                Instantiate(loginUI);
         });
 
         _emailField = ui.Q<TextField>("EmailField");
@@ -82,7 +85,9 @@ public class SignUpController : MonoBehaviour
             logger.Log("SignUp successful, email: " + _emailField.value, this);
             session.SetEmail(_emailField.value);
             session.SetPassword(_passwordField.value);
-            SceneManager.LoadScene(targetScene.SceneName);
+            Destroy(gameObject);
+            if (verifyCodeUI != null)
+                Instantiate(verifyCodeUI);
         }
         else
         {

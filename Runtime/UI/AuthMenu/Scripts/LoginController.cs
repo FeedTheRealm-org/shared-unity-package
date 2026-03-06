@@ -10,14 +10,12 @@ public class LoginController : MonoBehaviour
     [SerializeField]
     private Session.Session session;
 
+    [Header("UI Prefabs")]
     [SerializeField]
-    private SceneReference targetScene;
+    private GameObject signUpUI;
 
     [SerializeField]
-    private SceneReference otherFormScene;
-
-    [SerializeField]
-    private SceneReference verifyCodeScene;
+    private GameObject verifyCodeUI;
 
     [SerializeField]
     private Logging.Logger logger;
@@ -45,8 +43,10 @@ public class LoginController : MonoBehaviour
         _changeButton = ui.Q<Label>("SignUpChangeButton");
         _changeButton.RegisterCallback<ClickEvent>(evt =>
         {
-            logger.Log("Navigating to " + otherFormScene.SceneName + ".", this);
-            SceneManager.LoadScene(otherFormScene.SceneName);
+            logger.Log("Switching to SignUp UI.", this);
+            Destroy(gameObject);
+            if (signUpUI != null)
+                Instantiate(signUpUI);
         });
 
         _emailField = ui.Q<TextField>("EmailField");
@@ -77,18 +77,18 @@ public class LoginController : MonoBehaviour
             logger.Log("Login failed", this, Logging.LogType.Error);
             if (err == "You must verify your email address before you can log in.")
             {
-                logger.Log(
-                    "Navigating to " + verifyCodeScene.SceneName + " for verification.",
-                    this
-                );
+                logger.Log("Switching to VerifyCode UI for verification.", this);
                 session.SetEmail(_emailField.value);
                 session.SetPassword(_passwordField.value);
-                SceneManager.LoadScene(verifyCodeScene.SceneName);
+                Destroy(gameObject);
+                if (verifyCodeUI != null)
+                    Instantiate(verifyCodeUI);
             }
             ShowErrorMessage(err);
             return;
         }
-        SceneManager.LoadScene(targetScene.SceneName);
+        logger.Log("Login successful, switching to main UI.", this);
+        Destroy(gameObject);
     }
 
     private void ShowErrorMessage(string err)

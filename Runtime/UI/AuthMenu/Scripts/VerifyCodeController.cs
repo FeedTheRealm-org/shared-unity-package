@@ -11,11 +11,9 @@ public class VerifyCodeController : MonoBehaviour
     [SerializeField]
     private Session.Session session;
 
+    [Header("UI Prefabs")]
     [SerializeField]
-    private SceneReference targetScene;
-
-    [SerializeField]
-    private SceneReference backScene;
+    private GameObject loginUI;
 
     [SerializeField]
     private Logging.Logger logger;
@@ -48,8 +46,10 @@ public class VerifyCodeController : MonoBehaviour
         _changeButton = ui.Q<Label>("LoginBackButton");
         _changeButton.RegisterCallback<ClickEvent>(evt =>
         {
-            logger.Log("Navigating to " + backScene.SceneName + ".", this);
-            SceneManager.LoadScene(backScene.SceneName);
+            logger.Log("Switching to Login UI.", this);
+            Destroy(gameObject);
+            if (loginUI != null)
+                Instantiate(loginUI);
         });
 
         _codeField = ui.Q<TextField>("CodeField");
@@ -80,9 +80,16 @@ public class VerifyCodeController : MonoBehaviour
         }
         var loginErr = await authService.Login(session.Email, session.Password);
         if (string.IsNullOrEmpty(loginErr))
-            SceneManager.LoadScene(targetScene.SceneName);
+        {
+            logger.Log("Verification successful, switching to Login UI.", this);
+            Destroy(gameObject);
+            if (loginUI != null)
+                Instantiate(loginUI);
+        }
         else
+        {
             _messageError.text = loginErr;
+        }
     }
 
     private async void OnRefreshCodeClicked()
