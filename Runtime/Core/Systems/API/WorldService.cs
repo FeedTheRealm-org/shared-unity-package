@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -72,7 +72,7 @@ namespace API
         ///  Post a new world to the server (POST).
         /// </summary>
         private Task<(string id, string error, long statusCode)> CreateWorld(
-            Models.WorldData data,
+            FTRShared.Runtime.Models.WorldData data,
             string fileName,
             string description,
             string accessToken
@@ -91,7 +91,7 @@ namespace API
         ///  Update an existing world on the server (PUT).
         /// </summary>
         private Task<(string id, string error, long statusCode)> UpdateWorld(
-            Models.WorldData data,
+            FTRShared.Runtime.Models.WorldData data,
             string fileName,
             string description,
             string accessToken
@@ -112,7 +112,7 @@ namespace API
         private async Task<(string id, string error, long statusCode)> SendWorldRequest(
             string url,
             string method,
-            Models.WorldData data,
+            FTRShared.Runtime.Models.WorldData data,
             string fileName,
             string description,
             string accessToken,
@@ -349,7 +349,9 @@ namespace API
                     return (null, "Failed to parse envelope", statusCode);
                 }
 
-                var worldData = JsonUtility.FromJson<Models.WorldData>(worldEnvelope.data.data);
+                var worldData = JsonUtility.FromJson<FTRShared.Runtime.Models.WorldData>(
+                    worldEnvelope.data.data
+                );
                 if (worldData == null)
                 {
                     return (null, "Failed to parse world data", statusCode);

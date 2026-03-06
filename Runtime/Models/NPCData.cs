@@ -1,6 +1,6 @@
 using System;
 
-namespace Models
+namespace FTRShared.Runtime.Models
 {
     [Serializable]
     public class NPCData

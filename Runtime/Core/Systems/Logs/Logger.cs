@@ -42,25 +42,32 @@ namespace Logging
             }
         }
 
+        public void Log(object msg, LogType type = LogType.Info)
+        {
+            Log(msg, null, type);
+        }
+
         public void Log(object msg, Object sender, LogType type = LogType.Info)
         {
-            if (showLogs)
+            if (!showLogs)
+                return;
+
+            var time = System.DateTime.Now.ToString("HH:mm:ss.fff");
+            string formattedMsg =
+                $"{_stringColor}{time} | {type} | {loggerPrefix} {msg}{_resetColor}";
+
+            switch (type)
             {
-                var time = System.DateTime.Now.ToString("HH:mm:ss.fff");
-                string formattedMsg =
-                    $"{_stringColor}{time} | {type.ToString()} | {loggerPrefix} {msg}{_resetColor}";
-                switch (type)
-                {
-                    case LogType.Info:
-                        Debug.Log(formattedMsg, sender);
-                        break;
-                    case LogType.Warning:
-                        Debug.LogWarning(formattedMsg, sender);
-                        break;
-                    case LogType.Error:
-                        Debug.LogError(formattedMsg, sender);
-                        break;
-                }
+                case LogType.Warning:
+                    Debug.LogWarning(formattedMsg, sender);
+                    break;
+                case LogType.Error:
+                    Debug.LogError(formattedMsg, sender);
+                    break;
+                case LogType.Info:
+                default:
+                    Debug.Log(formattedMsg, sender);
+                    break;
             }
         }
     }

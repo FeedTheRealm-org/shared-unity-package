@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 
 namespace Worlds

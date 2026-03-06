@@ -12,12 +12,12 @@
         "WindowsStandalone64"
     ],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "defineConstraints": [],
+    "autoReferenced": true,
+    "noEngineReferences": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
     "versionDefines": [],
-    "noEngineReferences": false,
+    "allowUnsafeCode": false,
     "languageVersion": "10.0"
 }

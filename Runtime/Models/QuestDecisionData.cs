@@ -1,4 +1,4 @@
-namespace Models
+namespace FTRShared.Runtime.Models
 {
     public class QuestDecisionData
     {
