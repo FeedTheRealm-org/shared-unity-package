@@ -41,7 +41,7 @@ namespace FTRShared.Runtime.Models
             float cooldown,
             int maxStack
         )
-            : base(itemData.id, itemData.name, itemData.description, itemData.spriteFilepath)
+            : base(itemData.id, itemData.name, itemData.description, itemData.spriteFilePath)
         {
             this.effectType = effectType;
             this.value = value;

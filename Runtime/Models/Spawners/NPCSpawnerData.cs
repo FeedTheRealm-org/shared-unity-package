@@ -6,15 +6,12 @@ namespace FTRShared.Runtime.Models
     [Serializable]
     public class NPCSpawnerData : SpawnerData
     {
-        public string npcId = "";
+        public string NpcId = "";
 
-        public NPCSpawnerData(Vector3 position, float radius)
-            : base(position, radius) { }
-
-        public NPCSpawnerData(Vector3 position, float radius, string npcId)
+        public NPCSpawnerData(Vector3 position, float radius, string NpcId)
             : base(position, radius)
         {
-            this.npcId = npcId;
+            this.NpcId = NpcId;
         }
     }
 }

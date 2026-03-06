@@ -9,14 +9,14 @@ namespace FTRShared.Runtime.Models
         public string id;
         public string name = "Item";
         public string description = ""; // TODO: this is not necesary and will be removed later
-        public string spriteFilepath = "";
+        public string spriteFilePath = "";
 
-        public ItemData(string id, string name, string description, string spriteFilepath)
+        public ItemData(string id, string name, string description, string spriteFilePath)
         {
             this.id = id;
             this.name = name;
             this.description = description;
-            this.spriteFilepath = spriteFilepath;
+            this.spriteFilePath = spriteFilePath;
         }
     }
 }

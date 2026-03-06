@@ -7,26 +7,13 @@ namespace FTRShared.Runtime.Models
     [Serializable]
     public class QuestData
     {
-        [SerializeField]
-        public string Id;
-
-        [SerializeField]
-        public string Title;
-
-        [SerializeField]
-        public string Content;
-
-        [SerializeField]
-        public int TargetAmount;
-
-        [SerializeField]
-        public string TargetId;
-
-        [SerializeField]
-        public string TargetInteractionId;
-
-        [SerializeField]
-        public QuestType Type;
+        public string id = "";
+        public string title = "";
+        public string content = "";
+        public int targetAmount = 0;
+        public string targetId = "";
+        public string targetInteractionId = "";
+        public QuestType type;
 
         // TODO: add a type enum or a condition abstract class, and reward system
 
@@ -40,13 +27,13 @@ namespace FTRShared.Runtime.Models
             string targetInteractionId
         )
         {
-            this.Id = id;
-            this.Title = title;
-            this.Content = content;
-            this.Type = type;
-            this.TargetId = targetId;
-            this.TargetAmount = targetAmount;
-            this.TargetInteractionId = targetInteractionId;
+            this.id = id;
+            this.title = title;
+            this.content = content;
+            this.type = type;
+            this.targetId = targetId;
+            this.targetAmount = targetAmount;
+            this.targetInteractionId = targetInteractionId;
         }
     }
 }

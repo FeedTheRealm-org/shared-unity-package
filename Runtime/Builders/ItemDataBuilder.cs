@@ -1,5 +1,3 @@
-using System;
-using UnityEngine;
 
 namespace Builders
 {
@@ -11,11 +9,10 @@ namespace Builders
             string id,
             string name,
             string description,
-            string spriteFilepath
+            string spriteFilePath
         )
         {
-            itemData = new FTRShared.Runtime.Models.ItemData(id, name, description, spriteFilepath);
-
+            itemData = new FTRShared.Runtime.Models.ItemData(id, name, description, spriteFilePath);
             return this;
         }
 

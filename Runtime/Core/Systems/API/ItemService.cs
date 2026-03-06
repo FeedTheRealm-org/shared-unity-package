@@ -1,30 +1,28 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace API
 {
-    [CreateAssetMenu(fileName = "SpriteService", menuName = "Scriptable Objects/API/SpriteService")]
-    public class SpriteService : BaseApiService
+    [CreateAssetMenu(fileName = "ItemService", menuName = "Scriptable Objects/API/ItemService")]
+    public class ItemService : BaseApiService
     {
         [Header("API Config")]
         [SerializeField]
         private ApiConfig apiConfig;
 
-        private string GetBaseUrl() =>
-            $"http://{apiConfig.Hostname}:{apiConfig.Port}/assets/sprites";
+        private string GetBaseUrl() => $"http://{apiConfig.Hostname}:{apiConfig.Port}/assets/items";
 
         /// <summary>
         /// Uploads sprite files for a world.
         /// The sprites are composed of tuples with (sprite_id, sprite_filepath)
         /// </summary>
-        public async Task<string> UploadSprites(
+        public async Task<string> UploadItemsByCategory(
             List<(string, string)> sprites,
             string worldId,
+            string categoryId,
             string accessToken
         )
         {
@@ -45,11 +43,6 @@ namespace API
 
                 if (spriteFilePath == null)
                 {
-                    /*logger.Log(
-                        $"Sprite {i}: spriteFilePath is null",
-                        this,
-                        Logging.LogType.Warning
-                    );*/
                     continue;
                 }
 
@@ -59,11 +52,6 @@ namespace API
 
                 if (!File.Exists(absolutePath))
                 {
-                    /*logger.Log(
-                        $"Sprite {i}: file does not exist at {absolutePath}",
-                        this,
-                        Logging.LogType.Warning
-                    );*/
                     continue;
                 }
                 if (string.IsNullOrEmpty(spriteId))
@@ -85,6 +73,7 @@ namespace API
 
                 form.AddField($"id[{j + 1}]", spriteId);
                 byte[] spriteData = File.ReadAllBytes(absolutePath);
+                logger.Log($"Adding sprite to form: {spriteId} (index {j + 1})", this);
                 form.AddBinaryData(
                     $"sprite[{j + 1}]",
                     spriteData,
@@ -92,8 +81,9 @@ namespace API
                     "application/octet-stream"
                 );
             }
-            var url = $"{GetBaseUrl()}/items/{worldId}";
+            var url = $"{GetBaseUrl()}/world/{worldId}/categories/{categoryId}";
             UnityWebRequest uwr = UnityWebRequest.Post(url, form);
+            uwr.method = "PUT";
             uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
             await uwr.SendWebRequest();
 
@@ -107,6 +97,56 @@ namespace API
                 logger.Log($"Asset upload error: {uwr.error}", this, Logging.LogType.Error);
                 return uwr.error;
             }
+        }
+
+        /// <summary>
+        /// Gets all item categories.
+        /// </summary>
+        public async Task<ItemCategoryListResponse> GetItemCategories(string accessToken)
+        {
+            string url = $"{GetBaseUrl()}/categories";
+            var (responseText, result, statusCode) = await SendRequestAsync(
+                url,
+                "GET",
+                accessToken,
+                null,
+                "GetItemCategories"
+            );
+
+            if (result == UnityWebRequest.Result.ConnectionError)
+            {
+                logger.Log(
+                    $"GetItemCategories connection error: {responseText}",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new System.Exception(
+                    "Unable to connect to server. Please check your internet connection."
+                );
+            }
+            else if (result == UnityWebRequest.Result.ProtocolError)
+            {
+                string errorMessage = responseText;
+                if (statusCode == 401)
+                {
+                    errorMessage = "Session expired. Please log in again.";
+                }
+                else if (statusCode >= 500)
+                {
+                    errorMessage = "Server error. Please try again later.";
+                }
+                logger.Log(
+                    $"GetItemCategories error ({statusCode}): {errorMessage}",
+                    this,
+                    Logging.LogType.Error
+                );
+                throw new System.Exception(errorMessage);
+            }
+
+            var response = JsonUtility.FromJson<DataEnvelope<ItemCategoryListResponse>>(
+                responseText
+            );
+            return response.data;
         }
     }
 }

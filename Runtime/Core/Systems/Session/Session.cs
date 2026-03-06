@@ -15,7 +15,6 @@ namespace Session
         public string APIToken
         {
             get => apiToken;
-            private set => apiToken = value;
         }
         public bool IsFirstLogin
         {
@@ -31,8 +30,7 @@ namespace Session
 
         public void SetAPIToken(string token)
         {
-            Debug.Log($"Session: Setting API Token: {token}");
-            APIToken = token;
+            apiToken = token;
         }
 
         public void SetEmail(string email)
@@ -52,7 +50,7 @@ namespace Session
 
         public void ClearSession()
         {
-            APIToken = "";
+            apiToken = "";
             IsFirstLogin = false;
             UserId = "";
             Email = "";
