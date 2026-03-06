@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Models;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 using UnityEngine.Networking;
 
