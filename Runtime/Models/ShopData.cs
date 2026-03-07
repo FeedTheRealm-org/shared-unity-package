@@ -7,13 +7,13 @@ namespace Models
     [Serializable]
     public class ProductData
     {
-        public ItemData itemData;
+        public string itemId;
         public int price;
         public CurrencyType currency = CurrencyType.Gold;
 
-        public ProductData(ItemData itemData, int price, CurrencyType currency = CurrencyType.Gold)
+        public ProductData(string itemId, int price, CurrencyType currency = CurrencyType.Gold)
         {
-            this.itemData = itemData;
+            this.itemId = itemId;
             this.price = price;
             this.currency = currency;
         }
