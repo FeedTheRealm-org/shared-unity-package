@@ -1,8 +1,7 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-public class LoginController : MonoBehaviour
+public class LoginController : MonoBehaviour, IAuthUIController
 {
     [SerializeField]
     private API.AuthService authService;
@@ -10,14 +9,18 @@ public class LoginController : MonoBehaviour
     [SerializeField]
     private Session.Session session;
 
+    [Header("UI Prefabs")]
     [SerializeField]
-    private SceneReference targetScene;
+    private GameObject signUpUI;
 
     [SerializeField]
-    private SceneReference otherFormScene;
+    private GameObject verifyCodeUI;
 
     [SerializeField]
-    private SceneReference verifyCodeScene;
+    private GameObject loginBackgroundPrefab;
+
+    public bool showBackground = true;
+    private GameObject _backgroundInstance;
 
     [SerializeField]
     private Logging.Logger logger;
@@ -35,6 +38,14 @@ public class LoginController : MonoBehaviour
         ui = GetComponent<UIDocument>().rootVisualElement;
     }
 
+    private void Start()
+    {
+        if (showBackground && loginBackgroundPrefab != null && _backgroundInstance == null)
+            _backgroundInstance = Instantiate(loginBackgroundPrefab);
+    }
+
+    public void SetBackground(GameObject bg) => _backgroundInstance = bg;
+
     private void OnEnable()
     {
         logger.Log("LoginController enabled.", this);
@@ -45,8 +56,8 @@ public class LoginController : MonoBehaviour
         _changeButton = ui.Q<Label>("SignUpChangeButton");
         _changeButton.RegisterCallback<ClickEvent>(evt =>
         {
-            logger.Log("Navigating to " + otherFormScene.SceneName + ".", this);
-            SceneManager.LoadScene(otherFormScene.SceneName);
+            logger.Log("Switching to SignUp UI.", this);
+            SwitchTo(signUpUI);
         });
 
         _emailField = ui.Q<TextField>("EmailField");
@@ -77,18 +88,21 @@ public class LoginController : MonoBehaviour
             logger.Log("Login failed", this, Logging.LogType.Error);
             if (err == "You must verify your email address before you can log in.")
             {
-                logger.Log(
-                    "Navigating to " + verifyCodeScene.SceneName + " for verification.",
-                    this
-                );
+                logger.Log("Switching to VerifyCode UI for verification.", this);
                 session.SetEmail(_emailField.value);
                 session.SetPassword(_passwordField.value);
-                SceneManager.LoadScene(verifyCodeScene.SceneName);
+                SwitchTo(verifyCodeUI);
             }
             ShowErrorMessage(err);
             return;
         }
-        SceneManager.LoadScene(targetScene.SceneName);
+        logger.Log("Login successful.", this);
+        if (_backgroundInstance != null)
+        {
+            Destroy(_backgroundInstance);
+            _backgroundInstance = null;
+        }
+        Destroy(gameObject);
     }
 
     private void ShowErrorMessage(string err)
@@ -110,6 +124,16 @@ public class LoginController : MonoBehaviour
         };
 
         _messageError.style.display = DisplayStyle.Flex;
+    }
+
+    private void SwitchTo(GameObject prefab)
+    {
+        if (prefab == null)
+            return;
+        var go = Instantiate(prefab);
+        go.GetComponent<IAuthUIController>()?.SetBackground(_backgroundInstance);
+        _backgroundInstance = null;
+        Destroy(gameObject);
     }
 
     private void HideErrorMessage()

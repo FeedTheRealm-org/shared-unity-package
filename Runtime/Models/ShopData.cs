@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Enums;
 
-namespace Models
+namespace FTRShared.Runtime.Models
 {
     [Serializable]
     public class ProductData

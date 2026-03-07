@@ -1,11 +1,8 @@
-using System;
-using UnityEngine;
-
 namespace Builders
 {
     public class ItemDataBuilder
     {
-        private Models.ItemData itemData;
+        private FTRShared.Runtime.Models.ItemData itemData;
 
         public ItemDataBuilder SetItemData(
             string id,
@@ -14,20 +11,19 @@ namespace Builders
             string spriteFilePath
         )
         {
-            itemData = new Models.ItemData(id, name, description, spriteFilePath);
-
+            itemData = new FTRShared.Runtime.Models.ItemData(id, name, description, spriteFilePath);
             return this;
         }
 
-        public Models.ConsumableItemData BuildConsumableItem(
-            Models.EffectType effectType,
+        public FTRShared.Runtime.Models.ConsumableItemData BuildConsumableItem(
+            FTRShared.Runtime.Models.EffectType effectType,
             int value,
             float duration,
             float cooldown,
             int maxStack
         )
         {
-            return new Models.ConsumableItemData(
+            return new FTRShared.Runtime.Models.ConsumableItemData(
                 itemData,
                 effectType,
                 value,
@@ -37,15 +33,15 @@ namespace Builders
             );
         }
 
-        public Models.WeaponItemData BuildWeaponItem(
-            Models.WeaponType weaponType,
+        public FTRShared.Runtime.Models.WeaponItemData BuildWeaponItem(
+            FTRShared.Runtime.Models.WeaponType weaponType,
             int damage,
             float attackSpeed,
             float range,
             int ammo
         )
         {
-            return new Models.WeaponItemData(
+            return new FTRShared.Runtime.Models.WeaponItemData(
                 itemData,
                 weaponType,
                 damage,
