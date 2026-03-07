@@ -8,11 +8,13 @@ namespace Models
     {
         public ItemData itemData;
         public int price;
+        public CurrencyType currency = CurrencyType.Gold;
 
-        public ProductData(ItemData itemData, int price)
+        public ProductData(ItemData itemData, int price, CurrencyType currency = CurrencyType.Gold)
         {
             this.itemData = itemData;
             this.price = price;
+            this.currency = currency;
         }
     }
 
