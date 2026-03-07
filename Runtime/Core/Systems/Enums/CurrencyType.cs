@@ -1,6 +1,6 @@
 using System;
 
-namespace Models
+namespace Enums
 {
     [Serializable]
     public enum CurrencyType
