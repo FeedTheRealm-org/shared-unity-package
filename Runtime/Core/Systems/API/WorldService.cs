@@ -45,7 +45,22 @@ namespace API
         {
             if (!string.IsNullOrEmpty(data.id))
             {
-                return await UpdateWorld(data, fileName, description, accessToken);
+                var (id, error, statusCode) = await UpdateWorld(
+                    data,
+                    fileName,
+                    description,
+                    accessToken
+                );
+                if (statusCode == 404)
+                {
+                    logger.Log(
+                        $"PublishWorld: World '{data.id}' not found on server (404). Falling back to POST.",
+                        this,
+                        Logging.LogType.Warning
+                    );
+                    return await CreateWorld(data, fileName, description, accessToken);
+                }
+                return (id, error, statusCode);
             }
             else
             {

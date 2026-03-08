@@ -14,16 +14,12 @@ namespace FTRShared.Runtime.Models
         public string name = "Dialog";
 
         [SerializeField]
-        public string npc;
-
-        [SerializeField]
         public List<MessageData> messages = new();
 
-        public DialogData(string id, string name, string npc)
+        public DialogData(string id, string name)
         {
             this.id = id;
             this.name = name;
-            this.npc = npc;
             this.messages = new List<MessageData>();
         }
     }

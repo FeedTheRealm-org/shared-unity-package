@@ -37,7 +37,7 @@ namespace FTRShared.Runtime.Models
             float range,
             int ammo
         )
-            : base(itemData.id, itemData.name, itemData.description, itemData.spriteFilepath)
+            : base(itemData.id, itemData.name, itemData.description, itemData.spriteFilePath)
         {
             this.weaponType = weaponType;
             this.damage = damage;

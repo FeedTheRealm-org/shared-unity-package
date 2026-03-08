@@ -31,6 +31,7 @@ namespace FTRShared.Runtime.Models
         public string Content
         {
             get => _content;
+            set => _content = value;
         }
     }
 }

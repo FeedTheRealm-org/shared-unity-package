@@ -64,8 +64,8 @@ namespace Worlds
                     if (
                         !string.IsNullOrEmpty(consumable.id)
                         && (
-                            string.IsNullOrEmpty(consumable.spriteFilepath)
-                            || !string.IsNullOrEmpty(consumable.spriteFilepath)
+                            string.IsNullOrEmpty(consumable.spriteFilePath)
+                            || !string.IsNullOrEmpty(consumable.spriteFilePath)
                         )
                     )
                     {
@@ -99,7 +99,6 @@ namespace Worlds
                     + $"for world '{data.worldName}' (input consumables = {inputConsumablesCount}, input weapons = {inputWeaponsCount})."
             );
 
-            // Validate that enemy loot references only items that exist in this world.
             if (data.enemies != null && data.enemies.Count > 0)
             {
                 int missingLootEntries = 0;
@@ -112,24 +111,9 @@ namespace Worlds
                         continue;
                     }
 
-                    if (enemy.lootTable == null || enemy.lootTable.lootItems == null)
+                    if (string.IsNullOrEmpty(enemy.lootTableId))
                     {
                         continue;
-                    }
-
-                    foreach (var lootItem in enemy.lootTable.lootItems)
-                    {
-                        if (lootItem == null || string.IsNullOrEmpty(lootItem.id))
-                        {
-                            continue;
-                        }
-                        if (!worldItemIds.Contains(lootItem.id))
-                        {
-                            Debug.LogWarning(
-                                $"[WorldItemsRegistry] Enemy '{enemy.name}' loot item id '{lootItem.id}' not found in world items."
-                            );
-                            missingLootEntries++;
-                        }
                     }
                 }
 
