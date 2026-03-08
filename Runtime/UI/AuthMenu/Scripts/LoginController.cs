@@ -21,6 +21,7 @@ public class LoginController : MonoBehaviour, IAuthUIController
 
     public bool showBackground = true;
     private GameObject _backgroundInstance;
+    private bool _backgroundOwnershipTransferred = false;
 
     [SerializeField]
     private Logging.Logger logger;
@@ -40,11 +41,20 @@ public class LoginController : MonoBehaviour, IAuthUIController
 
     private void Start()
     {
-        if (showBackground && loginBackgroundPrefab != null && _backgroundInstance == null)
+        if (
+            !_backgroundOwnershipTransferred
+            && showBackground
+            && loginBackgroundPrefab != null
+            && _backgroundInstance == null
+        )
             _backgroundInstance = Instantiate(loginBackgroundPrefab);
     }
 
-    public void SetBackground(GameObject bg) => _backgroundInstance = bg;
+    public void SetBackground(GameObject bg)
+    {
+        _backgroundInstance = bg;
+        _backgroundOwnershipTransferred = true;
+    }
 
     private void OnEnable()
     {
@@ -131,8 +141,20 @@ public class LoginController : MonoBehaviour, IAuthUIController
         if (prefab == null)
             return;
         var go = Instantiate(prefab);
-        go.GetComponent<IAuthUIController>()?.SetBackground(_backgroundInstance);
-        _backgroundInstance = null;
+        var controller = go.GetComponent<IAuthUIController>();
+        if (controller != null)
+        {
+            controller.SetBackground(_backgroundInstance);
+            _backgroundInstance = null;
+        }
+        else if (_backgroundInstance != null)
+        {
+            Debug.LogWarning(
+                "LoginController.SwitchTo: Instantiated prefab does not implement IAuthUIController; "
+                    + "background instance will remain owned by the previous controller.",
+                this
+            );
+        }
         Destroy(gameObject);
     }
 

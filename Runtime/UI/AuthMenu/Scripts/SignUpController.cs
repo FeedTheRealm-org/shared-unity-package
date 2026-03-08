@@ -99,8 +99,19 @@ public class SignUpController : MonoBehaviour, IAuthUIController
         if (prefab == null)
             return;
         var go = Instantiate(prefab);
-        go.GetComponent<IAuthUIController>()?.SetBackground(_backgroundInstance);
-        _backgroundInstance = null;
+        var controller = go.GetComponent<IAuthUIController>();
+        if (controller != null)
+        {
+            controller.SetBackground(_backgroundInstance);
+            _backgroundInstance = null;
+        }
+        else
+        {
+            Debug.LogWarning(
+                $"Prefab '{prefab.name}' does not implement IAuthUIController. Background will not be handed off.",
+                this
+            );
+        }
         Destroy(gameObject);
     }
 }
