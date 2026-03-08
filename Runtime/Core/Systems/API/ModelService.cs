@@ -22,7 +22,10 @@ namespace API
         /// Lists all asset models for a given world.
         /// Returns dictionary of model info with model_id as key.
         /// </summary>
-        public async Task<Dictionary<string, ModelInfo>> ListWorldModels(string worldId, string accessToken)
+        public async Task<Dictionary<string, ModelInfo>> ListWorldModels(
+            string worldId,
+            string accessToken
+        )
         {
             string url = $"{GetBaseUrl().TrimEnd('/')}/world/{worldId}";
             var (responseText, result, statusCode) = await SendRequestAsync(
