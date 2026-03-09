@@ -27,7 +27,7 @@ namespace API
             string accessToken
         )
         {
-            string url = $"{GetBaseUrl().TrimEnd('/')}/world/{worldId}";
+            string url = $"{GetBaseUrl().TrimEnd('/')}/{worldId}";
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "GET",
