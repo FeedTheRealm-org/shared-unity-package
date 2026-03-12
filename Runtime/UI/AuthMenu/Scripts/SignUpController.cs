@@ -1,9 +1,8 @@
 using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-public class SignUpController : MonoBehaviour
+public class SignUpController : MonoBehaviour, IAuthUIController
 {
     [SerializeField]
     private API.AuthService authService;
@@ -12,17 +11,12 @@ public class SignUpController : MonoBehaviour
     private Session.Session session;
 
     [SerializeField]
-    private SceneReference targetScene;
-
-    [SerializeField]
-    private SceneReference otherFormScene;
-
-    [SerializeField]
     private Logging.Logger logger;
 
     public event Action OnNavigateToLogin;
     public event Action OnSignUpSuccess;
 
+    private GameObject _backgroundInstance;
     private VisualElement ui;
 
     private Button _signUpButton;
@@ -31,6 +25,8 @@ public class SignUpController : MonoBehaviour
     private TextField _repeatedPasswordField;
     private Label _messageError;
     private Label _changeButton;
+
+    public void SetBackground(GameObject bg) => _backgroundInstance = bg;
 
     private void Awake()
     {
@@ -47,16 +43,8 @@ public class SignUpController : MonoBehaviour
         _changeButton = ui.Q<Label>("LoginChangeButton");
         _changeButton.RegisterCallback<ClickEvent>(evt =>
         {
-            if (OnNavigateToLogin != null)
-            {
-                logger.Log("Navigating to Login.", this);
-                OnNavigateToLogin.Invoke();
-            }
-            else
-            {
-                logger.Log("Navigating to " + otherFormScene.SceneName + ".", this);
-                SceneManager.LoadScene(otherFormScene.SceneName);
-            }
+            logger.Log("Navigating to Login.", this);
+            OnNavigateToLogin?.Invoke();
         });
 
         _emailField = ui.Q<TextField>("EmailField");
@@ -94,10 +82,7 @@ public class SignUpController : MonoBehaviour
             logger.Log("SignUp successful, email: " + _emailField.value, this);
             session.SetEmail(_emailField.value);
             session.SetPassword(_passwordField.value);
-            if (OnSignUpSuccess != null)
-                OnSignUpSuccess.Invoke();
-            else
-                SceneManager.LoadScene(targetScene.SceneName);
+            OnSignUpSuccess?.Invoke();
         }
         else
         {

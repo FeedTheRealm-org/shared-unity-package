@@ -1,9 +1,8 @@
 using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-public class LoginController : MonoBehaviour
+public class LoginController : MonoBehaviour, IAuthUIController
 {
     [SerializeField]
     private API.AuthService authService;
@@ -12,13 +11,11 @@ public class LoginController : MonoBehaviour
     private Session.Session session;
 
     [SerializeField]
-    private SceneReference targetScene;
+    private GameObject loginBackgroundPrefab;
 
-    [SerializeField]
-    private SceneReference otherFormScene;
-
-    [SerializeField]
-    private SceneReference verifyCodeScene;
+    public bool showBackground = true;
+    private GameObject _backgroundInstance;
+    private bool _backgroundOwnershipTransferred = false;
 
     [SerializeField]
     private Logging.Logger logger;
@@ -40,6 +37,23 @@ public class LoginController : MonoBehaviour
         ui = GetComponent<UIDocument>().rootVisualElement;
     }
 
+    private void Start()
+    {
+        if (
+            !_backgroundOwnershipTransferred
+            && showBackground
+            && loginBackgroundPrefab != null
+            && _backgroundInstance == null
+        )
+            _backgroundInstance = Instantiate(loginBackgroundPrefab);
+    }
+
+    public void SetBackground(GameObject bg)
+    {
+        _backgroundInstance = bg;
+        _backgroundOwnershipTransferred = true;
+    }
+
     private void OnEnable()
     {
         logger.Log("LoginController enabled.", this);
@@ -50,16 +64,8 @@ public class LoginController : MonoBehaviour
         _changeButton = ui.Q<Label>("SignUpChangeButton");
         _changeButton.RegisterCallback<ClickEvent>(evt =>
         {
-            if (OnNavigateToSignUp != null)
-            {
-                logger.Log("Navigating to Sign Up.", this);
-                OnNavigateToSignUp.Invoke();
-            }
-            else
-            {
-                logger.Log("Navigating to " + otherFormScene.SceneName + ".", this);
-                SceneManager.LoadScene(otherFormScene.SceneName);
-            }
+            logger.Log("Navigating to Sign Up.", this);
+            OnNavigateToSignUp?.Invoke();
         });
 
         _emailField = ui.Q<TextField>("EmailField");
@@ -87,32 +93,18 @@ public class LoginController : MonoBehaviour
 
         if (!string.IsNullOrEmpty(err))
         {
-            logger.Log("Login failed", this, Logging.LogType.Error);
+            logger.Log("Login failed", this, Logging.LogType.Warning);
             if (err == "You must verify your email address before you can log in.")
             {
                 session.SetEmail(_emailField.value);
                 session.SetPassword(_passwordField.value);
-                if (OnNavigateToVerifyCode != null)
-                {
-                    logger.Log("Navigating to Verify Code for verification.", this);
-                    OnNavigateToVerifyCode.Invoke();
-                }
-                else
-                {
-                    logger.Log(
-                        "Navigating to " + verifyCodeScene.SceneName + " for verification.",
-                        this
-                    );
-                    SceneManager.LoadScene(verifyCodeScene.SceneName);
-                }
+                logger.Log("Navigating to Verify Code for verification.", this);
+                OnNavigateToVerifyCode?.Invoke();
             }
             ShowErrorMessage(err);
             return;
         }
-        if (OnLoginSuccess != null)
-            OnLoginSuccess.Invoke();
-        else
-            SceneManager.LoadScene(targetScene.SceneName);
+        OnLoginSuccess?.Invoke();
     }
 
     private void ShowErrorMessage(string err)

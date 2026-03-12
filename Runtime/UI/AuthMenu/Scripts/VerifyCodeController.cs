@@ -1,10 +1,9 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-public class VerifyCodeController : MonoBehaviour
+public class VerifyCodeController : MonoBehaviour, IAuthUIController
 {
     [SerializeField]
     private API.AuthService authService;
@@ -13,17 +12,12 @@ public class VerifyCodeController : MonoBehaviour
     private Session.Session session;
 
     [SerializeField]
-    private SceneReference targetScene;
-
-    [SerializeField]
-    private SceneReference backScene;
-
-    [SerializeField]
     private Logging.Logger logger;
 
     public event Action OnNavigateBack;
     public event Action OnVerifySuccess;
 
+    private GameObject _backgroundInstance;
     private VisualElement ui;
 
     private Button _verifyCodeButton;
@@ -32,6 +26,8 @@ public class VerifyCodeController : MonoBehaviour
     private Label _changeButton;
     private Label _messageError;
     private Label _refreshCodeButton;
+
+    public void SetBackground(GameObject bg) => _backgroundInstance = bg;
 
     private void Awake()
     {
@@ -52,16 +48,8 @@ public class VerifyCodeController : MonoBehaviour
         _changeButton = ui.Q<Label>("LoginBackButton");
         _changeButton.RegisterCallback<ClickEvent>(evt =>
         {
-            if (OnNavigateBack != null)
-            {
-                logger.Log("Navigating back to Login.", this);
-                OnNavigateBack.Invoke();
-            }
-            else
-            {
-                logger.Log("Navigating to " + backScene.SceneName + ".", this);
-                SceneManager.LoadScene(backScene.SceneName);
-            }
+            logger.Log("Navigating back to Login.", this);
+            OnNavigateBack?.Invoke();
         });
 
         _codeField = ui.Q<TextField>("CodeField");
@@ -93,13 +81,13 @@ public class VerifyCodeController : MonoBehaviour
         var loginErr = await authService.Login(session.Email, session.Password);
         if (string.IsNullOrEmpty(loginErr))
         {
-            if (OnVerifySuccess != null)
-                OnVerifySuccess.Invoke();
-            else
-                SceneManager.LoadScene(targetScene.SceneName);
+            logger.Log("Verification and login successful.", this);
+            OnVerifySuccess?.Invoke();
         }
         else
+        {
             _messageError.text = loginErr;
+        }
     }
 
     private async void OnRefreshCodeClicked()
