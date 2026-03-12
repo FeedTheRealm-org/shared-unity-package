@@ -35,6 +35,9 @@ namespace Logging
 
         private void OnEnable()
         {
+#if SERVER_BUILD
+            showColor = false;
+#endif
             if (showColor)
             {
                 _stringColor = $"<color=#{ColorUtility.ToHtmlStringRGB(loggerColor)}>";
