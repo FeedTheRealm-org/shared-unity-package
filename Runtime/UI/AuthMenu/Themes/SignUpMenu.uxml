@@ -6,7 +6,7 @@
             <ui:TextField label="Email" placeholder-text="Enter your email" name="EmailField" class="AuthEmailInput"/>
             <ui:TextField label="Password" placeholder-text="Enter your password" name="PasswordField" password="true" class="AuthPasswordField"/>
             <ui:TextField label="Repeat Password" placeholder-text="Enter your password again" name="RepeatPasswordField" password="true" class="AuthPasswordField"/>
-            <ui:Label text="Already have account? Login here" name="LoginChangeButton" class="AuthChangeButton" style="top: 1%;"/>
+            <ui:Button text="Already have account? Login here" name="LoginChangeButton" class="AuthChangeButton" style="top: 1%;"/>
             <ui:Label name="MessageError" class="AuthChangeButton AuthMessageError" style="top: 1%;"/>
             <ui:Button text="Sign Up" name="SignUpButton" class="AuthFormButton" style="bottom: 3%;"/>
         </ui:VisualElement>

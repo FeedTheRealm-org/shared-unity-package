@@ -24,7 +24,7 @@ public class SignUpController : MonoBehaviour, IAuthUIController
     private TextField _passwordField;
     private TextField _repeatedPasswordField;
     private Label _messageError;
-    private Label _changeButton;
+    private Button _changeButton;
 
     public void SetBackground(GameObject bg) => _backgroundInstance = bg;
 
@@ -40,12 +40,11 @@ public class SignUpController : MonoBehaviour, IAuthUIController
         _signUpButton = ui.Q<Button>("SignUpButton");
         _signUpButton.clicked += OnLoginClicked;
 
-        _changeButton = ui.Q<Label>("LoginChangeButton");
-        _changeButton.RegisterCallback<ClickEvent>(evt =>
+        _changeButton = ui.Q<Button>("LoginChangeButton");
+        if (_changeButton != null)
         {
-            logger.Log("Navigating to Login.", this);
-            OnNavigateToLogin?.Invoke();
-        });
+            _changeButton.clicked += NavigateToLogin;
+        }
 
         _emailField = ui.Q<TextField>("EmailField");
         _passwordField = ui.Q<TextField>("PasswordField");
@@ -57,6 +56,15 @@ public class SignUpController : MonoBehaviour, IAuthUIController
     {
         if (_signUpButton != null)
             _signUpButton.clicked -= OnLoginClicked;
+
+        if (_changeButton != null)
+            _changeButton.clicked -= NavigateToLogin;
+    }
+
+    private void NavigateToLogin()
+    {
+        logger.Log("Navigating to Login.", this);
+        OnNavigateToLogin?.Invoke();
     }
 
     private async void OnLoginClicked()
