@@ -14,6 +14,7 @@ namespace FTRShared.Runtime.Models
         public string structureName;
 
         public bool isShop = false;
+        public string shopId;
 
         public Vector3 colliderSize;
         public Vector3 colliderCenter;
@@ -32,7 +33,8 @@ namespace FTRShared.Runtime.Models
             Vector3 position,
             bool isShop = false,
             Vector3 colliderSize = default,
-            Vector3 colliderCenter = default
+            Vector3 colliderCenter = default,
+            string shopId = null
         )
         {
             this.id = id;
@@ -42,6 +44,7 @@ namespace FTRShared.Runtime.Models
             this.offset = offset;
             this.position = position;
             this.isShop = isShop;
+            this.shopId = shopId;
             this.colliderSize = colliderSize;
             this.colliderCenter = colliderCenter;
 
@@ -58,7 +61,7 @@ namespace FTRShared.Runtime.Models
 
         public override string ToString()
         {
-            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, Offset: {offset}, Filepath: {structureFilepath}, IsShop: {isShop}, ColliderSize: {colliderSize}, ColliderCenter: {colliderCenter}, HasCustomCollider: {hasCustomCollider}";
+            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, Offset: {offset}, Filepath: {structureFilepath}, IsShop: {isShop}, ShopId: {shopId}, ColliderSize: {colliderSize}, ColliderCenter: {colliderCenter}, HasCustomCollider: {hasCustomCollider}";
         }
     }
 }

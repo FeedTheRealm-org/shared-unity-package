@@ -1,29 +1,40 @@
 using System;
 using System.Collections.Generic;
+using Enums;
 
 namespace FTRShared.Runtime.Models
 {
     [Serializable]
     public class ProductData
     {
-        public ItemData itemData;
+        public string itemId;
         public int price;
+        public CurrencyType currency = CurrencyType.Gold;
 
-        public ProductData(ItemData itemData, int price)
+        public ProductData(string itemId, int price, CurrencyType currency = CurrencyType.Gold)
         {
-            this.itemData = itemData;
+            this.itemId = itemId;
             this.price = price;
+            this.currency = currency;
         }
     }
 
     [Serializable]
     public class ShopData
     {
-        public List<ProductData> products = new List<ProductData>();
+        public string id;
+        public string displayName;
+        public List<ProductData> products = new();
 
         public override string ToString()
         {
             return $"ShopData: {products.Count} products available.";
         }
+    }
+
+    [Serializable]
+    public class WorldShopsData
+    {
+        public List<ShopData> shops = new();
     }
 }
