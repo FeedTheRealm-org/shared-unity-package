@@ -39,7 +39,7 @@ namespace API
                     logger.Log(
                         $"Login connection error: {responseText}",
                         this,
-                        Logging.LogType.Error
+                        Logging.LogType.Warning
                     );
                     return "Unable to connect to server. Please check your internet connection.";
                 }
@@ -60,7 +60,7 @@ namespace API
                     logger.Log(
                         $"Login error ({statusCode}): {(res != null ? $"{res.title}: {errorMessage}" : responseText)}",
                         this,
-                        Logging.LogType.Error
+                        Logging.LogType.Warning
                     );
                     return errorMessage;
                 }
@@ -79,7 +79,7 @@ namespace API
             }
             catch (System.Exception ex)
             {
-                logger.Log($"Login exception: {ex.Message}", this, Logging.LogType.Error);
+                logger.Log($"Login exception: {ex.Message}", this, Logging.LogType.Warning);
                 return "Connection to the server failed.";
             }
         }
@@ -101,7 +101,11 @@ namespace API
 
             if (result == UnityWebRequest.Result.ConnectionError)
             {
-                logger.Log($"SignUp connection error: {responseText}", this, Logging.LogType.Error);
+                logger.Log(
+                    $"SignUp connection error: {responseText}",
+                    this,
+                    Logging.LogType.Warning
+                );
                 return (
                     false,
                     "Unable to connect to server. Please check your internet connection."
@@ -120,7 +124,7 @@ namespace API
                 logger.Log(
                     $"SignUp error ({statusCode}): {(res != null ? $"{res.title}: {errorMessage}" : responseText)}",
                     this,
-                    Logging.LogType.Error
+                    Logging.LogType.Warning
                 );
                 return (false, errorMessage);
             }
@@ -155,7 +159,7 @@ namespace API
                 logger.Log(
                     $"Verify Code connection error: {responseText}",
                     this,
-                    Logging.LogType.Error
+                    Logging.LogType.Warning
                 );
                 return (
                     false,
@@ -175,7 +179,7 @@ namespace API
                 logger.Log(
                     $"Verify Code error ({statusCode}): {(res != null ? $"{res.title}: {errorMessage}" : responseText)}",
                     this,
-                    Logging.LogType.Error
+                    Logging.LogType.Warning
                 );
                 return (false, errorMessage);
             }
@@ -209,7 +213,7 @@ namespace API
                 logger.Log(
                     $"Refresh Verification connection error: {responseText}",
                     this,
-                    Logging.LogType.Error
+                    Logging.LogType.Warning
                 );
                 return (
                     false,
@@ -229,7 +233,7 @@ namespace API
                 logger.Log(
                     $"Refresh Verification error ({statusCode}): {(res != null ? $"{res.title}: {errorMessage}" : responseText)}",
                     this,
-                    Logging.LogType.Error
+                    Logging.LogType.Warning
                 );
                 return (false, errorMessage);
             }

@@ -95,7 +95,7 @@ public class LoginController : MonoBehaviour, IAuthUIController
 
         if (!string.IsNullOrEmpty(err))
         {
-            logger.Log("Login failed", this, Logging.LogType.Error);
+            logger.Log("Login failed", this, Logging.LogType.Warning);
             if (err == "You must verify your email address before you can log in.")
             {
                 logger.Log("Switching to VerifyCode UI for verification.", this);
