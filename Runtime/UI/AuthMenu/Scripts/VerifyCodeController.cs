@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,6 +20,9 @@ public class VerifyCodeController : MonoBehaviour
 
     [SerializeField]
     private Logging.Logger logger;
+
+    public event Action OnNavigateBack;
+    public event Action OnVerifySuccess;
 
     private VisualElement ui;
 
@@ -48,8 +52,16 @@ public class VerifyCodeController : MonoBehaviour
         _changeButton = ui.Q<Label>("LoginBackButton");
         _changeButton.RegisterCallback<ClickEvent>(evt =>
         {
-            logger.Log("Navigating to " + backScene.SceneName + ".", this);
-            SceneManager.LoadScene(backScene.SceneName);
+            if (OnNavigateBack != null)
+            {
+                logger.Log("Navigating back to Login.", this);
+                OnNavigateBack.Invoke();
+            }
+            else
+            {
+                logger.Log("Navigating to " + backScene.SceneName + ".", this);
+                SceneManager.LoadScene(backScene.SceneName);
+            }
         });
 
         _codeField = ui.Q<TextField>("CodeField");
@@ -80,7 +92,12 @@ public class VerifyCodeController : MonoBehaviour
         }
         var loginErr = await authService.Login(session.Email, session.Password);
         if (string.IsNullOrEmpty(loginErr))
-            SceneManager.LoadScene(targetScene.SceneName);
+        {
+            if (OnVerifySuccess != null)
+                OnVerifySuccess.Invoke();
+            else
+                SceneManager.LoadScene(targetScene.SceneName);
+        }
         else
             _messageError.text = loginErr;
     }

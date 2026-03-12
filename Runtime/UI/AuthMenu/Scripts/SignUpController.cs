@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -18,6 +19,9 @@ public class SignUpController : MonoBehaviour
 
     [SerializeField]
     private Logging.Logger logger;
+
+    public event Action OnNavigateToLogin;
+    public event Action OnSignUpSuccess;
 
     private VisualElement ui;
 
@@ -43,8 +47,16 @@ public class SignUpController : MonoBehaviour
         _changeButton = ui.Q<Label>("LoginChangeButton");
         _changeButton.RegisterCallback<ClickEvent>(evt =>
         {
-            logger.Log("Navigating to " + otherFormScene.SceneName + ".", this);
-            SceneManager.LoadScene(otherFormScene.SceneName);
+            if (OnNavigateToLogin != null)
+            {
+                logger.Log("Navigating to Login.", this);
+                OnNavigateToLogin.Invoke();
+            }
+            else
+            {
+                logger.Log("Navigating to " + otherFormScene.SceneName + ".", this);
+                SceneManager.LoadScene(otherFormScene.SceneName);
+            }
         });
 
         _emailField = ui.Q<TextField>("EmailField");
@@ -82,7 +94,10 @@ public class SignUpController : MonoBehaviour
             logger.Log("SignUp successful, email: " + _emailField.value, this);
             session.SetEmail(_emailField.value);
             session.SetPassword(_passwordField.value);
-            SceneManager.LoadScene(targetScene.SceneName);
+            if (OnSignUpSuccess != null)
+                OnSignUpSuccess.Invoke();
+            else
+                SceneManager.LoadScene(targetScene.SceneName);
         }
         else
         {

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -22,6 +23,10 @@ public class LoginController : MonoBehaviour
     [SerializeField]
     private Logging.Logger logger;
 
+    public event Action OnNavigateToSignUp;
+    public event Action OnNavigateToVerifyCode;
+    public event Action OnLoginSuccess;
+
     private VisualElement ui;
 
     private Button _loginButton;
@@ -45,8 +50,16 @@ public class LoginController : MonoBehaviour
         _changeButton = ui.Q<Label>("SignUpChangeButton");
         _changeButton.RegisterCallback<ClickEvent>(evt =>
         {
-            logger.Log("Navigating to " + otherFormScene.SceneName + ".", this);
-            SceneManager.LoadScene(otherFormScene.SceneName);
+            if (OnNavigateToSignUp != null)
+            {
+                logger.Log("Navigating to Sign Up.", this);
+                OnNavigateToSignUp.Invoke();
+            }
+            else
+            {
+                logger.Log("Navigating to " + otherFormScene.SceneName + ".", this);
+                SceneManager.LoadScene(otherFormScene.SceneName);
+            }
         });
 
         _emailField = ui.Q<TextField>("EmailField");
@@ -77,18 +90,29 @@ public class LoginController : MonoBehaviour
             logger.Log("Login failed", this, Logging.LogType.Error);
             if (err == "You must verify your email address before you can log in.")
             {
-                logger.Log(
-                    "Navigating to " + verifyCodeScene.SceneName + " for verification.",
-                    this
-                );
                 session.SetEmail(_emailField.value);
                 session.SetPassword(_passwordField.value);
-                SceneManager.LoadScene(verifyCodeScene.SceneName);
+                if (OnNavigateToVerifyCode != null)
+                {
+                    logger.Log("Navigating to Verify Code for verification.", this);
+                    OnNavigateToVerifyCode.Invoke();
+                }
+                else
+                {
+                    logger.Log(
+                        "Navigating to " + verifyCodeScene.SceneName + " for verification.",
+                        this
+                    );
+                    SceneManager.LoadScene(verifyCodeScene.SceneName);
+                }
             }
             ShowErrorMessage(err);
             return;
         }
-        SceneManager.LoadScene(targetScene.SceneName);
+        if (OnLoginSuccess != null)
+            OnLoginSuccess.Invoke();
+        else
+            SceneManager.LoadScene(targetScene.SceneName);
     }
 
     private void ShowErrorMessage(string err)
