@@ -1,13 +1,16 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Packages/com.feed_the_realm.shared/Runtime/UI/AuthMenu/Themes/AuthForm.uss?fileID=7433441132597879392&amp;guid=c25ac5f0ef9fbfd46bdd96a557e53334&amp;type=3#AuthForm"/>
-    <ui:VisualElement name="SignUpContainer" class="AuthContainer" style="flex-grow: 1; background-image: none; background-color: rgba(18, 18, 18, 0); -unity-background-image-tint-color: rgba(255, 167, 166, 0);">
+    <ui:VisualElement name="SignUpContainer" view-data-key="" class="AuthContainer" style="flex-grow: 1; background-image: none; background-color: rgba(18, 18, 18, 0); -unity-background-image-tint-color: rgba(255, 167, 166, 0); color: rgb(100, 100, 100); top: 1px; bottom: 0; right: 0; left: 1px;">
         <ui:VisualElement name="SignUpForm" class="formBox" style="flex-grow: 1; flex-direction: column;">
             <ui:Label text="Sign Up" name="TitleForm" class="AuthFormTitle" style="top: 3%; left: auto;"/>
+            <ui:Label name="MessageError" class="AuthChangeButton AuthMessageError" style="top: 1%;"/>
             <ui:TextField label="Email" placeholder-text="Enter your email" name="EmailField" class="AuthEmailInput"/>
             <ui:TextField label="Password" placeholder-text="Enter your password" name="PasswordField" password="true" class="AuthPasswordField"/>
             <ui:TextField label="Repeat Password" placeholder-text="Enter your password again" name="RepeatPasswordField" password="true" class="AuthPasswordField"/>
-            <ui:Button text="Already have account? Login here" name="LoginChangeButton" class="AuthChangeButton" style="top: 1%;"/>
-            <ui:Label name="MessageError" class="AuthChangeButton AuthMessageError" style="top: 1%;"/>
+            <ui:VisualElement name="VisualElement" style="flex-grow: 0; position: relative; margin-bottom: 0; padding-bottom: 0; height: auto; min-height: auto; max-height: none; align-content: stretch; align-items: center; align-self: center; flex-direction: row; flex-shrink: 0;">
+                <ui:Label text="Already have account?" style="height: 25px;"/>
+                <ui:Button text="Back to Log In" name="LoginChangeButton" double-click-selects-word="false" triple-click-selects-line="false" display-tooltip-when-elided="false" emoji-fallback-support="false" enable-rich-text="false" style="border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; background-color: rgba(188, 188, 188, 0); color: rgb(31, 0, 255); -unity-font-style: normal; padding-left: 0; padding-right: 0;"/>
+            </ui:VisualElement>
             <ui:Button text="Sign Up" name="SignUpButton" class="AuthFormButton" style="bottom: 3%;"/>
         </ui:VisualElement>
     </ui:VisualElement>

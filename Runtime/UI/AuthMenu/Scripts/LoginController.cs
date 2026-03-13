@@ -57,6 +57,7 @@ public class LoginController : MonoBehaviour, IAuthUIController
     private void OnEnable()
     {
         logger.Log("LoginController enabled.", this);
+        ui = GetComponent<UIDocument>().rootVisualElement;
 
         _loginButton = ui.Q<Button>("LoginButton");
         _loginButton.clicked += OnLoginClicked;
@@ -105,6 +106,12 @@ public class LoginController : MonoBehaviour, IAuthUIController
             return;
         }
         OnLoginSuccess?.Invoke();
+
+        if (_backgroundInstance != null && !_backgroundOwnershipTransferred)
+        {
+            Destroy(_backgroundInstance);
+            _backgroundInstance = null;
+        }
     }
 
     private void ShowErrorMessage(string err)

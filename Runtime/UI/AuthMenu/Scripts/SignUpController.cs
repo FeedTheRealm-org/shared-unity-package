@@ -37,14 +37,13 @@ public class SignUpController : MonoBehaviour, IAuthUIController
     {
         logger.Log("SignUpController enabled.", this);
 
-        _signUpButton = ui.Q<Button>("SignUpButton");
-        _signUpButton.clicked += OnLoginClicked;
+        ui = GetComponent<UIDocument>().rootVisualElement;
 
+        _signUpButton = ui.Q<Button>("SignUpButton");
         _changeButton = ui.Q<Button>("LoginChangeButton");
-        if (_changeButton != null)
-        {
-            _changeButton.clicked += NavigateToLogin;
-        }
+
+        _signUpButton.clicked += OnSignUpClicked;
+        _changeButton.clicked += NavigateToLogin;
 
         _emailField = ui.Q<TextField>("EmailField");
         _passwordField = ui.Q<TextField>("PasswordField");
@@ -55,7 +54,7 @@ public class SignUpController : MonoBehaviour, IAuthUIController
     private void OnDisable()
     {
         if (_signUpButton != null)
-            _signUpButton.clicked -= OnLoginClicked;
+            _signUpButton.clicked -= OnSignUpClicked;
 
         if (_changeButton != null)
             _changeButton.clicked -= NavigateToLogin;
@@ -67,9 +66,9 @@ public class SignUpController : MonoBehaviour, IAuthUIController
         OnNavigateToLogin?.Invoke();
     }
 
-    private async void OnLoginClicked()
+    private async void OnSignUpClicked()
     {
-        logger.Log("Login Button Clicked", this);
+        logger.Log("SignUp Button Clicked", this);
         logger.Log("Email: " + _emailField.value, this);
         logger.Log("Password: " + _passwordField.value, this);
 
