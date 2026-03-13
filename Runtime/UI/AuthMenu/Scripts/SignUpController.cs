@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -9,15 +10,11 @@ public class SignUpController : MonoBehaviour, IAuthUIController
     [SerializeField]
     private Session.Session session;
 
-    [Header("UI Prefabs")]
-    [SerializeField]
-    private GameObject loginUI;
-
-    [SerializeField]
-    private GameObject verifyCodeUI;
-
     [SerializeField]
     private Logging.Logger logger;
+
+    public event Action OnNavigateToLogin;
+    public event Action OnSignUpSuccess;
 
     private GameObject _backgroundInstance;
     private VisualElement ui;
@@ -27,7 +24,7 @@ public class SignUpController : MonoBehaviour, IAuthUIController
     private TextField _passwordField;
     private TextField _repeatedPasswordField;
     private Label _messageError;
-    private Label _changeButton;
+    private Button _changeButton;
 
     public void SetBackground(GameObject bg) => _backgroundInstance = bg;
 
@@ -40,15 +37,13 @@ public class SignUpController : MonoBehaviour, IAuthUIController
     {
         logger.Log("SignUpController enabled.", this);
 
-        _signUpButton = ui.Q<Button>("SignUpButton");
-        _signUpButton.clicked += OnLoginClicked;
+        ui = GetComponent<UIDocument>().rootVisualElement;
 
-        _changeButton = ui.Q<Label>("LoginChangeButton");
-        _changeButton.RegisterCallback<ClickEvent>(evt =>
-        {
-            logger.Log("Switching to Login UI.", this);
-            SwitchTo(loginUI);
-        });
+        _signUpButton = ui.Q<Button>("SignUpButton");
+        _changeButton = ui.Q<Button>("LoginChangeButton");
+
+        _signUpButton.clicked += OnSignUpClicked;
+        _changeButton.clicked += NavigateToLogin;
 
         _emailField = ui.Q<TextField>("EmailField");
         _passwordField = ui.Q<TextField>("PasswordField");
@@ -59,12 +54,21 @@ public class SignUpController : MonoBehaviour, IAuthUIController
     private void OnDisable()
     {
         if (_signUpButton != null)
-            _signUpButton.clicked -= OnLoginClicked;
+            _signUpButton.clicked -= OnSignUpClicked;
+
+        if (_changeButton != null)
+            _changeButton.clicked -= NavigateToLogin;
     }
 
-    private async void OnLoginClicked()
+    private void NavigateToLogin()
     {
-        logger.Log("Login Button Clicked", this);
+        logger.Log("Navigating to Login.", this);
+        OnNavigateToLogin?.Invoke();
+    }
+
+    private async void OnSignUpClicked()
+    {
+        logger.Log("SignUp Button Clicked", this);
         logger.Log("Email: " + _emailField.value, this);
         logger.Log("Password: " + _passwordField.value, this);
 
@@ -85,33 +89,12 @@ public class SignUpController : MonoBehaviour, IAuthUIController
             logger.Log("SignUp successful, email: " + _emailField.value, this);
             session.SetEmail(_emailField.value);
             session.SetPassword(_passwordField.value);
-            SwitchTo(verifyCodeUI);
+            OnSignUpSuccess?.Invoke();
         }
         else
         {
             logger.Log("SignUp failed", this, Logging.LogType.Error);
             _messageError.text = err;
         }
-    }
-
-    private void SwitchTo(GameObject prefab)
-    {
-        if (prefab == null)
-            return;
-        var go = Instantiate(prefab);
-        var controller = go.GetComponent<IAuthUIController>();
-        if (controller != null)
-        {
-            controller.SetBackground(_backgroundInstance);
-            _backgroundInstance = null;
-        }
-        else
-        {
-            Debug.LogWarning(
-                $"Prefab '{prefab.name}' does not implement IAuthUIController. Background will not be handed off.",
-                this
-            );
-        }
-        Destroy(gameObject);
     }
 }
