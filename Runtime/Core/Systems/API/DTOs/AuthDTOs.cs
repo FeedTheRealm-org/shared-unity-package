@@ -9,6 +9,14 @@ namespace API
     }
 
     [System.Serializable]
+    public class SignUpRequest
+    {
+        public string email;
+        public string password;
+        public bool isAdmin;
+    }
+
+    [System.Serializable]
     public class VerifyCodeRequest
     {
         public string email;

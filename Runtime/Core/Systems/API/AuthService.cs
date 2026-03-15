@@ -87,7 +87,12 @@ namespace API
         public async Task<(bool success, string message)> SignUp(string email, string password)
         {
             string url = $"{GetBaseUrl()}/signup";
-            LoginRequest payload = new LoginRequest { email = email, password = password };
+            SignUpRequest payload = new SignUpRequest
+            {
+                email = email,
+                password = password,
+                isAdmin = false,
+            };
             string json = JsonUtility.ToJson(payload);
 
             Task<(string, UnityWebRequest.Result, long)> task = SendRequestAsync(
