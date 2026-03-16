@@ -31,7 +31,7 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        private string GetBaseUrl() => $"http://{apiConfig.Hostname}:{apiConfig.Port}/world";
+        private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/world";
 
         /// <summary>
         ///  Post a new world to the server or update an existing one if it has an id.

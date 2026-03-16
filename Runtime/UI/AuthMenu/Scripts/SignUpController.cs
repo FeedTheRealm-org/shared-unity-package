@@ -70,7 +70,7 @@ public class SignUpController : MonoBehaviour, IAuthUIController
 
         if (_passwordField.value != _repeatedPasswordField.value)
         {
-            logger.Log("Passwords do not match", this, Logging.LogType.Error);
+            logger.Log("Passwords do not match", this, Logging.LogType.Warning);
             _messageError.text = "Passwords do not match.";
             return;
         }

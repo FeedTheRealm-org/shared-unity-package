@@ -15,7 +15,7 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        private string GetBaseUrl() => $"http://{apiConfig.Hostname}:{apiConfig.Port}/auth";
+        private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/auth";
 
         public async Task<string> Login(string email, string password)
         {

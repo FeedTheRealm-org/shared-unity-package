@@ -15,8 +15,7 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        private string GetBaseUrl() =>
-            $"http://{apiConfig.Hostname}:{apiConfig.Port}/assets/models/world";
+        private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/assets/models/world";
 
         /// <summary>
         /// Lists all asset models for a given world.

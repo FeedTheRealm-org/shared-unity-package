@@ -13,7 +13,7 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        private string GetBaseUrl() => $"http://{apiConfig.Hostname}:{apiConfig.Port}/assets/items";
+        private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/assets/items";
 
         /// <summary>
         /// Uploads sprite files for a world.
