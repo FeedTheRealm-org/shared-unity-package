@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -10,12 +11,11 @@ public class VerifyCodeController : MonoBehaviour, IAuthUIController
     [SerializeField]
     private Session.Session session;
 
-    [Header("UI Prefabs")]
-    [SerializeField]
-    private GameObject loginUI;
-
     [SerializeField]
     private Logging.Logger logger;
+
+    public event Action OnNavigateBack;
+    public event Action OnVerifySuccess;
 
     private GameObject _backgroundInstance;
     private VisualElement ui;
@@ -26,6 +26,8 @@ public class VerifyCodeController : MonoBehaviour, IAuthUIController
     private Label _changeButton;
     private Label _messageError;
     private Label _refreshCodeButton;
+    private EventCallback<ClickEvent> _refreshCodeCallback;
+    private EventCallback<ClickEvent> _navigateBackCallback;
 
     public void SetBackground(GameObject bg) => _backgroundInstance = bg;
 
@@ -37,20 +39,23 @@ public class VerifyCodeController : MonoBehaviour, IAuthUIController
     private void OnEnable()
     {
         logger.Log("VerifyCodeController enabled.", this);
+        ui = GetComponent<UIDocument>().rootVisualElement;
 
         _verifyCodeButton = ui.Q<Button>("VerifyCodeButton");
         _verifyCodeButton.clicked += OnLoginClicked;
 
+        _refreshCodeCallback = evt => OnRefreshCodeClicked();
         _refreshCodeButton = ui.Q<Label>("RefreshCodeButton");
         if (_refreshCodeButton != null)
-            _refreshCodeButton.RegisterCallback<ClickEvent>(evt => OnRefreshCodeClicked());
+            _refreshCodeButton.RegisterCallback(_refreshCodeCallback);
 
-        _changeButton = ui.Q<Label>("LoginBackButton");
-        _changeButton.RegisterCallback<ClickEvent>(evt =>
+        _navigateBackCallback = evt =>
         {
-            logger.Log("Switching to Login UI.", this);
-            SwitchTo(loginUI);
-        });
+            logger.Log("Navigating back to Login.", this);
+            OnNavigateBack?.Invoke();
+        };
+        _changeButton = ui.Q<Label>("LoginBackButton");
+        _changeButton.RegisterCallback(_navigateBackCallback);
 
         _codeField = ui.Q<TextField>("CodeField");
         _messageError = ui.Q<Label>("MessageError");
@@ -60,8 +65,12 @@ public class VerifyCodeController : MonoBehaviour, IAuthUIController
     {
         if (_verifyCodeButton != null)
             _verifyCodeButton.clicked -= OnLoginClicked;
-        if (_refreshCodeButton != null)
-            _refreshCodeButton.UnregisterCallback<ClickEvent>(evt => OnRefreshCodeClicked());
+
+        if (_refreshCodeButton != null && _refreshCodeCallback != null)
+            _refreshCodeButton.UnregisterCallback(_refreshCodeCallback);
+
+        if (_changeButton != null && _navigateBackCallback != null)
+            _changeButton.UnregisterCallback(_navigateBackCallback);
     }
 
     private async void OnLoginClicked()
@@ -82,12 +91,7 @@ public class VerifyCodeController : MonoBehaviour, IAuthUIController
         if (string.IsNullOrEmpty(loginErr))
         {
             logger.Log("Verification and login successful.", this);
-            if (_backgroundInstance != null)
-            {
-                Destroy(_backgroundInstance);
-                _backgroundInstance = null;
-            }
-            Destroy(gameObject);
+            OnVerifySuccess?.Invoke();
         }
         else
         {
@@ -118,15 +122,5 @@ public class VerifyCodeController : MonoBehaviour, IAuthUIController
         yield return new WaitForSeconds(seconds);
         if (_messageError != null)
             _messageError.text = "";
-    }
-
-    private void SwitchTo(GameObject prefab)
-    {
-        if (prefab == null)
-            return;
-        var go = Instantiate(prefab);
-        go.GetComponent<IAuthUIController>()?.SetBackground(_backgroundInstance);
-        _backgroundInstance = null;
-        Destroy(gameObject);
     }
 }

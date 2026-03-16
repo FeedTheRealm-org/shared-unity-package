@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -9,13 +10,6 @@ public class LoginController : MonoBehaviour, IAuthUIController
     [SerializeField]
     private Session.Session session;
 
-    [Header("UI Prefabs")]
-    [SerializeField]
-    private GameObject signUpUI;
-
-    [SerializeField]
-    private GameObject verifyCodeUI;
-
     [SerializeField]
     private GameObject loginBackgroundPrefab;
 
@@ -25,6 +19,10 @@ public class LoginController : MonoBehaviour, IAuthUIController
 
     [SerializeField]
     private Logging.Logger logger;
+
+    public event Action OnNavigateToSignUp;
+    public event Action OnNavigateToVerifyCode;
+    public event Action OnLoginSuccess;
 
     private VisualElement ui;
 
@@ -59,6 +57,7 @@ public class LoginController : MonoBehaviour, IAuthUIController
     private void OnEnable()
     {
         logger.Log("LoginController enabled.", this);
+        ui = GetComponent<UIDocument>().rootVisualElement;
 
         _loginButton = ui.Q<Button>("LoginButton");
         _loginButton.clicked += OnLoginClicked;
@@ -66,8 +65,8 @@ public class LoginController : MonoBehaviour, IAuthUIController
         _changeButton = ui.Q<Label>("SignUpChangeButton");
         _changeButton.RegisterCallback<ClickEvent>(evt =>
         {
-            logger.Log("Switching to SignUp UI.", this);
-            SwitchTo(signUpUI);
+            logger.Log("Navigating to Sign Up.", this);
+            OnNavigateToSignUp?.Invoke();
         });
 
         _emailField = ui.Q<TextField>("EmailField");
@@ -98,21 +97,21 @@ public class LoginController : MonoBehaviour, IAuthUIController
             logger.Log("Login failed", this, Logging.LogType.Warning);
             if (err == "You must verify your email address before you can log in.")
             {
-                logger.Log("Switching to VerifyCode UI for verification.", this);
                 session.SetEmail(_emailField.value);
                 session.SetPassword(_passwordField.value);
-                SwitchTo(verifyCodeUI);
+                logger.Log("Navigating to Verify Code for verification.", this);
+                OnNavigateToVerifyCode?.Invoke();
             }
             ShowErrorMessage(err);
             return;
         }
-        logger.Log("Login successful.", this);
-        if (_backgroundInstance != null)
+        OnLoginSuccess?.Invoke();
+
+        if (_backgroundInstance != null && !_backgroundOwnershipTransferred)
         {
             Destroy(_backgroundInstance);
             _backgroundInstance = null;
         }
-        Destroy(gameObject);
     }
 
     private void ShowErrorMessage(string err)
@@ -134,28 +133,6 @@ public class LoginController : MonoBehaviour, IAuthUIController
         };
 
         _messageError.style.display = DisplayStyle.Flex;
-    }
-
-    private void SwitchTo(GameObject prefab)
-    {
-        if (prefab == null)
-            return;
-        var go = Instantiate(prefab);
-        var controller = go.GetComponent<IAuthUIController>();
-        if (controller != null)
-        {
-            controller.SetBackground(_backgroundInstance);
-            _backgroundInstance = null;
-        }
-        else if (_backgroundInstance != null)
-        {
-            Debug.LogWarning(
-                "LoginController.SwitchTo: Instantiated prefab does not implement IAuthUIController; "
-                    + "background instance will remain owned by the previous controller.",
-                this
-            );
-        }
-        Destroy(gameObject);
     }
 
     private void HideErrorMessage()
