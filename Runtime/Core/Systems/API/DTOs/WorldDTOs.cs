@@ -5,7 +5,7 @@ namespace API
     [System.Serializable]
     public class WorldRequest
     {
-        public FTRShared.Runtime.Models.WorldData data;
+        public FTRShared.Runtime.Models.ZoneData data;
         public string description;
         public string file_name;
     }

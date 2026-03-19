@@ -7,50 +7,44 @@ namespace FTRShared.Runtime.Models
     public class StructureData
     {
         public string id;
-        public Vector3 size;
-        public Vector3 rotation;
-        public Vector3 offset;
-        public Vector3 position;
-        public string structureName;
-
+        public Vector3 size = Vector3.one;
+        public Vector3 rotation = Vector3.zero;
+        public Vector3 position = Vector3.zero;
+        public string fileName = null;
+        public string structureName = "New Structure";
         public bool isShop = false;
-        public string shopId;
-
-        public Vector3 colliderSize;
-        public Vector3 colliderCenter;
-
-        public bool hasCustomCollider;
+        public string shopId = null;
+        public Vector3 colliderSize = Vector3.zero;
+        public Vector3 colliderCenter = Vector3.zero;
+        public bool hasCustomCollider = false;
 
         [NonSerialized]
         public string structureFilepath;
+
+        public StructureData() { }
 
         public StructureData(
             string id,
             string structureName,
             Vector3 size,
             Vector3 rotation,
-            Vector3 offset,
-            Vector3 position,
-            bool isShop = false,
-            Vector3 colliderSize = default,
-            Vector3 colliderCenter = default,
-            string shopId = null
+            string fileName = null
         )
         {
             this.id = id;
             this.structureName = structureName;
             this.size = size;
             this.rotation = rotation;
-            this.offset = offset;
-            this.position = position;
-            this.isShop = isShop;
-            this.shopId = shopId;
-            this.colliderSize = colliderSize;
-            this.colliderCenter = colliderCenter;
+            this.fileName = fileName;
+            position = Vector3.zero;
+            isShop = false;
+            colliderSize = Vector3.zero;
+            colliderCenter = Vector3.zero;
+            shopId = null;
 
             if (colliderSize == default)
             {
-                this.colliderSize = Vector3.zero;
+                colliderSize = Vector3.zero;
                 hasCustomCollider = false;
             }
             else
@@ -61,7 +55,7 @@ namespace FTRShared.Runtime.Models
 
         public override string ToString()
         {
-            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, Offset: {offset}, Filepath: {structureFilepath}, IsShop: {isShop}, ShopId: {shopId}, ColliderSize: {colliderSize}, ColliderCenter: {colliderCenter}, HasCustomCollider: {hasCustomCollider}";
+            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, IsShop: {isShop}, ShopId: {shopId}, ColliderSize: {colliderSize}, ColliderCenter: {colliderCenter}, HasCustomCollider: {hasCustomCollider}";
         }
     }
 }

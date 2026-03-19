@@ -14,7 +14,7 @@ namespace Worlds
         /// <summary>
         /// Last world data registered by a loader (client or server).
         /// </summary>
-        public static WorldData CurrentWorldData { get; private set; }
+        public static ZoneData CurrentWorldData { get; private set; }
 
         // All items by id, regardless of concrete type.
         private static readonly Dictionary<string, ItemData> itemsById =
@@ -33,7 +33,7 @@ namespace Worlds
         /// <summary>
         /// Register world data so that other systems can query items/enemies.
         /// </summary>
-        public static void RegisterWorldData(WorldData data)
+        public static void RegisterWorldData(ZoneData data)
         {
             CurrentWorldData = data;
 

@@ -7,22 +7,12 @@ namespace FTRShared.Runtime.Models
     [Serializable]
     public class WorldData
     {
-        [SerializeField]
         public string id;
-
-        [SerializeField]
+        public int zone_id = 0;
         private string _worldName = "New_FTR_World";
-
-        [SerializeField]
         public List<StructureData> objectPlacementData = new();
-
-        [SerializeField]
         public List<EnemySpawnerData> enemySpawnAreas = new();
-
-        [SerializeField]
         public List<NPCSpawnerData> npcSpawnAreas = new();
-
-        [SerializeField]
         public List<PlayerSpawnerData> playerSpawnAreas = new();
         public List<ConsumableItemData> consumableItems = new();
         public List<WeaponItemData> weaponItems = new();
@@ -36,7 +26,12 @@ namespace FTRShared.Runtime.Models
         public string worldName
         {
             get => _worldName;
-            set => _worldName = value?.Replace(" ", "_") ?? "New_FTR_World";
+            set =>
+                _worldName = System.Text.RegularExpressions.Regex.Replace(
+                    value ?? "New_FTR_World",
+                    @"[^a-zA-Z0-9_]",
+                    "_"
+                );
         }
     }
 }
