@@ -37,7 +37,7 @@ namespace API
         ///  Post a new world to the server or update an existing one if it has an id.
         /// </summary>
         public async Task<(string id, string error, long statusCode)> PublishWorld(
-            WorldData data,
+            WorldDataOld data,
             string fileName,
             string description,
             string accessToken
@@ -72,7 +72,7 @@ namespace API
         ///  Post a new world to the server (POST).
         /// </summary>
         private Task<(string id, string error, long statusCode)> CreateWorld(
-            FTRShared.Runtime.Models.WorldData data,
+            FTRShared.Runtime.Models.WorldDataOld data,
             string fileName,
             string description,
             string accessToken
@@ -91,7 +91,7 @@ namespace API
         ///  Update an existing world on the server (PUT).
         /// </summary>
         private Task<(string id, string error, long statusCode)> UpdateWorld(
-            FTRShared.Runtime.Models.WorldData data,
+            FTRShared.Runtime.Models.WorldDataOld data,
             string fileName,
             string description,
             string accessToken
@@ -112,7 +112,7 @@ namespace API
         private async Task<(string id, string error, long statusCode)> SendWorldRequest(
             string url,
             string method,
-            FTRShared.Runtime.Models.WorldData data,
+            FTRShared.Runtime.Models.WorldDataOld data,
             string fileName,
             string description,
             string accessToken,
@@ -183,7 +183,7 @@ namespace API
             int limit,
             string filter,
             string accessToken,
-            System.Action<int, List<WorldMetadata>, string> handler
+            System.Action<int, List<WorldData>, string> handler
         )
         {
             var url = $"{GetBaseUrl()}?offset={offset}&limit={limit}";
@@ -245,20 +245,20 @@ namespace API
                     yield break;
                 }
 
-                var worlds = new List<WorldMetadata>();
+                var worlds = new List<WorldData>();
 
                 foreach (var worldItem in worldListResponse.worlds)
                 {
                     try
                     {
-                        var world = new WorldMetadata();
-                        world.id = worldItem.id;
-                        world.userId = worldItem.user_id;
-                        world.name = worldItem.name;
-                        world.description = worldItem.description;
-                        world.createdAt = worldItem.created_at;
-                        world.updatedAt = worldItem.updated_at;
-                        var worldData = JsonUtility.FromJson<WorldData>(worldItem.data);
+                        var world = new WorldData();
+                        // world.id = worldItem.id;
+                        // world.userId = worldItem.user_id;
+                        // world.name = worldItem.name;
+                        // world.description = worldItem.description;
+                        // world.createdAt = worldItem.created_at;
+                        // world.updatedAt = worldItem.updated_at;
+                        // var worldData = JsonUtility.FromJson<WorldDataOld>(worldItem.data);
                         worlds.Add(world);
                     }
                     catch (System.Exception ex)
@@ -283,10 +283,10 @@ namespace API
         /// <param name="accessToken">The access token for authenticating the request. Must be valid and authorized to access the specified world.</param>
         /// <returns>
         /// A tuple containing:
-        ///   - <see cref="WorldData"/>: The deserialized world data object if retrieval and parsing succeed; otherwise, null.
+        ///   - <see cref="WorldDataOld"/>: The deserialized world data object if retrieval and parsing succeed; otherwise, null.
         ///   - <see cref="string"/>: An error message if an error occurs, or an empty string on success.
         /// </returns>
-        public async Task<(WorldData, string, long)> GetWorldData(
+        public async Task<(WorldDataOld, string, long)> GetWorldData(
             string worldID,
             string accessToken
         )
@@ -349,7 +349,7 @@ namespace API
                     return (null, "Failed to parse envelope", statusCode);
                 }
 
-                var worldData = JsonUtility.FromJson<FTRShared.Runtime.Models.WorldData>(
+                var worldData = JsonUtility.FromJson<FTRShared.Runtime.Models.WorldDataOld>(
                     worldEnvelope.data.data
                 );
                 if (worldData == null)
