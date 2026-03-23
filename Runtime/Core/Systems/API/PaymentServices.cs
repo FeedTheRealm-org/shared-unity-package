@@ -15,7 +15,8 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        private string GetPaymentBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/payments";
+        private string GetPaymentBaseUrl() =>
+            $"http://{apiConfig.Hostname}:{apiConfig.Port}/payments";
 
         private string GetGemsBaseUrl() => $"{GetPaymentBaseUrl()}/gems";
 
