@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace FTRShared.Runtime.Models
 {
     [Serializable]
-    public class WorldCreatables
+    public class CreatablesData
     {
         public List<ConsumableItemData> consumableItems = new();
         public List<WeaponItemData> weaponItems = new();

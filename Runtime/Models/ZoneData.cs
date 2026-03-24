@@ -10,11 +10,20 @@ namespace FTRShared.Runtime.Models
     [Serializable]
     public class ZoneData
     {
-        public string id;
-        public int zone_id;
+        public ZoneData(string worldId, int zoneId)
+        {
+            this.worldId = worldId;
+            this.zoneId = zoneId;
+            last_edited_at = DateTime.Now;
+        }
+
+        public string worldId;
+        public int zoneId;
         public List<StructureData> objectPlacementData = new();
         public List<EnemySpawnerData> enemySpawnAreas = new();
         public List<NPCSpawnerData> npcSpawnAreas = new();
         public List<PlayerSpawnerData> playerSpawnAreas = new();
+        public DateTime last_edited_at;
+        public DateTime published_at;
     }
 }
