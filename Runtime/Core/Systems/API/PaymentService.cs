@@ -52,8 +52,14 @@ namespace API
                         ? null
                         : JsonUtility.FromJson<ErrorResponse>(responseText);
                     string errorMessage = res?.detail ?? responseText;
-                    if (statusCode >= 500)
+                    if (statusCode == 401 || statusCode == 403)
+                    {
+                        errorMessage = "Unauthorized access. Please log in again.";
+                    }
+                    else if (statusCode >= 500)
+                    {
                         errorMessage = "Server error. Please try again later.";
+                    }
                     logger.Log(
                         $"GetAllGemPacks error ({statusCode}): {errorMessage}",
                         this,
