@@ -72,31 +72,32 @@ namespace API
                     DataEnvelope<List<GemPackResponse>> res = JsonUtility.FromJson<
                         DataEnvelope<List<GemPackResponse>>
                     >(responseText);
-                    logger.Log(
-                        $"GetAllGemPacks exception (result: {result}, status: {statusCode}): {ex.Message}",
-                        this,
-                        Logging.LogType.Error
-                    );
-
-                    string userMessage;
-                    if (result == UnityWebRequest.Result.ConnectionError)
-                    {
-                        userMessage =
-                            "Unable to connect to server. Please check your internet connection.";
-                    }
-                    else
-                    {
-                        string statusInfo = statusCode > 0 ? $" (HTTP {statusCode})" : string.Empty;
-                        userMessage =
-                            $"Received an unexpected response from the server{statusInfo}. Please try again later.";
-                    }
-                    return (false, userMessage, null);
+                    logger.Log($"CreateCheckoutSession response: {responseText}", this);
+                    return (true, "", res.data);
                 }
             }
             catch (System.Exception ex)
             {
                 logger.Log($"GetAllGemPacks exception: {ex.Message}", this, Logging.LogType.Error);
-                return (false, "Connection to the server failed.", null);
+                logger.Log(
+                    $"GetAllGemPacks exception (result: {result}, status: {statusCode}): {ex.Message}",
+                    this,
+                    Logging.LogType.Error
+                );
+
+                string userMessage;
+                if (result == UnityWebRequest.Result.ConnectionError)
+                {
+                    userMessage =
+                        "Unable to connect to server. Please check your internet connection.";
+                }
+                else
+                {
+                    string statusInfo = statusCode > 0 ? $" (HTTP {statusCode})" : string.Empty;
+                    userMessage =
+                        $"Received an unexpected response from the server{statusInfo}. Please try again later.";
+                }
+                return (false, userMessage, null);
             }
         }
 
@@ -232,25 +233,8 @@ namespace API
                     DataEnvelope<CheckoutResponse> res = JsonUtility.FromJson<
                         DataEnvelope<CheckoutResponse>
                     >(responseText);
-                    logger.Log(
-                        $"CreateCheckoutSession exception (status {statusCode}): {ex.Message}",
-                        this,
-                        Logging.LogType.Error
-                    );
-                    string userMessage;
-                    if (result == UnityWebRequest.Result.ConnectionError)
-                    {
-                        userMessage =
-                            "Unable to connect to server. Please check your internet connection.";
-                    }
-                    else
-                    {
-                        userMessage =
-                            statusCode > 0
-                                ? $"There was a problem processing the server response (status code {statusCode}). Please try again later."
-                                : "There was a problem processing the server response. Please try again later.";
-                    }
-                    return (false, userMessage, null);
+                    logger.Log($"CreateCheckoutSession response: {responseText}", this);
+                    return (true, "", res.data);
                 }
             }
             catch (System.Exception ex)
@@ -260,7 +244,25 @@ namespace API
                     this,
                     Logging.LogType.Error
                 );
-                return (false, "Connection to the server failed.", null);
+                logger.Log(
+                    $"CreateCheckoutSession exception (result: {result}, status: {statusCode}): {ex.Message}",
+                    this,
+                    Logging.LogType.Error
+                );
+
+                string userMessage;
+                if (result == UnityWebRequest.Result.ConnectionError)
+                {
+                    userMessage =
+                        "Unable to connect to server. Please check your internet connection.";
+                }
+                else
+                {
+                    string statusInfo = statusCode > 0 ? $" (HTTP {statusCode})" : string.Empty;
+                    userMessage =
+                        $"Received an unexpected response from the server{statusInfo}. Please try again later.";
+                }
+                return (false, userMessage, null);
             }
         }
     }
