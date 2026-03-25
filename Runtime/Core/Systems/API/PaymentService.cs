@@ -153,7 +153,20 @@ namespace API
             catch (System.Exception ex)
             {
                 logger.Log($"GetGemBalance exception: {ex.Message}", this, Logging.LogType.Error);
-                return (false, "Connection to the server failed.", null);
+                string userMessage;
+                if (result == UnityWebRequest.Result.ConnectionError)
+                {
+                    userMessage =
+                        "Unable to connect to server. Please check your internet connection.";
+                }
+                else
+                {
+                    userMessage =
+                        statusCode > 0
+                            ? $"Unexpected response from server (status code {statusCode}). Please try again later."
+                            : "Unexpected response from server. Please try again later.";
+                }
+                return (false, userMessage, null);
             }
         }
 
@@ -219,8 +232,25 @@ namespace API
                     DataEnvelope<CheckoutResponse> res = JsonUtility.FromJson<
                         DataEnvelope<CheckoutResponse>
                     >(responseText);
-                    logger.Log($"CreateCheckoutSession response: {responseText}", this);
-                    return (true, "", res.data);
+                    logger.Log(
+                        $"CreateCheckoutSession exception (status {statusCode}): {ex.Message}",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    string userMessage;
+                    if (result == UnityWebRequest.Result.ConnectionError)
+                    {
+                        userMessage =
+                            "Unable to connect to server. Please check your internet connection.";
+                    }
+                    else
+                    {
+                        userMessage =
+                            statusCode > 0
+                                ? $"There was a problem processing the server response (status code {statusCode}). Please try again later."
+                                : "There was a problem processing the server response. Please try again later.";
+                    }
+                    return (false, userMessage, null);
                 }
             }
             catch (System.Exception ex)
