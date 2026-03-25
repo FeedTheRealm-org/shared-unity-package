@@ -72,8 +72,25 @@ namespace API
                     DataEnvelope<List<GemPackResponse>> res = JsonUtility.FromJson<
                         DataEnvelope<List<GemPackResponse>>
                     >(responseText);
-                    logger.Log($"GetAllGemPacks response: {responseText}", this);
-                    return (true, "", res.data);
+                    logger.Log(
+                        $"GetAllGemPacks exception (result: {result}, status: {statusCode}): {ex.Message}",
+                        this,
+                        Logging.LogType.Error
+                    );
+
+                    string userMessage;
+                    if (result == UnityWebRequest.Result.ConnectionError)
+                    {
+                        userMessage =
+                            "Unable to connect to server. Please check your internet connection.";
+                    }
+                    else
+                    {
+                        string statusInfo = statusCode > 0 ? $" (HTTP {statusCode})" : string.Empty;
+                        userMessage =
+                            $"Received an unexpected response from the server{statusInfo}. Please try again later.";
+                    }
+                    return (false, userMessage, null);
                 }
             }
             catch (System.Exception ex)
