@@ -30,7 +30,7 @@ namespace API
         public string id;
         public string name;
         public int gems;
-        public float price;
+        public decimal price;
         public string created_at;
         public string updated_at;
     }
