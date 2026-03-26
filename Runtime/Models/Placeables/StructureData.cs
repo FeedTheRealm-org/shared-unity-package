@@ -53,6 +53,24 @@ namespace FTRShared.Runtime.Models
             }
         }
 
+        public StructureData Clone()
+        {
+            return new StructureData
+            {
+                id = id,
+                size = size,
+                rotation = rotation,
+                position = position,
+                fileName = fileName,
+                structureName = structureName,
+                isShop = isShop,
+                shopId = shopId,
+                colliderSize = colliderSize,
+                colliderCenter = colliderCenter,
+                hasCustomCollider = hasCustomCollider,
+            };
+        }
+
         public override string ToString()
         {
             return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, IsShop: {isShop}, ShopId: {shopId}, ColliderSize: {colliderSize}, ColliderCenter: {colliderCenter}, HasCustomCollider: {hasCustomCollider}";

@@ -10,14 +10,14 @@ namespace FTRShared.Runtime.Models
     [Serializable]
     public class ZoneData
     {
-        public ZoneData(string worldId, int zoneId)
+        public ZoneData(string worldName, int zoneId)
         {
-            this.worldId = worldId;
+            this.worldName = worldName;
             this.zoneId = zoneId;
             last_edited_at = DateTime.Now;
         }
 
-        public string worldId;
+        public string worldName;
         public int zoneId;
         public List<StructureData> objectPlacementData = new();
         public List<EnemySpawnerData> enemySpawnAreas = new();

@@ -8,7 +8,7 @@ namespace FTRShared.Runtime.Models
     {
         public string id;
         public string name = "Item";
-        public string description = ""; // TODO: this is not necesary and will be removed later
+        public string description = "";
         public string spriteFilePath = "";
 
         public ItemData(string id, string name, string description, string spriteFilePath)
