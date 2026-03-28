@@ -14,19 +14,10 @@ namespace FTRShared.Runtime.Models
     [Serializable]
     public class WeaponItemData : ItemData
     {
-        [SerializeField]
         public WeaponType weaponType = WeaponType.None;
-
-        [SerializeField]
         public int damage = 0;
-
-        [SerializeField]
         public float attackSpeed = 0f;
-
-        [SerializeField]
         public float range = 0f;
-
-        [SerializeField]
         public int ammo = 0;
 
         public WeaponItemData(

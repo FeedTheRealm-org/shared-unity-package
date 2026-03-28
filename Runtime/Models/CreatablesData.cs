@@ -13,6 +13,6 @@ namespace FTRShared.Runtime.Models
         public List<DialogData> dialogs = new();
         public List<NPCData> npcs = new();
         public List<QuestData> quests = new();
-        public WorldShopsData worldShopsData = new();
+        public List<ShopData> shops = new();
     }
 }
