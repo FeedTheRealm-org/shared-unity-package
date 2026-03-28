@@ -28,7 +28,7 @@ namespace API
         public string id;
         public string name;
         public int gems;
-        public decimal price;
+        public string price;
         public string created_at;
         public string updated_at;
     }
