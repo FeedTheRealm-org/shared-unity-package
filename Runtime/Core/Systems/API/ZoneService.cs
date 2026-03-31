@@ -13,7 +13,8 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        private string BaseUrl => $"{apiConfig.Hostname}:{apiConfig.Port}/zone";
+        private string BaseUrl(string worldId) =>
+            $"{apiConfig.Hostname}:{apiConfig.Port}/world/{worldId}/zones";
 
         /// <summary>
         /// Publishes or Updates a zone on the server.
@@ -34,9 +35,10 @@ namespace API
                         data = data,
                     }
                 );
+                string url = $"{BaseUrl(worldId)}/{data.zoneId}";
                 var (responseText, result, statusCode) = await SendRequestAsync(
-                    BaseUrl,
-                    "POST",
+                    url,
+                    "PUT",
                     accessToken,
                     json,
                     "PublishZone"

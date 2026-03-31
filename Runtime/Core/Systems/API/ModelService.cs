@@ -106,7 +106,7 @@ namespace API
                 );
             }
 
-            var url = $"{GetBaseUrl()}/{worldId}";
+            var url = $"{GetBaseUrl()}/assets/models/world/{worldId}";
             UnityWebRequest uwr = UnityWebRequest.Post(url, form);
             uwr.method = "PUT";
             uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
