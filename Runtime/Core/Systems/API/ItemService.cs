@@ -98,55 +98,5 @@ namespace API
                 return uwr.error;
             }
         }
-
-        /// <summary>
-        /// Gets all item categories.
-        /// </summary>
-        public async Task<ItemCategoryListResponse> GetItemCategories(string accessToken)
-        {
-            string url = $"{GetBaseUrl()}/categories";
-            var (responseText, result, statusCode) = await SendRequestAsync(
-                url,
-                "GET",
-                accessToken,
-                null,
-                "GetItemCategories"
-            );
-
-            if (result == UnityWebRequest.Result.ConnectionError)
-            {
-                logger.Log(
-                    $"GetItemCategories connection error: {responseText}",
-                    this,
-                    Logging.LogType.Error
-                );
-                throw new System.Exception(
-                    "Unable to connect to server. Please check your internet connection."
-                );
-            }
-            else if (result == UnityWebRequest.Result.ProtocolError)
-            {
-                string errorMessage = responseText;
-                if (statusCode == 401)
-                {
-                    errorMessage = "Session expired. Please log in again.";
-                }
-                else if (statusCode >= 500)
-                {
-                    errorMessage = "Server error. Please try again later.";
-                }
-                logger.Log(
-                    $"GetItemCategories error ({statusCode}): {errorMessage}",
-                    this,
-                    Logging.LogType.Error
-                );
-                throw new System.Exception(errorMessage);
-            }
-
-            var response = JsonUtility.FromJson<DataEnvelope<ItemCategoryListResponse>>(
-                responseText
-            );
-            return response.data;
-        }
     }
 }

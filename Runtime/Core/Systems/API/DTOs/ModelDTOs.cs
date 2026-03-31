@@ -1,44 +1,51 @@
+using System;
 using System.Collections.Generic;
 
 namespace API
 {
-    [System.Serializable]
+    [Serializable]
     public class AssetListResponse
     {
         public AssetListData data;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class AssetListData
     {
         public string world_id;
         public List<AssetListItem> models;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class AssetListItem
     {
         public string model_id;
         public string name;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class ModelInfo
     {
         public string model_id;
         public string url;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class WorldModelsData
     {
         public string world_id;
-        public ModelInfo[] models;
+        public List<ModelInfo> models = new();
     }
 
-    [System.Serializable]
+    [Serializable]
     public class WorldModelsResponse
     {
         public WorldModelsData data;
+    }
+
+    public class ModelRequest
+    {
+        public string id;
+        public string filePath;
     }
 }

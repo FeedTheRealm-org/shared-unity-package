@@ -15,7 +15,7 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/assets/models/world";
+        private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}";
 
         /// <summary>
         /// Lists all asset models for a given world.
@@ -26,7 +26,7 @@ namespace API
             string accessToken
         )
         {
-            string url = $"{GetBaseUrl().TrimEnd('/')}/{worldId}";
+            string url = $"{GetBaseUrl()}/assets/models/world/{worldId}";
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "GET",
@@ -69,10 +69,7 @@ namespace API
 
             Dictionary<string, ModelInfo> models = new();
             foreach (var model in response.data.models)
-            {
                 models[model.model_id] = model;
-            }
-
             return models;
         }
 
@@ -80,7 +77,7 @@ namespace API
         /// Uploads asset model & material files for a world.
         /// </summary>
         public async Task<string> UploadModels(
-            List<StructureData> structureModels,
+            List<ModelRequest> structureModels,
             string worldId,
             string accessToken
         )
@@ -99,13 +96,12 @@ namespace API
                 var structure = structureModels[i];
                 string prefix = $"models[{i}]";
                 form.AddField($"{prefix}.model_id", structure.id);
-                form.AddField($"{prefix}.name", structure.structureName);
-                byte[] modelData = File.ReadAllBytes(structure.structureFilepath);
+                byte[] modelData = File.ReadAllBytes(structure.filePath);
 
                 form.AddBinaryData(
                     $"{prefix}.model_file",
                     modelData,
-                    Path.GetFileName(structure.structureFilepath),
+                    Path.GetFileName(structure.filePath),
                     "application/octet-stream"
                 );
             }
