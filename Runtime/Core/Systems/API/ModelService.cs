@@ -27,6 +27,7 @@ namespace API
         )
         {
             string url = $"{GetBaseUrl()}/assets/models/world/{worldId}";
+            Debug.Log($"[ModelService] Sending GET request to {url}");
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "GET",

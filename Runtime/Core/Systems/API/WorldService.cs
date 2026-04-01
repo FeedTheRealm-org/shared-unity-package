@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FTRShared.Runtime.Models;
 using UnityEngine;
@@ -126,38 +127,46 @@ namespace API
         /// <summary>
         /// Fetches a page of worlds from the server.
         /// </summary>
-        public IEnumerator GetWorldPage(
+        /// <summary>
+        /// Fetches a page of worlds from the server.
+        /// </summary>
+        public async Task<(int amount, List<WorldData> worlds, string error)> GetWorldPage(
             int offset,
             int limit,
             string filter,
-            string accessToken,
-            System.Action<int, List<WorldData>, string> handler
+            string accessToken
         )
         {
             var url = $"{BaseUrl}?offset={offset}&limit={limit}";
             if (!string.IsNullOrWhiteSpace(filter))
                 url += $"&filter={UnityWebRequest.EscapeURL(filter.Trim())}";
 
-            var task = SendRequestAsync(url, "GET", accessToken, null, "GetWorldPage");
-            while (!task.IsCompleted)
-                yield return null;
+            var (responseText, result, statusCode) = await SendRequestAsync(
+                url,
+                "GET",
+                accessToken,
+                null,
+                "GetWorldPage"
+            );
 
-            var (responseText, result, statusCode) = task.Result;
             var error = ParseError(result, responseText, statusCode, "GetWorldPage");
             if (error != null)
-            {
-                handler?.Invoke(0, null, error);
-                yield break;
-            }
+                return (0, null, error);
 
             var envelope = JsonUtility.FromJson<DataEnvelope<WorldListResponse>>(responseText);
             if (envelope?.data == null)
-            {
-                handler?.Invoke(0, null, "Failed to parse world list.");
-                yield break;
-            }
+                return (0, null, "Failed to parse world list.");
 
-            handler?.Invoke(envelope.data.amount, new List<WorldData>(), "");
+            var worlds = envelope
+                .data.worlds.Select(w => new WorldData
+                {
+                    worldId = w.id,
+                    worldName = w.name,
+                    description = w.description ?? "",
+                })
+                .ToList();
+
+            return (envelope.data.amount, worlds, "");
         }
 
         /// <summary>

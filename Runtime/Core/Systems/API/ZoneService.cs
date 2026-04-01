@@ -71,7 +71,7 @@ namespace API
         )
         {
             var (responseText, result, statusCode) = await SendRequestAsync(
-                $"{BaseUrl(worldId)}/zones",
+                $"{BaseUrl(worldId)}",
                 "GET",
                 accessToken,
                 null,
@@ -95,8 +95,10 @@ namespace API
             string accessToken
         )
         {
+            string url = $"{BaseUrl(worldId)}/{zoneId}";
+            Debug.Log($"[ZoneService] Getting zone data from URL: {url}");
             var (responseText, result, statusCode) = await SendRequestAsync(
-                $"{BaseUrl(worldId)}/zones/{zoneId}",
+                url,
                 "GET",
                 accessToken,
                 null,
