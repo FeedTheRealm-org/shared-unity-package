@@ -159,5 +159,34 @@ namespace API
 
             handler?.Invoke(envelope.data.amount, new List<WorldData>(), "");
         }
+
+        /// <summary>
+        /// Fetches a world and its creatables data by world id.
+        /// Returns the deserialized WorldData and CreatablesData.
+        /// </summary>
+        public async Task<(WorldData worldData, CreatablesData creatablesData, string error, long statusCode)> GetWorld(
+            string worldId, string accessToken)
+        {
+            var (responseText, result, statusCode) = await SendRequestAsync(
+                $"{BaseUrl}/{worldId}", "GET", accessToken, null, "GetWorld");
+
+            var error = ParseError(result, responseText, statusCode, "GetWorld");
+            if (error != null) return (null, null, error, statusCode);
+
+            var envelope = JsonUtility.FromJson<DataEnvelope<WorldDetailResponse>>(responseText);
+            if (envelope?.data == null)
+                return (null, null, "Failed to parse world response.", statusCode);
+
+            WorldData worldData = JsonUtility.FromJson<WorldData>(envelope.data.data);
+            if (worldData == null)
+                return (null, null, "Failed to parse world data.", statusCode);
+
+            worldData.worldId = envelope.data.id;
+            worldData.worldName = envelope.data.name;
+
+            CreatablesData creatablesData = JsonUtility.FromJson<CreatablesData>(envelope.data.createable_data);
+
+            return (worldData, creatablesData, "", statusCode);
+        }
     }
 }

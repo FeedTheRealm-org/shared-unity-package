@@ -19,4 +19,11 @@ namespace API
         public int zone_id;
         public string zone_data;
     }
+
+    [Serializable]
+    public class ZonesListResponse
+    {
+        public string world_id;
+        public List<int> zones;
+    }
 }
