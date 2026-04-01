@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FTRShared.Runtime.Models;
-using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 

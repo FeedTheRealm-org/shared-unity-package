@@ -87,17 +87,23 @@ namespace API
                 logger.Log("No assets to upload.", this, Logging.LogType.Warning);
                 return "No assets to upload.";
             }
-            logger.Log($"Uploading {structureModels.Count} assets for world ID: {worldId}", this);
+
+            var url = $"{GetBaseUrl()}/assets/models/world/{worldId}";
+            logger.Log($"[ModelService] Uploading {structureModels.Count} models to: {url}", this);
 
             var form = new WWWForm();
-
             for (int i = 0; i < structureModels.Count; i++)
             {
                 var structure = structureModels[i];
                 string prefix = $"models[{i}]";
+
+                logger.Log(
+                    $"[ModelService] Model [{i}]: id={structure.id}, filePath={structure.filePath}, fileExists={File.Exists(structure.filePath)}, fileSize={new FileInfo(structure.filePath).Length} bytes",
+                    this
+                );
+
                 form.AddField($"{prefix}.model_id", structure.id);
                 byte[] modelData = File.ReadAllBytes(structure.filePath);
-
                 form.AddBinaryData(
                     $"{prefix}.model_file",
                     modelData,
@@ -106,22 +112,28 @@ namespace API
                 );
             }
 
-            var url = $"{GetBaseUrl()}/assets/models/world/{worldId}";
             UnityWebRequest uwr = UnityWebRequest.Post(url, form);
             uwr.method = "PUT";
             uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+
+            logger.Log($"[ModelService] Sending PUT to {url}", this);
             await uwr.SendWebRequest();
+
+            logger.Log($"[ModelService] Response code: {uwr.responseCode}", this);
+            logger.Log($"[ModelService] Response body: {uwr.downloadHandler?.text}", this);
 
             if (uwr.result == UnityWebRequest.Result.Success)
             {
-                logger.Log("Assets uploaded successfully", this);
+                logger.Log("[ModelService] Models uploaded successfully.", this);
                 return string.Empty;
             }
-            else
-            {
-                logger.Log($"Asset upload error: {uwr.error}", this, Logging.LogType.Error);
-                return uwr.error;
-            }
+
+            logger.Log(
+                $"[ModelService] Upload error: {uwr.error} | Response: {uwr.downloadHandler?.text}",
+                this,
+                Logging.LogType.Error
+            );
+            return uwr.error;
         }
     }
 }
