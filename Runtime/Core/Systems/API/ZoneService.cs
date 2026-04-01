@@ -67,13 +67,21 @@ namespace API
         /// Returns the list of zone ids for a given world.
         /// </summary>
         public async Task<(List<int> zones, string error, long statusCode)> GetZonesList(
-            string worldId, string accessToken)
+            string worldId,
+            string accessToken
+        )
         {
             var (responseText, result, statusCode) = await SendRequestAsync(
-                $"{BaseUrl(worldId)}/zones", "GET", accessToken, null, "GetZonesList");
+                $"{BaseUrl(worldId)}/zones",
+                "GET",
+                accessToken,
+                null,
+                "GetZonesList"
+            );
 
             var error = ParseError(result, responseText, statusCode, "GetZonesList");
-            if (error != null) return (null, error, statusCode);
+            if (error != null)
+                return (null, error, statusCode);
 
             var envelope = JsonUtility.FromJson<DataEnvelope<ZonesListResponse>>(responseText);
             return (envelope?.data?.zones ?? new List<int>(), "", statusCode);
@@ -83,13 +91,22 @@ namespace API
         /// Returns the zone data for a specific zone in a world.
         /// </summary>
         public async Task<(ZoneData zoneData, string error, long statusCode)> GetZoneData(
-            string worldId, int zoneId, string accessToken)
+            string worldId,
+            int zoneId,
+            string accessToken
+        )
         {
             var (responseText, result, statusCode) = await SendRequestAsync(
-                $"{BaseUrl(worldId)}/zones/{zoneId}", "GET", accessToken, null, "GetZoneData");
+                $"{BaseUrl(worldId)}/zones/{zoneId}",
+                "GET",
+                accessToken,
+                null,
+                "GetZoneData"
+            );
 
             var error = ParseError(result, responseText, statusCode, "GetZoneData");
-            if (error != null) return (null, error, statusCode);
+            if (error != null)
+                return (null, error, statusCode);
 
             var envelope = JsonUtility.FromJson<DataEnvelope<ZoneResponse>>(responseText);
             if (envelope?.data == null)

@@ -164,14 +164,24 @@ namespace API
         /// Fetches a world and its creatables data by world id.
         /// Returns the deserialized WorldData and CreatablesData.
         /// </summary>
-        public async Task<(WorldData worldData, CreatablesData creatablesData, string error, long statusCode)> GetWorld(
-            string worldId, string accessToken)
+        public async Task<(
+            WorldData worldData,
+            CreatablesData creatablesData,
+            string error,
+            long statusCode
+        )> GetWorld(string worldId, string accessToken)
         {
             var (responseText, result, statusCode) = await SendRequestAsync(
-                $"{BaseUrl}/{worldId}", "GET", accessToken, null, "GetWorld");
+                $"{BaseUrl}/{worldId}",
+                "GET",
+                accessToken,
+                null,
+                "GetWorld"
+            );
 
             var error = ParseError(result, responseText, statusCode, "GetWorld");
-            if (error != null) return (null, null, error, statusCode);
+            if (error != null)
+                return (null, null, error, statusCode);
 
             var envelope = JsonUtility.FromJson<DataEnvelope<WorldDetailResponse>>(responseText);
             if (envelope?.data == null)
@@ -184,7 +194,9 @@ namespace API
             worldData.worldId = envelope.data.id;
             worldData.worldName = envelope.data.name;
 
-            CreatablesData creatablesData = JsonUtility.FromJson<CreatablesData>(envelope.data.createable_data);
+            CreatablesData creatablesData = JsonUtility.FromJson<CreatablesData>(
+                envelope.data.createable_data
+            );
 
             return (worldData, creatablesData, "", statusCode);
         }
