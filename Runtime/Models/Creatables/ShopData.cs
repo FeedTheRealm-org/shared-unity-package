@@ -7,13 +7,13 @@ namespace FTRShared.Runtime.Models
     [Serializable]
     public class ProductData
     {
-        public string itemId;
+        public string productId;
         public int price;
         public CurrencyType currency = CurrencyType.Gold;
 
-        public ProductData(string itemId, int price, CurrencyType currency = CurrencyType.Gold)
+        public ProductData(string productId, int price, CurrencyType currency = CurrencyType.Gold)
         {
-            this.itemId = itemId;
+            this.productId = productId;
             this.price = price;
             this.currency = currency;
         }
@@ -23,18 +23,12 @@ namespace FTRShared.Runtime.Models
     public class ShopData
     {
         public string id;
-        public string displayName;
+        public string shopName;
         public List<ProductData> products = new();
 
         public override string ToString()
         {
             return $"ShopData: {products.Count} products available.";
         }
-    }
-
-    [Serializable]
-    public class WorldShopsData
-    {
-        public List<ShopData> shops = new();
     }
 }

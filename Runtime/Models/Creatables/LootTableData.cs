@@ -7,19 +7,14 @@ namespace FTRShared.Runtime.Models
     [Serializable]
     public class LootTableData
     {
-        [SerializeField]
         public string id;
 
-        [SerializeField]
         public string name = "Loot Table";
 
-        [SerializeField]
         public int minGoldDropAmount = 0;
 
-        [SerializeField]
         public int maxGoldDropAmount = 0;
 
-        [SerializeField]
         public List<LootEntryData> lootItems = new();
 
         public LootTableData(
@@ -50,13 +45,11 @@ namespace FTRShared.Runtime.Models
             /// <summary>
             /// Id of the consumable item this entry refers to.
             /// </summary>
-            [SerializeField]
             public string id;
 
             /// <summary>
             /// Per-item drop probability (0-100).
             /// </summary>
-            [SerializeField]
             public int dropProbability = 0;
 
             public LootEntryData() { }

@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using FTRShared.Runtime.Models;
 using UnityEngine;
@@ -8,359 +8,206 @@ using UnityEngine.Networking;
 
 namespace API
 {
-    [System.Serializable]
-    public class WorldResponseEnvelope
-    {
-        public WorldResponseData data;
-    }
-
-    [System.Serializable]
-    public class WorldResponseData
-    {
-        public string id;
-        public string name;
-        public string description;
-        public string user_id;
-        public string data;
-    }
-
     [CreateAssetMenu(fileName = "WorldService", menuName = "Scriptable Objects/API/WorldService")]
     public class WorldService : BaseApiService
     {
-        [Header("API Config")]
         [SerializeField]
         private ApiConfig apiConfig;
 
-        private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/world";
+        private string BaseUrl => $"{apiConfig.Hostname}:{apiConfig.Port}/world";
 
         /// <summary>
-        ///  Post a new world to the server or update an existing one if it has an id.
+        /// Creates a new world on the server. Returns the server assigned world id.
         /// </summary>
         public async Task<(string id, string error, long statusCode)> PublishWorld(
             WorldData data,
-            string fileName,
-            string description,
             string accessToken
         )
         {
-            if (!string.IsNullOrEmpty(data.id))
+            try
             {
-                var (id, error, statusCode) = await UpdateWorld(
-                    data,
-                    fileName,
-                    description,
-                    accessToken
+                string json = JsonUtility.ToJson(
+                    new WorldRequest
+                    {
+                        file_name = data.worldName,
+                        description = data.description,
+                        data = data,
+                    }
                 );
-                if (statusCode == 404)
-                {
-                    logger.Log(
-                        $"PublishWorld: World '{data.id}' not found on server (404). Falling back to POST.",
-                        this,
-                        Logging.LogType.Warning
-                    );
-                    return await CreateWorld(data, fileName, description, accessToken);
-                }
-                return (id, error, statusCode);
+                var (responseText, result, statusCode) = await SendRequestAsync(
+                    BaseUrl,
+                    "POST",
+                    accessToken,
+                    json,
+                    "CreateWorld"
+                );
+
+                var error = ParseError(result, responseText, statusCode, "CreateWorld");
+                if (error != null)
+                    return ("", error, statusCode);
+
+                var res = JsonUtility.FromJson<DataEnvelope<WorldCreateResponse>>(responseText);
+                return (res?.data?.id ?? "", "", statusCode);
             }
-            else
+            catch (System.Exception ex)
             {
-                return await CreateWorld(data, fileName, description, accessToken);
+                logger.Log(
+                    $"World Cound not be Published: {ex.Message}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return ("", ex.Message, 0);
             }
         }
 
         /// <summary>
-        ///  Post a new world to the server (POST).
+        /// Updates an existing world on the server using its worldId.
         /// </summary>
-        private Task<(string id, string error, long statusCode)> CreateWorld(
-            FTRShared.Runtime.Models.WorldData data,
-            string fileName,
-            string description,
+        public async Task<(string id, string error, long statusCode)> UpdateWorld(
+            WorldData data,
             string accessToken
-        ) =>
-            SendWorldRequest(
-                GetBaseUrl(),
-                "POST",
-                data,
-                fileName,
-                description,
-                accessToken,
-                "CreateWorld"
+        )
+        {
+            string json = JsonUtility.ToJson(
+                new WorldRequest
+                {
+                    file_name = data.worldName,
+                    description = data.description,
+                    data = data,
+                }
             );
-
-        /// <summary>
-        ///  Update an existing world on the server (PUT).
-        /// </summary>
-        private Task<(string id, string error, long statusCode)> UpdateWorld(
-            FTRShared.Runtime.Models.WorldData data,
-            string fileName,
-            string description,
-            string accessToken
-        ) =>
-            SendWorldRequest(
-                $"{GetBaseUrl()}/{data.id}",
+            var (responseText, result, statusCode) = await SendRequestAsync(
+                $"{BaseUrl}/{data.worldId}",
                 "PUT",
-                data,
-                fileName,
-                description,
                 accessToken,
+                json,
                 "UpdateWorld"
             );
 
-        /// <summary>
-        /// Send requests for creating or updating worlds.
-        /// </summary>
-        private async Task<(string id, string error, long statusCode)> SendWorldRequest(
-            string url,
-            string method,
-            FTRShared.Runtime.Models.WorldData data,
-            string fileName,
-            string description,
-            string accessToken,
-            string logPrefix
-        )
-        {
-            WorldRequest payload = new()
-            {
-                data = data,
-                file_name = fileName,
-                description = description,
-            };
+            var error = ParseError(result, responseText, statusCode, "UpdateWorld");
+            if (error != null)
+                return ("", error, statusCode);
 
-            string json = JsonUtility.ToJson(payload);
-
-            var (responseText, result, statusCode) = await SendRequestAsync(
-                url,
-                method,
-                accessToken,
-                json,
-                logPrefix
-            );
-
-            if (result == UnityWebRequest.Result.ConnectionError)
-            {
-                logger.Log(
-                    $"{logPrefix} connection error: {responseText}",
-                    this,
-                    Logging.LogType.Error
-                );
-                return (
-                    "",
-                    "Unable to connect to server. Please check your internet connection.",
-                    0
-                );
-            }
-            else if (result == UnityWebRequest.Result.ProtocolError)
-            {
-                var res = JsonUtility.FromJson<ErrorResponse>(responseText);
-                string errorMessage = res?.detail ?? responseText;
-                if (statusCode == 401)
-                {
-                    errorMessage = "Session expired. Please log in again.";
-                }
-                else if (statusCode >= 500)
-                {
-                    errorMessage = "Server error. Please try again later.";
-                }
-                logger.Log(
-                    $"{logPrefix} error ({statusCode}): {res?.title}: {errorMessage}",
-                    this,
-                    Logging.LogType.Error
-                );
-                return ("", errorMessage, statusCode);
-            }
-            else
-            {
-                var res = JsonUtility.FromJson<DataEnvelope<WorldCreateResponse>>(responseText);
-                return (res?.data?.id ?? (method == "PUT" ? data.id : ""), "", statusCode);
-            }
+            return (data.worldId, "", statusCode);
         }
 
-        /// <summary>
-        /// Get a page of worlds from the server.
-        /// </summary>
-        public IEnumerator GetWorldPage(
-            int offset,
-            int limit,
-            string filter,
-            string accessToken,
-            System.Action<int, List<WorldMetadata>, string> handler
-        )
-        {
-            var url = $"{GetBaseUrl()}?offset={offset}&limit={limit}";
-            if (!string.IsNullOrWhiteSpace(filter))
-            {
-                var trimmed = filter.Trim();
-                url = $"{url}&filter={UnityWebRequest.EscapeURL(trimmed)}";
-            }
-            logger.Log($"Fetching worlds from URL: {url}", this);
-            var task = SendRequestAsync(url, "GET", accessToken, null, "GetWorldPage");
-            while (!task.IsCompleted)
-                yield return null;
-            var (responseText, result, statusCode) = task.Result;
-
-            if (result == UnityWebRequest.Result.ConnectionError)
-            {
-                logger.Log(
-                    $"GetWorldPage connection error: {responseText}",
-                    this,
-                    Logging.LogType.Error
-                );
-                handler?.Invoke(
-                    0,
-                    null,
-                    "Unable to connect to server. Please check your internet connection."
-                );
-            }
-            else if (result == UnityWebRequest.Result.ProtocolError)
-            {
-                var res = string.IsNullOrEmpty(responseText)
-                    ? null
-                    : JsonUtility.FromJson<ErrorResponse>(responseText);
-                string errorMessage = res?.detail ?? responseText;
-                if (statusCode == 401)
-                {
-                    errorMessage = "Session expired. Please log in again.";
-                }
-                else if (statusCode >= 500)
-                {
-                    errorMessage = "Server error. Please try again later.";
-                }
-                logger.Log(
-                    $"GetWorldPage error ({statusCode}): {(res != null ? $"{res.title}: {errorMessage}" : responseText)}",
-                    this,
-                    Logging.LogType.Error
-                );
-                handler?.Invoke(0, null, errorMessage);
-            }
-            else
-            {
-                var envelope = string.IsNullOrEmpty(responseText)
-                    ? null
-                    : JsonUtility.FromJson<DataEnvelope<WorldListResponse>>(responseText);
-                var worldListResponse = envelope?.data;
-
-                if (worldListResponse == null)
-                {
-                    handler?.Invoke(0, null, "Failed to parse world list response");
-                    yield break;
-                }
-
-                var worlds = new List<WorldMetadata>();
-
-                foreach (var worldItem in worldListResponse.worlds)
-                {
-                    try
-                    {
-                        var world = new WorldMetadata();
-                        world.id = worldItem.id;
-                        world.userId = worldItem.user_id;
-                        world.name = worldItem.name;
-                        world.description = worldItem.description;
-                        world.createdAt = worldItem.created_at;
-                        world.updatedAt = worldItem.updated_at;
-                        var worldData = JsonUtility.FromJson<WorldData>(worldItem.data);
-                        worlds.Add(world);
-                    }
-                    catch (System.Exception ex)
-                    {
-                        logger.Log(
-                            $"Failed to parse world data for {worldItem.id}: {ex.Message}",
-                            this,
-                            Logging.LogType.Error
-                        );
-                    }
-                }
-
-                logger.Log($"GetWorldPage response: Loaded {worlds.Count} worlds", this);
-                handler?.Invoke(worldListResponse.amount, worlds, "");
-            }
-        }
-
-        /// <summary>
-        /// Retrieves detailed world data from the server using the specified world ID.
-        /// </summary>
-        /// <param name="worldID">The unique identifier of the world to retrieve. This should be a valid world ID string as returned by world creation or listing endpoints. Typically a GUID or database-generated string.</param>
-        /// <param name="accessToken">The access token for authenticating the request. Must be valid and authorized to access the specified world.</param>
-        /// <returns>
-        /// A tuple containing:
-        ///   - <see cref="WorldData"/>: The deserialized world data object if retrieval and parsing succeed; otherwise, null.
-        ///   - <see cref="string"/>: An error message if an error occurs, or an empty string on success.
-        /// </returns>
-        public async Task<(WorldData, string, long)> GetWorldData(
-            string worldID,
+        public async Task<(string error, long statusCode)> PublishCreatables(
+            CreatablesData data,
+            string worldId,
             string accessToken
         )
         {
-            var url = $"{GetBaseUrl()}/{worldID}";
-            logger.Log($"Fetching world data from URL: {url}", this);
+            try
+            {
+                string json = JsonUtility.ToJson(new CreatablesRequest { createable_data = data });
+                var (responseText, result, statusCode) = await SendRequestAsync(
+                    $"{BaseUrl}/{worldId}/createable-data",
+                    "PUT",
+                    accessToken,
+                    json,
+                    "PublishCreatables"
+                );
+
+                var error = ParseError(result, responseText, statusCode, "PublishCreatables");
+                if (error != null)
+                    return (error, statusCode);
+                return ("", statusCode);
+            }
+            catch (System.Exception ex)
+            {
+                logger.Log(
+                    $"Creatables Cound not be Published: {ex.Message}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (ex.Message, 0);
+            }
+        }
+
+        /// <summary>
+        /// Fetches a page of worlds from the server.
+        /// </summary>
+        /// <summary>
+        /// Fetches a page of worlds from the server.
+        /// </summary>
+        public async Task<(int amount, List<WorldData> worlds, string error)> GetWorldPage(
+            int offset,
+            int limit,
+            string filter,
+            string accessToken
+        )
+        {
+            var url = $"{BaseUrl}?offset={offset}&limit={limit}";
+            if (!string.IsNullOrWhiteSpace(filter))
+                url += $"&filter={UnityWebRequest.EscapeURL(filter.Trim())}";
+
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "GET",
                 accessToken,
                 null,
-                "GetWorldData"
+                "GetWorldPage"
             );
 
-            if (result == UnityWebRequest.Result.ConnectionError)
-            {
-                logger.Log(
-                    $"GetWorldData connection error: {responseText}",
-                    this,
-                    Logging.LogType.Error
-                );
-                return (
-                    null,
-                    "Unable to connect to server. Please check your internet connection.",
-                    0
-                );
-            }
-            else if (result == UnityWebRequest.Result.ProtocolError)
-            {
-                var res = string.IsNullOrEmpty(responseText)
-                    ? null
-                    : JsonUtility.FromJson<ErrorResponse>(responseText);
-                string errorMessage = res?.detail ?? responseText;
-                if (statusCode == 401)
-                {
-                    errorMessage = "Session expired. Please log in again.";
-                }
-                else if (statusCode >= 500)
-                {
-                    errorMessage = "Server error. Please try again later.";
-                }
-                logger.Log(
-                    $"GetWorldData error ({statusCode}): {(res != null ? $"{res.title}: {errorMessage}" : responseText)}",
-                    this,
-                    Logging.LogType.Error
-                );
-                return (null, errorMessage, statusCode);
-            }
-            else
-            {
-                var worldEnvelope = string.IsNullOrEmpty(responseText)
-                    ? null
-                    : JsonUtility.FromJson<WorldResponseEnvelope>(responseText);
-                if (
-                    worldEnvelope == null
-                    || worldEnvelope.data == null
-                    || string.IsNullOrEmpty(worldEnvelope.data.data)
-                )
-                {
-                    return (null, "Failed to parse envelope", statusCode);
-                }
+            var error = ParseError(result, responseText, statusCode, "GetWorldPage");
+            if (error != null)
+                return (0, null, error);
 
-                var worldData = JsonUtility.FromJson<FTRShared.Runtime.Models.WorldData>(
-                    worldEnvelope.data.data
-                );
-                if (worldData == null)
-                {
-                    return (null, "Failed to parse world data", statusCode);
-                }
-                worldData.id = worldEnvelope.data.id;
-                worldData.worldName = worldEnvelope.data.name ?? worldData.worldName;
+            var envelope = JsonUtility.FromJson<DataEnvelope<WorldListResponse>>(responseText);
+            if (envelope?.data == null)
+                return (0, null, "Failed to parse world list.");
 
-                return (worldData, "", statusCode);
-            }
+            var worlds = envelope
+                .data.worlds.Select(w => new WorldData
+                {
+                    worldId = w.id,
+                    worldName = w.name,
+                    description = w.description ?? "",
+                })
+                .ToList();
+
+            return (envelope.data.amount, worlds, "");
+        }
+
+        /// <summary>
+        /// Fetches a world and its creatables data by world id.
+        /// Returns the deserialized WorldData and CreatablesData.
+        /// </summary>
+        public async Task<(
+            WorldData worldData,
+            CreatablesData creatablesData,
+            string error,
+            long statusCode
+        )> GetWorld(string worldId, string accessToken)
+        {
+            var (responseText, result, statusCode) = await SendRequestAsync(
+                $"{BaseUrl}/{worldId}",
+                "GET",
+                accessToken,
+                null,
+                "GetWorld"
+            );
+
+            var error = ParseError(result, responseText, statusCode, "GetWorld");
+            if (error != null)
+                return (null, null, error, statusCode);
+
+            var envelope = JsonUtility.FromJson<DataEnvelope<WorldDetailResponse>>(responseText);
+            if (envelope?.data == null)
+                return (null, null, "Failed to parse world response.", statusCode);
+
+            WorldData worldData = JsonUtility.FromJson<WorldData>(envelope.data.data);
+            if (worldData == null)
+                return (null, null, "Failed to parse world data.", statusCode);
+
+            worldData.worldId = envelope.data.id;
+            worldData.worldName = envelope.data.name;
+
+            CreatablesData creatablesData = JsonUtility.FromJson<CreatablesData>(
+                envelope.data.createable_data
+            );
+
+            return (worldData, creatablesData, "", statusCode);
         }
     }
 }
