@@ -15,7 +15,7 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/assets/models/world";
+        private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}";
 
         /// <summary>
         /// Lists all asset models for a given world.
@@ -26,7 +26,8 @@ namespace API
             string accessToken
         )
         {
-            string url = $"{GetBaseUrl().TrimEnd('/')}/{worldId}";
+            string url = $"{GetBaseUrl()}/assets/models/world/{worldId}";
+            Debug.Log($"[ModelService] Sending GET request to {url}");
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "GET",
@@ -69,10 +70,7 @@ namespace API
 
             Dictionary<string, ModelInfo> models = new();
             foreach (var model in response.data.models)
-            {
                 models[model.model_id] = model;
-            }
-
             return models;
         }
 
@@ -80,7 +78,7 @@ namespace API
         /// Uploads asset model & material files for a world.
         /// </summary>
         public async Task<string> UploadModels(
-            List<StructureData> structureModels,
+            List<ModelRequest> structureModels,
             string worldId,
             string accessToken
         )
@@ -90,42 +88,53 @@ namespace API
                 logger.Log("No assets to upload.", this, Logging.LogType.Warning);
                 return "No assets to upload.";
             }
-            logger.Log($"Uploading {structureModels.Count} assets for world ID: {worldId}", this);
+
+            var url = $"{GetBaseUrl()}/assets/models/world/{worldId}";
+            logger.Log($"[ModelService] Uploading {structureModels.Count} models to: {url}", this);
 
             var form = new WWWForm();
-
             for (int i = 0; i < structureModels.Count; i++)
             {
                 var structure = structureModels[i];
                 string prefix = $"models[{i}]";
-                form.AddField($"{prefix}.model_id", structure.id);
-                form.AddField($"{prefix}.name", structure.structureName);
-                byte[] modelData = File.ReadAllBytes(structure.structureFilepath);
 
+                logger.Log(
+                    $"[ModelService] Model [{i}]: id={structure.id}, filePath={structure.filePath}, fileExists={File.Exists(structure.filePath)}, fileSize={new FileInfo(structure.filePath).Length} bytes",
+                    this
+                );
+
+                form.AddField($"{prefix}.model_id", structure.id);
+                byte[] modelData = File.ReadAllBytes(structure.filePath);
                 form.AddBinaryData(
                     $"{prefix}.model_file",
                     modelData,
-                    Path.GetFileName(structure.structureFilepath),
+                    Path.GetFileName(structure.filePath),
                     "application/octet-stream"
                 );
             }
 
-            var url = $"{GetBaseUrl()}/{worldId}";
             UnityWebRequest uwr = UnityWebRequest.Post(url, form);
             uwr.method = "PUT";
             uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+
+            logger.Log($"[ModelService] Sending PUT to {url}", this);
             await uwr.SendWebRequest();
+
+            logger.Log($"[ModelService] Response code: {uwr.responseCode}", this);
+            logger.Log($"[ModelService] Response body: {uwr.downloadHandler?.text}", this);
 
             if (uwr.result == UnityWebRequest.Result.Success)
             {
-                logger.Log("Assets uploaded successfully", this);
+                logger.Log("[ModelService] Models uploaded successfully.", this);
                 return string.Empty;
             }
-            else
-            {
-                logger.Log($"Asset upload error: {uwr.error}", this, Logging.LogType.Error);
-                return uwr.error;
-            }
+
+            logger.Log(
+                $"[ModelService] Upload error: {uwr.error} | Response: {uwr.downloadHandler?.text}",
+                this,
+                Logging.LogType.Error
+            );
+            return uwr.error;
         }
     }
 }

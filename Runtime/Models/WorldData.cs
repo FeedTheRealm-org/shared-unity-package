@@ -1,42 +1,25 @@
 using System;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace FTRShared.Runtime.Models
 {
     [Serializable]
     public class WorldData
     {
-        [SerializeField]
-        public string id;
-
-        [SerializeField]
-        private string _worldName = "New_FTR_World";
-
-        [SerializeField]
-        public List<StructureData> objectPlacementData = new();
-
-        [SerializeField]
-        public List<EnemySpawnerData> enemySpawnAreas = new();
-
-        [SerializeField]
-        public List<NPCSpawnerData> npcSpawnAreas = new();
-
-        [SerializeField]
-        public List<PlayerSpawnerData> playerSpawnAreas = new();
-        public List<ConsumableItemData> consumableItems = new();
-        public List<WeaponItemData> weaponItems = new();
-        public List<EnemyData> enemies = new();
-        public List<LootTableData> lootTables = new();
-        public List<DialogData> dialogs = new();
-        public List<NPCData> npcs = new();
-        public List<QuestData> quests = new();
-        public WorldShopsData worldShopsData = new();
-
+        public string worldId = "";
+        public string _worldName = "New_FTR_World";
         public string worldName
         {
             get => _worldName;
-            set => _worldName = value?.Replace(" ", "_") ?? "New_FTR_World";
+            set => _worldName = value.Replace(" ", "_");
         }
+        public int startingZone = 1;
+        public string description = "";
+        public string created_by = "";
+        public DateTime created_at = DateTime.Now;
+        public DateTime last_edited_at = DateTime.Now;
+        public DateTime published_at;
+
+        public override string ToString() =>
+            $"WorldData(worldId: {worldId}, worldName: {worldName}, startingZone: {startingZone})";
     }
 }
