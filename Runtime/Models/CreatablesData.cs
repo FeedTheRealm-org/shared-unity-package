@@ -14,5 +14,6 @@ namespace FTRShared.Runtime.Models
         public List<NPCData> npcs = new();
         public List<QuestData> quests = new();
         public List<ShopData> shops = new();
+        public List<PortalData> portals = new();
     }
 }

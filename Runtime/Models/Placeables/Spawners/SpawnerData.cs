@@ -6,7 +6,6 @@ namespace FTRShared.Runtime.Models
     [Serializable]
     public class SpawnerData
     {
-        [SerializeField]
         public Vector3 Position;
         public float Radius = 3f;
 
