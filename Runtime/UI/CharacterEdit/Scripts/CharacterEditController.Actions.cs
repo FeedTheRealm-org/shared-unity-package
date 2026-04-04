@@ -605,8 +605,9 @@ public partial class CharacterEditController
 
         characterInfoRequest.character_name = _nameInput.value;
         characterInfoRequest.character_bio = _bioInput.value;
-        characterInfoRequest.category_sprites = data.category_sprites != null
-            ? new Dictionary<string, string>(data.category_sprites)
-            : new Dictionary<string, string>();
+        characterInfoRequest.category_sprites =
+            data.category_sprites != null
+                ? new Dictionary<string, string>(data.category_sprites)
+                : new Dictionary<string, string>();
     }
 }
