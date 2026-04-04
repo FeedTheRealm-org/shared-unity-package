@@ -1,9 +1,15 @@
+using System;
 using UnityEngine;
 
-public class PortalPlacementData
+namespace FTRShared.Runtime.Models
 {
-    // references PortalData.id in creatables
-    public string portalId;
-    public Vector3 position;
-    public Vector3 rotation;
+    [Serializable]
+    public class PortalPlacementData
+    {
+        // references PortalData.id in creatables
+        public string id;
+        public string name = "Portal";
+        public float radius = 3f;
+        public Vector3 position = Vector3.zero;
+    }
 }
