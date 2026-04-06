@@ -200,6 +200,7 @@ public class SpriteConfigDirector
             .Reset(320, 320, 0.5f, 0.5f)
             .AddTile(CharacterPartCategory.Beard, FacingDirection.Front, 0, tileY)
             .AddTile(CharacterPartCategory.Beard, FacingDirection.Left, 320, tileY)
+            .AddTile(CharacterPartCategory.Beard, FacingDirection.Right, 320, tileY)
             .Build();
     }
 
