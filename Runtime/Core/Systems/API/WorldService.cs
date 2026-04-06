@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using FTRShared.Runtime.Models;
-using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -33,91 +32,6 @@ namespace API
         private ApiConfig apiConfig;
 
         private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/world";
-
-        private bool TryParseWorldDataPayload(string payload, out WorldData worldData)
-        {
-            worldData = null;
-            if (string.IsNullOrWhiteSpace(payload))
-                return false;
-
-            var currentPayload = payload.Trim();
-            for (int i = 0; i < 3; i++)
-            {
-                if (TryParseWorldObject(currentPayload, out worldData))
-                    return true;
-
-                if (TryParseLegacyStructuresArray(currentPayload, out worldData))
-                    return true;
-
-                if (!TryUnwrapJsonString(currentPayload, out var unwrappedPayload))
-                    return false;
-
-                currentPayload = unwrappedPayload.Trim();
-            }
-
-            return false;
-        }
-
-        private bool TryParseWorldObject(string payload, out WorldData worldData)
-        {
-            worldData = null;
-            if (string.IsNullOrWhiteSpace(payload) || payload[0] != '{')
-                return false;
-
-            try
-            {
-                worldData = JsonUtility.FromJson<WorldData>(payload);
-                return worldData != null;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private bool TryParseLegacyStructuresArray(string payload, out WorldData worldData)
-        {
-            worldData = null;
-            if (string.IsNullOrWhiteSpace(payload) || payload[0] != '[')
-                return false;
-
-            try
-            {
-                // Legacy worlds may store a top-level array of structures.
-                var wrappedPayload = $"{{\"objectPlacementData\":{payload}}}";
-                worldData = JsonUtility.FromJson<WorldData>(wrappedPayload);
-                return worldData != null;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private bool TryUnwrapJsonString(string payload, out string unwrappedPayload)
-        {
-            unwrappedPayload = null;
-            if (string.IsNullOrWhiteSpace(payload))
-                return false;
-
-            var trimmed = payload.Trim();
-            if (!trimmed.StartsWith("\"") || !trimmed.EndsWith("\""))
-                return false;
-
-            try
-            {
-                var token = JToken.Parse(trimmed);
-                if (token.Type != JTokenType.String)
-                    return false;
-
-                unwrappedPayload = token.ToObject<string>();
-                return !string.IsNullOrWhiteSpace(unwrappedPayload);
-            }
-            catch
-            {
-                return false;
-            }
-        }
 
         /// <summary>
         ///  Post a new world to the server or update an existing one if it has an id.
@@ -423,23 +337,9 @@ namespace API
             }
             else
             {
-                WorldResponseEnvelope worldEnvelope;
-                try
-                {
-                    worldEnvelope = string.IsNullOrEmpty(responseText)
-                        ? null
-                        : JsonUtility.FromJson<WorldResponseEnvelope>(responseText);
-                }
-                catch (System.Exception ex)
-                {
-                    logger.Log(
-                        $"GetWorldData failed to parse response envelope: {ex.Message}",
-                        this,
-                        Logging.LogType.Error
-                    );
-                    return (null, "Failed to parse world response envelope", statusCode);
-                }
-
+                var worldEnvelope = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<WorldResponseEnvelope>(responseText);
                 if (
                     worldEnvelope == null
                     || worldEnvelope.data == null
@@ -449,13 +349,11 @@ namespace API
                     return (null, "Failed to parse envelope", statusCode);
                 }
 
-                if (!TryParseWorldDataPayload(worldEnvelope.data.data, out var worldData))
+                var worldData = JsonUtility.FromJson<FTRShared.Runtime.Models.WorldData>(
+                    worldEnvelope.data.data
+                );
+                if (worldData == null)
                 {
-                    logger.Log(
-                        $"GetWorldData failed to parse world payload for world '{worldEnvelope.data.id}'.",
-                        this,
-                        Logging.LogType.Error
-                    );
                     return (null, "Failed to parse world data", statusCode);
                 }
                 worldData.id = worldEnvelope.data.id;
