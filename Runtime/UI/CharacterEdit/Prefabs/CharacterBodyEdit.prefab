@@ -1430,7 +1430,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3622679468865644734}
   - component: {fileID: 276933354264011677}
-  - component: {fileID: 2280457114595477371}
+  - component: {fileID: 3868768719749350845}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -1467,7 +1467,7 @@ Animator:
   m_GameObject: {fileID: 1089338994360408180}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7ca1b15845a55d96a9a26463c75e142e, type: 2}
+  m_Controller: {fileID: 9100000, guid: b932593c4f32ff8918ec3e08cbda1f6e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1479,7 +1479,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2280457114595477371
+--- !u!114 &3868768719749350845
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1488,15 +1488,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1089338994360408180}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e28b36ef3944197c906e3db5dc80918, type: 3}
+  m_Script: {fileID: 11500000, guid: aa3d0a5bb9d3c04d3ac2dc5893220154, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterAnimator
+  m_EditorClassIdentifier: FeedTheRealm_Shared::CharacterAnimator
   animator: {fileID: 276933354264011677}
   front: {fileID: 7924194088684876643}
   back: {fileID: 2829290806883297253}
   right: {fileID: 1116511225899009461}
   left: {fileID: 4732903562119520283}
-  logger: {fileID: 11400000, guid: e982b7aca37827bb2860d63b6041225c, type: 2}
+  logger: {fileID: 11400000, guid: e566741b31fec873c94b2868946ab81d, type: 2}
 --- !u!1 &1105552095070347107
 GameObject:
   m_ObjectHideFlags: 0

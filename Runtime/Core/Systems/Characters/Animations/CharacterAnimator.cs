@@ -32,9 +32,7 @@ public class CharacterAnimator : MonoBehaviour
     private void Start()
     {
         if (animator == null)
-            throw new System.Exception(
-                $"Animator component not assigned on {gameObject.name} in {GetType().Name}"
-            );
+            throw new System.Exception("Animator reference is missing on CharacterAnimator.");
 
         spriteMap = new Dictionary<FacingDirection, GameObject>()
         {
@@ -45,6 +43,7 @@ public class CharacterAnimator : MonoBehaviour
         };
 
         SetFacing(FacingDirection.Front);
+        PlayIdle();
     }
 
     /* --- Getters --- */
