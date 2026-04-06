@@ -23,6 +23,7 @@ namespace FTRShared.Runtime.Models
         public List<EnemySpawnerData> enemySpawnAreas = new();
         public List<NPCSpawnerData> npcSpawnAreas = new();
         public List<PlayerSpawnerData> playerSpawnAreas = new();
+        public List<PortalPlacementData> portalPlacements = new();
         public DateTime last_edited_at;
         public DateTime published_at;
     }
