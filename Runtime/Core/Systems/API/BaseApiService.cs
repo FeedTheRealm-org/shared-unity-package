@@ -57,5 +57,37 @@ namespace API
 
             return (responseText, uwr.result, uwr.responseCode);
         }
+
+        protected string ParseError(
+            UnityWebRequest.Result result,
+            string responseText,
+            long statusCode,
+            string logPrefix
+        )
+        {
+            if (result == UnityWebRequest.Result.ConnectionError)
+            {
+                logger.Log($"[{logPrefix}] Connection error.", this, Logging.LogType.Error);
+                return "Unable to connect to server. Please check your internet connection.";
+            }
+
+            if (result == UnityWebRequest.Result.ProtocolError)
+            {
+                string message = statusCode switch
+                {
+                    401 => "Session expired. Please log in again.",
+                    >= 500 => "Server error. Please try again later.",
+                    _ => JsonUtility.FromJson<ErrorResponse>(responseText)?.detail ?? responseText,
+                };
+                logger.Log(
+                    $"[{logPrefix}] Error ({statusCode}): {message}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return message;
+            }
+
+            return null;
+        }
     }
 }

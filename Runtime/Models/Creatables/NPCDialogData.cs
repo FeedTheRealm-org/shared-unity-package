@@ -7,14 +7,11 @@ namespace FTRShared.Runtime.Models
     [Serializable]
     public class NPCDialogData
     {
-        [SerializeField]
         public string dialogId;
 
         // Map message id to quest id using lists
-        [SerializeField]
         public List<string> messageIds = new List<string>();
 
-        [SerializeField]
         public List<string> questIds = new List<string>();
 
         public NPCDialogData(string dialogId)

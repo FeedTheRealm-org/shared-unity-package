@@ -11,101 +11,57 @@ namespace API
     [CreateAssetMenu(fileName = "SpriteService", menuName = "Scriptable Objects/API/SpriteService")]
     public class SpriteService : BaseApiService
     {
-        [Header("API Config")]
         [SerializeField]
         private ApiConfig apiConfig;
 
-        private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/assets/sprites";
+        private string BaseUrl => $"{apiConfig.Hostname}:{apiConfig.Port}/assets";
 
         /// <summary>
         /// Uploads sprite files for a world.
-        /// The sprites are composed of tuples with (sprite_id, sprite_filepath)
+        /// Assumes all sprite paths have been validated before calling.
         /// </summary>
         public async Task<string> UploadSprites(
-            List<(string, string)> sprites,
+            SpritesRequest request,
             string worldId,
             string accessToken
         )
         {
-            if (sprites == null || sprites.Count == 0)
-            {
-                logger.Log("No assets to upload.", this, Logging.LogType.Warning);
+            if (request.ids == null || request.ids.Count == 0)
                 return "No assets to upload.";
-            }
-            logger.Log($"Uploading {sprites.Count} assets for world ID: {worldId}", this);
+
+            logger.Log(
+                $"[SpriteService] Uploading {request.ids.Count} sprites for world {worldId}",
+                this
+            );
 
             var form = new WWWForm();
-
-            var validSprites = new List<(string spriteId, string absolutePath)>();
-
-            for (int i = 0; i < sprites.Count; i++)
+            for (int i = 0; i < request.ids.Count; i++)
             {
-                (string spriteId, string spriteFilePath) = sprites[i];
-
-                if (spriteFilePath == null)
-                {
-                    /*logger.Log(
-                        $"Sprite {i}: spriteFilePath is null",
-                        this,
-                        Logging.LogType.Warning
-                    );*/
-                    continue;
-                }
-
-                string absolutePath = spriteFilePath;
-                if (!Path.IsPathRooted(spriteFilePath))
-                    absolutePath = Path.Combine(Application.streamingAssetsPath, spriteFilePath);
-
-                if (!File.Exists(absolutePath))
-                {
-                    /*logger.Log(
-                        $"Sprite {i}: file does not exist at {absolutePath}",
-                        this,
-                        Logging.LogType.Warning
-                    );*/
-                    continue;
-                }
-                if (string.IsNullOrEmpty(spriteId))
-                {
-                    logger.Log(
-                        $"Sprite {i}: spriteId is null or empty",
-                        this,
-                        Logging.LogType.Warning
-                    );
-                    continue;
-                }
-
-                validSprites.Add((spriteId, absolutePath));
-            }
-
-            for (int j = 0; j < validSprites.Count; j++)
-            {
-                var (spriteId, absolutePath) = validSprites[j];
-
-                form.AddField($"id[{j + 1}]", spriteId);
-                byte[] spriteData = File.ReadAllBytes(absolutePath);
+                form.AddField($"ids[{i}]", request.ids[i]);
                 form.AddBinaryData(
-                    $"sprite[{j + 1}]",
-                    spriteData,
-                    Path.GetFileName(absolutePath),
+                    $"sprites[{i}]",
+                    File.ReadAllBytes(request.spritePath[i]),
+                    Path.GetFileName(request.spritePath[i]),
                     "application/octet-stream"
                 );
             }
-            var url = $"{GetBaseUrl()}/items/{worldId}";
-            UnityWebRequest uwr = UnityWebRequest.Post(url, form);
+
+            var uwr = UnityWebRequest.Put($"{BaseUrl}/items/world/{worldId}", form.data);
             uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+            uwr.SetRequestHeader(
+                "Content-Type",
+                $"multipart/form-data; boundary={form.headers["Content-Type"].Split('=')[1]}"
+            );
             await uwr.SendWebRequest();
 
             if (uwr.result == UnityWebRequest.Result.Success)
             {
-                logger.Log("Assets uploaded successfully", this);
+                logger.Log("[SpriteService] Sprites uploaded successfully.", this);
                 return string.Empty;
             }
-            else
-            {
-                logger.Log($"Asset upload error: {uwr.error}", this, Logging.LogType.Error);
-                return uwr.error;
-            }
+
+            logger.Log($"[SpriteService] Upload error: {uwr.error}", this, Logging.LogType.Error);
+            return uwr.error;
         }
     }
 }
