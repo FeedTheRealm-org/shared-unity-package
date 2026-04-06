@@ -126,6 +126,15 @@ public class SpriteManager : MonoBehaviour
 
         // Get character info category_id -> sprite_id
         API.CharacterInfoResponse characterInfo = await spriteRepository.LoadAsync(characterId);
+        if (characterInfo == null || characterInfo.category_sprites == null)
+        {
+            logger.Log(
+                $"SpriteManager: Character info not found for characterId '{characterId}'.",
+                this,
+                Logging.LogType.Warning
+            );
+            return;
+        }
 
         // Get category_id -> category_name
         var categoriesResponse = await assetsService.GetCategoriesAsync();
@@ -147,8 +156,13 @@ public class SpriteManager : MonoBehaviour
                 var sprite = await assetsService.GetSpriteByIdAsync(entry.Value);
                 if (sprite == null || string.IsNullOrEmpty(sprite.sprite_url))
                     continue;
-                spriteUrlsById[entry.Value] = sprite.sprite_url;
+
+                spriteUrl = sprite.sprite_url;
+                spriteUrlsById[entry.Value] = spriteUrl;
             }
+
+            if (string.IsNullOrEmpty(spriteUrl))
+                continue;
 
             if (!cachedCategoryTexturesByUrl.TryGetValue(spriteUrl, out Texture2D texture))
             {
@@ -159,7 +173,7 @@ public class SpriteManager : MonoBehaviour
             }
 
             if (!existingCategories.TryGetValue(entry.Key, out var name))
-                return;
+                continue;
 
             var category = GetPartCategoryFromCategoryName(name);
             ChangeSprite(category, texture);
