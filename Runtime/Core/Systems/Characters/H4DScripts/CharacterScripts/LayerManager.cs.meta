@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: e6dbda98e8614ec8a935809c1a0ace8a
+AssetOrigin:
+  serializedVersion: 1
+  productId: 147364
+  packageName: 'Character Editor 4D [Megapack]'
+  packageVersion: 7.6
+  assetPath: Assets/HeroEditor4D/Common/Scripts/CharacterScripts/LayerManager.cs
+  uploadId: 795836
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: 69b61ed5fefec04a886f291d790c9521, type: 3}
+  userData:
+  assetBundleName:
+  assetBundleVariant:

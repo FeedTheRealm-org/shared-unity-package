@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 8e6421c02d1181d4795f9fe4e0320c5c
+AssetOrigin:
+  serializedVersion: 1
+  productId: 147364
+  packageName: 'Character Editor 4D [Megapack]'
+  packageVersion: 7.6
+  assetPath: Assets/HeroEditor4D/Common/Scripts/ExampleScripts/QuickStart.cs
+  uploadId: 795836
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: 69b61ed5fefec04a886f291d790c9521, type: 3}
+  userData:
+  assetBundleName:
+  assetBundleVariant:
