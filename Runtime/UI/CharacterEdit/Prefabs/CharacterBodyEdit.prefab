@@ -1496,7 +1496,7 @@ MonoBehaviour:
   back: {fileID: 2829290806883297253}
   right: {fileID: 1116511225899009461}
   left: {fileID: 4732903562119520283}
-  logger: {fileID: 11400000, guid: e566741b31fec873c94b2868946ab81d, type: 2}
+  logger: {fileID: 11400000, guid: 4357131c102db789ba4efe64b367f152, type: 2}
 --- !u!1 &1105552095070347107
 GameObject:
   m_ObjectHideFlags: 0
@@ -11910,7 +11910,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ae068552dfb671458052c0c93464725, type: 3}
   m_Name:
   m_EditorClassIdentifier: FTR.Gameplay.Client::SpriteLoader
-  logger: {fileID: 11400000, guid: 544ea290701b4455595d55f3c34b4fc5, type: 2}
+  logger: {fileID: 11400000, guid: 4357131c102db789ba4efe64b367f152, type: 2}
 --- !u!114 &4911763066085040946
 MonoBehaviour:
   m_ObjectHideFlags: 0

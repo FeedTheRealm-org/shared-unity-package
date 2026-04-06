@@ -317,7 +317,7 @@ MonoBehaviour:
   canvasCharacterPreview: {fileID: 3352910251473479137}
   characterPreviewCameraOverride: {fileID: 890871454519069051}
   characterInContainerOffset: {x: -12, y: 0}
-  logger: {fileID: 11400000, guid: 544ea290701b4455595d55f3c34b4fc5, type: 2}
+  logger: {fileID: 11400000, guid: 4357131c102db789ba4efe64b367f152, type: 2}
 --- !u!1 &8984891845346889083
 GameObject:
   m_ObjectHideFlags: 0
