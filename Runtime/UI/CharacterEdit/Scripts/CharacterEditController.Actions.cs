@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FTR.Core.Client.Enums;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -85,7 +84,7 @@ public partial class CharacterEditController
         characterInfoRequest.character_name = _nameInput.value;
         characterInfoRequest.character_bio = _bioInput.value;
 
-        if (persistenceStrategy != null)
+        if (characterSpriteRepository != null)
         {
             await saveCharacterWithPersistenceStrategy();
             return;
@@ -197,9 +196,9 @@ public partial class CharacterEditController
     /// </summary>
     private async Task fetchCharacterInfo()
     {
-        if (persistenceStrategy != null)
+        if (characterSpriteRepository != null)
         {
-            var data = await persistenceStrategy.LoadAsync();
+            var data = await characterSpriteRepository.LoadAsync(session.UserId);
             if (data == null)
             {
                 logger.Log("Failed to retrieve character info", this, Logging.LogType.Warning);
@@ -578,7 +577,10 @@ public partial class CharacterEditController
 
     private async Task saveCharacterWithPersistenceStrategy()
     {
-        var characterInfo = await persistenceStrategy.SaveAsync(characterInfoRequest);
+        var characterInfo = await characterSpriteRepository.SaveAsync(
+            session.UserId,
+            characterInfoRequest
+        );
 
         if (characterInfo != null)
         {

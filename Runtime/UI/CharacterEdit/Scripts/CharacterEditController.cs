@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using FTR.Core.Client.Enums;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VContainer;
 
 /// <summary>
 /// Manages the character editing interface and interactions.
@@ -14,13 +13,16 @@ public partial class CharacterEditController : MonoBehaviour
     private API.PlayerService playerService;
 
     [SerializeField]
-    private CharacterEditPersistence persistenceStrategy;
-
-    [SerializeField]
     private API.AssetsService assetsService;
 
     [SerializeField]
     private Session.Session session;
+
+    [SerializeField]
+    private SpriteLoader spriteLoader;
+
+    [SerializeField]
+    private SpriteManager spriteManager;
 
     [SerializeField]
     private RectTransform canvasCharacterPreview;
@@ -30,6 +32,9 @@ public partial class CharacterEditController : MonoBehaviour
 
     [SerializeField]
     private Vector2 characterInContainerOffset = new Vector2(-12, 0);
+
+    [Inject]
+    private CharacterSpriteRepository characterSpriteRepository;
 
     // Code-driven tuning values: edit these defaults directly in code.
     private float characterPreviewFillRatio = 0.82f;
@@ -43,9 +48,6 @@ public partial class CharacterEditController : MonoBehaviour
     private float _lastAppliedPreviewFillRatio = -1f;
     private float _lastAppliedPreviewOrthoSize = -1f;
     private Camera _characterPreviewCamera;
-
-    [SerializeField]
-    private SpriteManager spriteManager;
 
     [Header("General settings")]
     [SerializeField]
@@ -107,16 +109,6 @@ public partial class CharacterEditController : MonoBehaviour
 
     private async void OnEnable()
     {
-        if (persistenceStrategy == null && playerService == null)
-        {
-            logger.Log(
-                "Character persistence strategy or PlayerService must be assigned.",
-                this,
-                Logging.LogType.Error
-            );
-            return;
-        }
-
         builder = new SpriteConfigBuilder();
         director = new SpriteConfigDirector(builder);
 
@@ -184,24 +176,6 @@ public partial class CharacterEditController : MonoBehaviour
         _nextPageButton = _cosmeticsContainer.Q<Button>("NextPage");
         _pageInfoLabel = _cosmeticsContainer.Q<Label>("PageInfo");
 
-        if (
-            _nameInput == null
-            || _bioInput == null
-            || _backButton == null
-            || _cancelButton == null
-            || _saveButton == null
-            || _errorMessage == null
-            || _itemsList == null
-            || _categoriesList == null
-            || _prevPageButton == null
-            || _nextPageButton == null
-            || _pageInfoLabel == null
-        )
-        {
-            logger.Log("Buttons or Inputs not found in UI Document.", this, Logging.LogType.Error);
-            return;
-        }
-
         _errorMessage.style.display = DisplayStyle.None;
 
         _emptyItemButton = _itemsList.Q<Button>("Empty");
@@ -247,9 +221,7 @@ public partial class CharacterEditController : MonoBehaviour
         _currentPageTextureKeys.Clear();
 
         if (characterInfoRequest.category_sprites == null)
-        {
             characterInfoRequest.category_sprites = new Dictionary<string, string>();
-        }
 
         _currentCosmeticsOffset = 0;
         _currentCosmeticsTotalCount = 0;
@@ -262,6 +234,9 @@ public partial class CharacterEditController : MonoBehaviour
         await fetchCharacterInfo();
         await fetchCategories();
         await ApplyCurrentCharacterSprites();
+
+        var characterIdSource = new SessionUserIdSource(session);
+        spriteManager.Initialize(spriteLoader, characterSpriteRepository, characterIdSource);
     }
 
     private void Update()
@@ -387,12 +362,6 @@ public partial class CharacterEditController : MonoBehaviour
 
     private void applyPersistencePresentation()
     {
-        var showBio = persistenceStrategy == null || persistenceStrategy.ShowBio;
-        var canEditName = persistenceStrategy == null || persistenceStrategy.CanEditName;
-
-        _bioInput.style.display = showBio ? DisplayStyle.Flex : DisplayStyle.None;
-        _nameInput.isReadOnly = !canEditName;
-
         if (session != null && session.IsFirstLogin)
         {
             logger.Log("First login detected, hiding back button.", this);

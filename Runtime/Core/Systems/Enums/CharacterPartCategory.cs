@@ -1,5 +1,3 @@
-namespace FTR.Core.Client.Enums;
-
 /// <summary>
 /// Enum representing different character sprite parts in the hirarchy.
 /// </summary>

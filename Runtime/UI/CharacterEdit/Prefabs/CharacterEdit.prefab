@@ -310,13 +310,13 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterEditController
   playerService: {fileID: 11400000, guid: c32e41c719d74440b9719caf3db30295, type: 2}
-  persistenceStrategy: {fileID: 11400000, guid: 9c2a6d70c78201e22853c2ec09572ccd, type: 2}
   assetsService: {fileID: 11400000, guid: cd0887d2ef13cf0deb9953395f896994, type: 2}
   session: {fileID: 11400000, guid: 1249a41a5d0e4f74aaae0d52d4e22d43, type: 2}
+  spriteLoader: {fileID: 113516504402039252}
+  spriteManager: {fileID: 4150376280182372543}
   canvasCharacterPreview: {fileID: 3352910251473479137}
-  characterPreviewCameraOverride: {fileID: 0}
+  characterPreviewCameraOverride: {fileID: 890871454519069051}
   characterInContainerOffset: {x: -12, y: 0}
-  spriteManager: {fileID: 11400000, guid: ace9350c5869a9b1492cedfaa5b1b689, type: 2}
   logger: {fileID: 11400000, guid: 544ea290701b4455595d55f3c34b4fc5, type: 2}
 --- !u!1 &8984891845346889083
 GameObject:
@@ -454,6 +454,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1760632149948816872}
     m_Modifications:
+    - target: {fileID: 276933354264011677, guid: 3dedbe8a37ecd50eca074f1862e3a811, type: 3}
+      propertyPath: m_Controller
+      value:
+      objectReference: {fileID: 9100000, guid: 7ca1b15845a55d96a9a26463c75e142e, type: 2}
     - target: {fileID: 5167346019328723826, guid: 3dedbe8a37ecd50eca074f1862e3a811, type: 3}
       propertyPath: m_Name
       value: CharacterBodyEdit
@@ -503,8 +507,30 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3dedbe8a37ecd50eca074f1862e3a811, type: 3}
+--- !u!114 &113516504402039252 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8944225724162427481, guid: 3dedbe8a37ecd50eca074f1862e3a811, type: 3}
+  m_PrefabInstance: {fileID: 9057600045785537421}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae068552dfb671458052c0c93464725, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: FTR.Gameplay.Client::SpriteLoader
 --- !u!4 &538314585692849826 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8848294552524135727, guid: 3dedbe8a37ecd50eca074f1862e3a811, type: 3}
   m_PrefabInstance: {fileID: 9057600045785537421}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4150376280182372543 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4911763066085040946, guid: 3dedbe8a37ecd50eca074f1862e3a811, type: 3}
+  m_PrefabInstance: {fileID: 9057600045785537421}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6f7196b6992ca54d9adb89a1fdc3480, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: FeedTheRealm_Shared::SpriteManager

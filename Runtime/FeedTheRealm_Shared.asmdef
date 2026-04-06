@@ -4,7 +4,9 @@
     "references": [
         "UnityEngine",
         "Unity.InputSystem",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "VContainer",
+        "UniTask"
     ],
     "includePlatforms": [
         "Editor",
