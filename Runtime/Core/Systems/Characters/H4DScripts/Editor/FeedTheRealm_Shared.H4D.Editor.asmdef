@@ -1,0 +1,19 @@
+{
+  "name": "FeedTheRealm_Shared.H4D.Editor",
+  "references": [
+    "FeedTheRealm_Shared",
+    "UnityEditor"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "defineConstraints": [],
+  "autoReferenced": true,
+  "noEngineReferences": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "versionDefines": [],
+  "allowUnsafeCode": false,
+  "languageVersion": "10.0"
+}

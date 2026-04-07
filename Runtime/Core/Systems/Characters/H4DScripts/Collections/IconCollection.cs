@@ -4,8 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Assets.HeroEditor4D.Common.Scripts.Data;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 
 namespace Assets.HeroEditor4D.Common.Scripts.Collections
 {
