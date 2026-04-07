@@ -273,10 +273,11 @@ public partial class CharacterEditController
     /// </summary>
     private async Task ApplyCurrentCharacterSprites()
     {
+        ClearAppliedCharacterSprites();
+        _previewSpriteByPart.Clear();
+
         if (_categories == null || characterInfoRequest.category_sprites == null)
             return;
-
-        _previewSpriteByPart.Clear();
 
         foreach (var kvp in characterInfoRequest.category_sprites)
         {
@@ -703,28 +704,34 @@ public partial class CharacterEditController
                 : new Dictionary<string, string>();
     }
 
-    private async Task ResetCharacterSpritesToInitialState()
+    private static readonly CharacterPartCategory[] ResettableCharacterParts =
     {
-        var resettableParts = new[]
-        {
-            CharacterPartCategory.ArmorHelmet,
-            CharacterPartCategory.ArmorBody,
-            CharacterPartCategory.ArmorLegL,
-            CharacterPartCategory.ArmorLegR,
-            CharacterPartCategory.Hair,
-            CharacterPartCategory.Beard,
-            CharacterPartCategory.EyeBrows,
-            CharacterPartCategory.Eyes,
-            CharacterPartCategory.Back,
-            CharacterPartCategory.EarringR,
-            CharacterPartCategory.EarringL,
-            CharacterPartCategory.Mask,
-        };
+        CharacterPartCategory.ArmorHelmet,
+        CharacterPartCategory.ArmorBody,
+        CharacterPartCategory.ArmorLegL,
+        CharacterPartCategory.ArmorLegR,
+        CharacterPartCategory.Hair,
+        CharacterPartCategory.Beard,
+        CharacterPartCategory.EyeBrows,
+        CharacterPartCategory.Eyes,
+        CharacterPartCategory.Mouth,
+        CharacterPartCategory.Back,
+        CharacterPartCategory.EarringR,
+        CharacterPartCategory.EarringL,
+        CharacterPartCategory.Mask,
+    };
 
-        foreach (var part in resettableParts)
+    private void ClearAppliedCharacterSprites()
+    {
+        foreach (var part in ResettableCharacterParts)
         {
             spriteManager.ChangeSprite(part, null);
         }
+    }
+
+    private async Task ResetCharacterSpritesToInitialState()
+    {
+        ClearAppliedCharacterSprites();
 
         characterInfoRequest.category_sprites = new Dictionary<string, string>(
             initialCategorySprites

@@ -305,6 +305,7 @@ public partial class CharacterEditController : MonoBehaviour
         applyEditorModePresentation();
 
         spriteManager.Initialize(spriteLoader, characterSpriteRepository, activeCharacterIdSource);
+        _ = ApplyCurrentCharacterSprites();
     }
 
     private void Update()
