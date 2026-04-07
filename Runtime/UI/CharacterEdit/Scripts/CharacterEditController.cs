@@ -58,6 +58,8 @@ public partial class CharacterEditController : MonoBehaviour
     private float _lastAppliedPreviewFillRatio = -1f;
     private float _lastAppliedPreviewOrthoSize = -1f;
     private Camera _characterPreviewCamera;
+    private int _lastScreenWidth = -1;
+    private int _lastScreenHeight = -1;
 
     [Header("General settings")]
     [SerializeField]
@@ -253,6 +255,8 @@ public partial class CharacterEditController : MonoBehaviour
         UpdatePaginationControls(0, 0);
         _lastAppliedPreviewFillRatio = characterPreviewFillRatio;
         _lastAppliedPreviewOrthoSize = characterPreviewOrthographicSize;
+        _lastScreenWidth = Screen.width;
+        _lastScreenHeight = Screen.height;
         centerCharacterPreview();
         await fetchCharacterInfo();
         await fetchCategories();
@@ -312,6 +316,13 @@ public partial class CharacterEditController : MonoBehaviour
     {
         if (!isActiveAndEnabled || canvasCharacterPreview == null)
             return;
+
+        if (_lastScreenWidth != Screen.width || _lastScreenHeight != Screen.height)
+        {
+            _lastScreenWidth = Screen.width;
+            _lastScreenHeight = Screen.height;
+            centerCharacterPreview();
+        }
 
         if (!Mathf.Approximately(_lastAppliedPreviewOrthoSize, characterPreviewOrthographicSize))
         {
