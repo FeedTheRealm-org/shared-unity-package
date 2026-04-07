@@ -202,6 +202,13 @@ public partial class CharacterEditController
     /// </summary>
     private async Task fetchCharacterInfo()
     {
+        // In editor flow, wait for SetupWithCharacterInfo() before loading any data.
+        if (!loadFromSession && !spritesOnlyEditorMode)
+        {
+            logger.Log("Skipping auto-load until editor setup provides character data.", this);
+            return;
+        }
+
         if (characterSpriteRepository != null)
         {
             var characterId = ResolveActiveCharacterId();

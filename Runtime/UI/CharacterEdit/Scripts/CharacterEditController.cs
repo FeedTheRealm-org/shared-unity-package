@@ -246,19 +246,9 @@ public partial class CharacterEditController : MonoBehaviour
         await fetchCategories();
         await ApplyCurrentCharacterSprites();
 
-        if (activeCharacterIdSource == null && loadFromSession)
+        if (loadFromSession)
         {
             activeCharacterIdSource = new SessionUserIdSource(session);
-        }
-
-        if (activeCharacterIdSource != null)
-        {
-            activeCharacterId = activeCharacterIdSource.CharacterId ?? string.Empty;
-            spriteManager.Initialize(
-                spriteLoader,
-                characterSpriteRepository,
-                activeCharacterIdSource
-            );
         }
     }
 
