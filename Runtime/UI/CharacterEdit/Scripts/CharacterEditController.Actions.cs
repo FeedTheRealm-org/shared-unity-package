@@ -58,9 +58,11 @@ public partial class CharacterEditController
     /// <summary>
     /// Handles cancel button click event.
     /// </summary>
-    private void onCancelClicked()
+    private async void onCancelClicked()
     {
         logger.Log("Cancel Button Clicked", this);
+
+        await ResetCharacterSpritesToInitialState();
 
         if (spritesOnlyEditorMode && closeOnCancelInEditorMode)
         {
@@ -184,6 +186,16 @@ public partial class CharacterEditController
         if (characterInfo != null)
         {
             logger.Log("Character info successfully updated", this);
+
+            if (characterInfo.category_sprites != null)
+            {
+                characterInfoRequest.category_sprites = new Dictionary<string, string>(
+                    characterInfo.category_sprites
+                );
+            }
+
+            CaptureInitialSpriteSnapshot();
+
             if (session != null)
             {
                 session.IsFirstLogin = false;
@@ -247,6 +259,8 @@ public partial class CharacterEditController
                     characterInfo.category_sprites
                 );
             }
+
+            CaptureInitialSpriteSnapshot();
         }
         else
         {
@@ -637,6 +651,15 @@ public partial class CharacterEditController
         {
             _saveButton.text = "Saved";
 
+            if (characterInfo.category_sprites != null)
+            {
+                characterInfoRequest.category_sprites = new Dictionary<string, string>(
+                    characterInfo.category_sprites
+                );
+            }
+
+            CaptureInitialSpriteSnapshot();
+
             if (session != null)
             {
                 session.IsFirstLogin = false;
@@ -668,5 +691,48 @@ public partial class CharacterEditController
             data.category_sprites != null
                 ? new Dictionary<string, string>(data.category_sprites)
                 : new Dictionary<string, string>();
+
+        CaptureInitialSpriteSnapshot();
+    }
+
+    private void CaptureInitialSpriteSnapshot()
+    {
+        initialCategorySprites =
+            characterInfoRequest.category_sprites != null
+                ? new Dictionary<string, string>(characterInfoRequest.category_sprites)
+                : new Dictionary<string, string>();
+    }
+
+    private async Task ResetCharacterSpritesToInitialState()
+    {
+        var resettableParts = new[]
+        {
+            CharacterPartCategory.ArmorHelmet,
+            CharacterPartCategory.ArmorBody,
+            CharacterPartCategory.ArmorLegL,
+            CharacterPartCategory.ArmorLegR,
+            CharacterPartCategory.Hair,
+            CharacterPartCategory.Beard,
+            CharacterPartCategory.EyeBrows,
+            CharacterPartCategory.Eyes,
+            CharacterPartCategory.Back,
+            CharacterPartCategory.EarringR,
+            CharacterPartCategory.EarringL,
+            CharacterPartCategory.Mask,
+        };
+
+        foreach (var part in resettableParts)
+        {
+            spriteManager.ChangeSprite(part, null);
+        }
+
+        characterInfoRequest.category_sprites = new Dictionary<string, string>(
+            initialCategorySprites
+        );
+        _previewSpriteByPart.Clear();
+        await ApplyCurrentCharacterSprites();
+
+        if (_saveButton != null)
+            _saveButton.text = "Saved";
     }
 }

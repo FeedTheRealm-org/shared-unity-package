@@ -112,6 +112,7 @@ public partial class CharacterEditController : MonoBehaviour
     private string _selectedCategoryName = "";
     private API.PatchCharacterInfoRequest characterInfoRequest =
         new API.PatchCharacterInfoRequest();
+    private Dictionary<string, string> initialCategorySprites = new Dictionary<string, string>();
     private API.SpriteCategoryResponse[] _categories;
     private int _currentCosmeticsOffset;
     private int _currentCosmeticsTotalCount;
@@ -240,6 +241,7 @@ public partial class CharacterEditController : MonoBehaviour
         _selectedCategoryName = string.Empty;
         _categories = null;
         _currentPageTextureKeys.Clear();
+        initialCategorySprites = new Dictionary<string, string>();
 
         if (characterInfoRequest.category_sprites == null)
             characterInfoRequest.category_sprites = new Dictionary<string, string>();
@@ -286,6 +288,9 @@ public partial class CharacterEditController : MonoBehaviour
             safeCharacterInfo.category_sprites != null
                 ? new Dictionary<string, string>(safeCharacterInfo.category_sprites)
                 : new Dictionary<string, string>();
+        initialCategorySprites = new Dictionary<string, string>(
+            characterInfoRequest.category_sprites
+        );
 
         if (_nameInput != null)
         {
