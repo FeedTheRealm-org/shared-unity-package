@@ -9,8 +9,10 @@ public class EditorNpcSpriteRepository : CharacterSpriteRepository
     private API.CharacterInfoResponse defaultData;
     private Action<Dictionary<string, string>> onDataChanged;
 
-    public EditorNpcSpriteRepository(API.CharacterInfoResponse defaultData,
-            Action<Dictionary<string, string>> onDataChanged)
+    public EditorNpcSpriteRepository(
+        API.CharacterInfoResponse defaultData,
+        Action<Dictionary<string, string>> onDataChanged
+    )
     {
         this.defaultData = defaultData;
         this.onDataChanged = onDataChanged;
@@ -31,7 +33,7 @@ public class EditorNpcSpriteRepository : CharacterSpriteRepository
         {
             character_name = data.character_name,
             character_bio = data.character_bio,
-            category_sprites = new Dictionary<string, string>(data.category_sprites)
+            category_sprites = new Dictionary<string, string>(data.category_sprites),
         };
     }
 }

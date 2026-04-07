@@ -7,7 +7,6 @@ using UnityEngine.Rendering;
 using UnityEditor;
 #endif
 
-
 namespace Assets.HeroEditor4D.Common.Scripts.CharacterScripts
 {
     /// <summary>

@@ -12,4 +12,3 @@ public class StaticCharacterIdSource : ICharacterIdSource
         this.characterId = characterId;
     }
 }
-

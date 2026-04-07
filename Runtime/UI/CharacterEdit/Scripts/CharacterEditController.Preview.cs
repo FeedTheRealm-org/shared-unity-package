@@ -75,10 +75,7 @@ public partial class CharacterEditController
 
         // Convert preview bounds from screen space to parent-local space to get accurate size.
         Vector2 topLeftScreen = new Vector2(previewBoundsScreen.xMin, previewBoundsScreen.yMax);
-        Vector2 bottomRightScreen = new Vector2(
-            previewBoundsScreen.xMax,
-            previewBoundsScreen.yMin
-        );
+        Vector2 bottomRightScreen = new Vector2(previewBoundsScreen.xMax, previewBoundsScreen.yMin);
 
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             previewParent,

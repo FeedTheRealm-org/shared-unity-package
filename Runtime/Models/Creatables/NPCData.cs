@@ -28,9 +28,10 @@ namespace FTRShared.Runtime.Models
             this.name = name;
             this.description = description;
             this.npcDialog = npcDialog;
-            this.category_sprites = category_sprites != null
-                ? new Dictionary<string, string>(category_sprites)
-                : new Dictionary<string, string>();
+            this.category_sprites =
+                category_sprites != null
+                    ? new Dictionary<string, string>(category_sprites)
+                    : new Dictionary<string, string>();
         }
 
         public void OnBeforeSerialize()
@@ -40,7 +41,9 @@ namespace FTRShared.Runtime.Models
 
         public void OnAfterDeserialize()
         {
-            category_sprites = StringDictionarySerialization.ToDictionary(category_sprites_serialized);
+            category_sprites = StringDictionarySerialization.ToDictionary(
+                category_sprites_serialized
+            );
         }
     }
 }

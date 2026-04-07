@@ -40,9 +40,10 @@ namespace FTRShared.Runtime.Models
             this.speed = speed;
             this.range = range;
             this.lootTableId = lootTableId;
-            this.category_sprites = category_sprites != null
-                ? new Dictionary<string, string>(category_sprites)
-                : new Dictionary<string, string>();
+            this.category_sprites =
+                category_sprites != null
+                    ? new Dictionary<string, string>(category_sprites)
+                    : new Dictionary<string, string>();
         }
 
         public void OnBeforeSerialize()
@@ -52,7 +53,9 @@ namespace FTRShared.Runtime.Models
 
         public void OnAfterDeserialize()
         {
-            category_sprites = StringDictionarySerialization.ToDictionary(category_sprites_serialized);
+            category_sprites = StringDictionarySerialization.ToDictionary(
+                category_sprites_serialized
+            );
         }
     }
 }

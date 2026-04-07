@@ -9,7 +9,6 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-
 namespace Assets.HeroEditor4D.Common.Scripts.Collections
 {
     /// <summary>
