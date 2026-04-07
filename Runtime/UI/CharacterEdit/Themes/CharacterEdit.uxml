@@ -41,6 +41,6 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:Button name="BackButton" tabindex="0" focusable="true" icon-image="" class="back-button back-button-background"/>
+        <ui:Button name="BackButton" tabindex="0" focusable="true" icon-image="project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=-1008301579157283121&amp;guid=f65e45a379dc54fcc9499c23c4ce4729&amp;type=3#arrow-left@2x" class="back-button back-button-background"/>
     </ui:VisualElement>
 </ui:UXML>

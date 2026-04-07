@@ -225,6 +225,16 @@ public partial class CharacterEditController : MonoBehaviour
         applyPersistencePresentation();
         applyEditorModePresentation();
 
+        if (loadFromSession)
+        {
+            activeCharacterIdSource = new SessionUserIdSource(session);
+            spriteManager.Initialize(
+                spriteLoader,
+                characterSpriteRepository,
+                activeCharacterIdSource
+            );
+        }
+
         _spritesRequestVersion++;
         _selectedCategoryId = string.Empty;
         _selectedCategoryName = string.Empty;
@@ -245,11 +255,6 @@ public partial class CharacterEditController : MonoBehaviour
         await fetchCharacterInfo();
         await fetchCategories();
         await ApplyCurrentCharacterSprites();
-
-        if (loadFromSession)
-        {
-            activeCharacterIdSource = new SessionUserIdSource(session);
-        }
     }
 
     public void SetupWithCharacterInfo(
@@ -264,7 +269,10 @@ public partial class CharacterEditController : MonoBehaviour
         closeOnCancelInEditorMode = true;
         loadFromSession = false;
 
-        characterSpriteRepository = new EditorNpcSpriteRepository(safeCharacterInfo, onSaveCallback);
+        characterSpriteRepository = new EditorNpcSpriteRepository(
+            safeCharacterInfo,
+            onSaveCallback
+        );
 
         activeCharacterId = !string.IsNullOrWhiteSpace(safeCharacterInfo.character_name)
             ? safeCharacterInfo.character_name
@@ -446,7 +454,10 @@ public partial class CharacterEditController : MonoBehaviour
             return activeCharacterId;
         }
 
-        if (activeCharacterIdSource != null && !string.IsNullOrEmpty(activeCharacterIdSource.CharacterId))
+        if (
+            activeCharacterIdSource != null
+            && !string.IsNullOrEmpty(activeCharacterIdSource.CharacterId)
+        )
         {
             activeCharacterId = activeCharacterIdSource.CharacterId;
             return activeCharacterId;
