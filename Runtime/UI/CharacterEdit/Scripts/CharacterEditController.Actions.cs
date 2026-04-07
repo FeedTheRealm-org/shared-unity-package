@@ -38,6 +38,8 @@ public partial class CharacterEditController
             case CharacterPartCategory.Mask:
                 return director.BuildMaskSpriteConfig();
             default:
+                const string err = "This code's vibecoded af im tired boss";
+                logger.Log(err, this, Logging.LogType.Error);
                 return null;
         }
     }
@@ -626,7 +628,10 @@ public partial class CharacterEditController
             return;
         }
 
-        var characterInfo = await characterSpriteRepository.SaveAsync(characterId, characterInfoRequest);
+        var characterInfo = await characterSpriteRepository.SaveAsync(
+            characterId,
+            characterInfoRequest
+        );
 
         if (characterInfo != null)
         {
