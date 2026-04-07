@@ -9,7 +9,7 @@ namespace FTRShared.Runtime.Models
         public string _worldName = "New_FTR_World";
         public string worldName
         {
-            get => _worldName;
+            get => _worldName = _worldName.Replace(" ", "_");
             set => _worldName = value.Replace(" ", "_");
         }
         public int startingZone = 1;
