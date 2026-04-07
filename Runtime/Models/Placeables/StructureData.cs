@@ -16,7 +16,7 @@ namespace FTRShared.Runtime.Models
         public string shopId = null;
         public Vector3 colliderSize = Vector3.zero;
         public Vector3 colliderCenter = Vector3.zero;
-        public bool hasCustomCollider = false;
+        public bool hasColliders = true;
 
         [NonSerialized]
         public string structureFilepath;
@@ -28,7 +28,8 @@ namespace FTRShared.Runtime.Models
             string structureName,
             Vector3 size,
             Vector3 rotation,
-            string fileName = null
+            string fileName = null,
+            bool hasColliders = true
         )
         {
             this.id = id;
@@ -36,21 +37,10 @@ namespace FTRShared.Runtime.Models
             this.size = size;
             this.rotation = rotation;
             this.fileName = fileName;
+            this.hasColliders = hasColliders;
             position = Vector3.zero;
-            isShop = false;
             colliderSize = Vector3.zero;
             colliderCenter = Vector3.zero;
-            shopId = null;
-
-            if (colliderSize == default)
-            {
-                colliderSize = Vector3.zero;
-                hasCustomCollider = false;
-            }
-            else
-            {
-                hasCustomCollider = true;
-            }
         }
 
         public StructureData Clone()
@@ -67,13 +57,13 @@ namespace FTRShared.Runtime.Models
                 shopId = shopId,
                 colliderSize = colliderSize,
                 colliderCenter = colliderCenter,
-                hasCustomCollider = hasCustomCollider,
+                hasColliders = hasColliders,
             };
         }
 
         public override string ToString()
         {
-            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, IsShop: {isShop}, ShopId: {shopId}, ColliderSize: {colliderSize}, ColliderCenter: {colliderCenter}, HasCustomCollider: {hasCustomCollider}";
+            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, IsShop: {isShop}, ShopId: {shopId}, ColliderSize: {colliderSize}, ColliderCenter: {colliderCenter}, HasCustomCollider: {hasColliders}";
         }
     }
 }
