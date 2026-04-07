@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -19,6 +20,9 @@ public partial class CharacterEditController : MonoBehaviour
     private Session.Session session;
 
     [SerializeField]
+    private bool loadFromSession = true;
+
+    [SerializeField]
     private SpriteLoader spriteLoader;
 
     [SerializeField]
@@ -35,6 +39,12 @@ public partial class CharacterEditController : MonoBehaviour
 
     [Inject]
     private CharacterSpriteRepository characterSpriteRepository;
+
+    private ICharacterIdSource activeCharacterIdSource;
+    private string activeCharacterId = string.Empty;
+    private bool spritesOnlyEditorMode;
+    private bool closeOnSaveInEditorMode;
+    private bool closeOnCancelInEditorMode;
 
     // Code-driven tuning values: edit these defaults directly in code.
     private float characterPreviewFillRatio = 0.82f;
@@ -213,6 +223,7 @@ public partial class CharacterEditController : MonoBehaviour
         }
 
         applyPersistencePresentation();
+        applyEditorModePresentation();
 
         _spritesRequestVersion++;
         _selectedCategoryId = string.Empty;
@@ -235,8 +246,62 @@ public partial class CharacterEditController : MonoBehaviour
         await fetchCategories();
         await ApplyCurrentCharacterSprites();
 
-        var characterIdSource = new SessionUserIdSource(session);
-        spriteManager.Initialize(spriteLoader, characterSpriteRepository, characterIdSource);
+        if (activeCharacterIdSource == null && loadFromSession)
+        {
+            activeCharacterIdSource = new SessionUserIdSource(session);
+        }
+
+        if (activeCharacterIdSource != null)
+        {
+            activeCharacterId = activeCharacterIdSource.CharacterId ?? string.Empty;
+            spriteManager.Initialize(
+                spriteLoader,
+                characterSpriteRepository,
+                activeCharacterIdSource
+            );
+        }
+    }
+
+    public void SetupWithCharacterInfo(
+        API.CharacterInfoResponse characterInfo,
+        Action<Dictionary<string, string>> onSaveCallback
+    )
+    {
+        var safeCharacterInfo = characterInfo ?? new API.CharacterInfoResponse();
+
+        spritesOnlyEditorMode = true;
+        closeOnSaveInEditorMode = true;
+        closeOnCancelInEditorMode = true;
+        loadFromSession = false;
+
+        characterSpriteRepository = new EditorNpcSpriteRepository(safeCharacterInfo, onSaveCallback);
+
+        activeCharacterId = !string.IsNullOrWhiteSpace(safeCharacterInfo.character_name)
+            ? safeCharacterInfo.character_name
+            : Guid.NewGuid().ToString();
+
+        activeCharacterIdSource = new StaticCharacterIdSource(activeCharacterId);
+
+        characterInfoRequest.character_name = safeCharacterInfo.character_name ?? string.Empty;
+        characterInfoRequest.character_bio = safeCharacterInfo.character_bio ?? string.Empty;
+        characterInfoRequest.category_sprites =
+            safeCharacterInfo.category_sprites != null
+                ? new Dictionary<string, string>(safeCharacterInfo.category_sprites)
+                : new Dictionary<string, string>();
+
+        if (_nameInput != null)
+        {
+            _nameInput.value = characterInfoRequest.character_name;
+        }
+
+        if (_bioInput != null)
+        {
+            _bioInput.value = characterInfoRequest.character_bio;
+        }
+
+        applyEditorModePresentation();
+
+        spriteManager.Initialize(spriteLoader, characterSpriteRepository, activeCharacterIdSource);
     }
 
     private void Update()
@@ -362,6 +427,17 @@ public partial class CharacterEditController : MonoBehaviour
 
     private void applyPersistencePresentation()
     {
+        if (_backButton == null)
+        {
+            return;
+        }
+
+        if (spritesOnlyEditorMode)
+        {
+            _backButton.style.display = DisplayStyle.None;
+            return;
+        }
+
         if (session != null && session.IsFirstLogin)
         {
             logger.Log("First login detected, hiding back button.", this);
@@ -371,5 +447,63 @@ public partial class CharacterEditController : MonoBehaviour
         {
             _backButton.style.display = DisplayStyle.Flex;
         }
+    }
+
+    private string ResolveActiveCharacterId()
+    {
+        if (!string.IsNullOrEmpty(activeCharacterId))
+        {
+            return activeCharacterId;
+        }
+
+        if (activeCharacterIdSource != null && !string.IsNullOrEmpty(activeCharacterIdSource.CharacterId))
+        {
+            activeCharacterId = activeCharacterIdSource.CharacterId;
+            return activeCharacterId;
+        }
+
+        if (session != null && !string.IsNullOrEmpty(session.UserId))
+        {
+            activeCharacterId = session.UserId;
+            return activeCharacterId;
+        }
+
+        return string.Empty;
+    }
+
+    private void applyEditorModePresentation()
+    {
+        if (!spritesOnlyEditorMode)
+        {
+            return;
+        }
+
+        if (_nameInput != null)
+        {
+            _nameInput.isReadOnly = true;
+            _nameInput.style.display = DisplayStyle.None;
+        }
+
+        if (_bioInput != null)
+        {
+            _bioInput.isReadOnly = true;
+            _bioInput.style.display = DisplayStyle.None;
+        }
+
+        if (_backButton != null)
+        {
+            _backButton.style.display = DisplayStyle.None;
+        }
+    }
+
+    private void CloseEditorPopup()
+    {
+        if (canvasCharacterPreview != null)
+        {
+            canvasCharacterPreview.gameObject.SetActive(false);
+        }
+
+        var container = transform.parent != null ? transform.parent.gameObject : gameObject;
+        container.SetActive(false);
     }
 }

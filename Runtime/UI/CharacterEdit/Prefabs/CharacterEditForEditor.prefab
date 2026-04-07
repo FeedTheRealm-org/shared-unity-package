@@ -115,7 +115,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8307865642202193816}
   m_Layer: 5
-  m_Name: CharacterEdit
+  m_Name: CharacterEditForEditor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

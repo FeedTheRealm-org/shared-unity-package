@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace FTRShared.Runtime.Models
 {
@@ -12,10 +13,8 @@ namespace FTRShared.Runtime.Models
         public int damage = 0;
         public int speed = 0;
         public int range = 0;
-        public string spriteFilePath = "";
-
-        // Loot table that this enemy can drop
         public string lootTableId = "";
+        public Dictionary<string, string> category_sprites;
 
         public EnemyData(
             string id,
@@ -25,8 +24,8 @@ namespace FTRShared.Runtime.Models
             int damage,
             int speed,
             int range,
-            string spriteFilePath,
-            string lootTableId
+            string lootTableId,
+            Dictionary<string, string> category_sprites
         )
         {
             this.id = id;
@@ -36,8 +35,8 @@ namespace FTRShared.Runtime.Models
             this.damage = damage;
             this.speed = speed;
             this.range = range;
-            this.spriteFilePath = spriteFilePath;
             this.lootTableId = lootTableId;
+            this.category_sprites = category_sprites;
         }
     }
 }

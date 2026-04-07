@@ -136,8 +136,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackArmR
   SpriteNameFallback: []
 --- !u!1 &316227856205603487
@@ -242,8 +242,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Right
   SpriteNameFallback:
   - Left
@@ -385,8 +385,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &538115800999562240
@@ -491,8 +491,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightBody
   SpriteNameFallback:
   - LeftBody
@@ -598,8 +598,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftHandR
   SpriteNameFallback: []
 --- !u!1 &691627624715112121
@@ -704,8 +704,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackHandL
   SpriteNameFallback: []
 --- !u!1 &730644910374262045
@@ -848,8 +848,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftArmR
   SpriteNameFallback: []
 --- !u!1 &907486276550489142
@@ -954,8 +954,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback: []
 --- !u!1 &915774207565603812
@@ -1060,8 +1060,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightLegR
   SpriteNameFallback:
   - LeftLegL
@@ -1167,8 +1167,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontLegR
   SpriteNameFallback: []
 --- !u!1 &929416249077491441
@@ -1305,8 +1305,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &1046604556649801117
@@ -1416,8 +1416,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackHandL
   SpriteNameFallback: []
 --- !u!1 &1089338994360408180
@@ -1474,7 +1474,7 @@ Animator:
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
-  m_WarningMessage:
+  m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
@@ -1489,7 +1489,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa3d0a5bb9d3c04d3ac2dc5893220154, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: FeedTheRealm_Shared::CharacterAnimator
   animator: {fileID: 276933354264011677}
   front: {fileID: 7924194088684876643}
@@ -1599,8 +1599,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Back
   SpriteNameFallback: []
 --- !u!1 &1116511225899009461
@@ -1649,8 +1649,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa07006f64294964b84f79497751e149, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteCollection: {fileID: 11400000, guid: ed0b296bc13a33144a4e9ea08d0ad5d5, type: 2}
   Ears:
   - {fileID: 21300002, guid: 17d8c1b68153975408b54cbd158b6ce3, type: 3}
@@ -1832,7 +1832,7 @@ MonoBehaviour:
   LayerManager: {fileID: 1658454868674472884}
   Underwear: []
   UnderwearColor: {r: 0, g: 0, b: 0, a: 0}
-  EquipmentTags:
+  EquipmentTags: 
   ShowHelmet: 1
 --- !u!114 &1658454868674472884
 MonoBehaviour:
@@ -1844,8 +1844,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6dbda98e8614ec8a935809c1a0ace8a, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SortingGroup: {fileID: 0}
   DepthSortingPrecision: 100
   DepthSortingOffset: 0
@@ -1902,8 +1902,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9ac5cde981f663e49855fc6a42c56c96, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   Body: {fileID: 5863542966208320667}
   PrimaryWeapon: {fileID: 1465103531428688206}
   Bow: {fileID: 5903181209420280785}
@@ -2015,8 +2015,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackFingersL
   SpriteNameFallback: []
 --- !u!1 &1159773636645872200
@@ -2121,8 +2121,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback: []
 --- !u!1 &1221221137118488722
@@ -2227,8 +2227,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontBody
   SpriteNameFallback: []
 --- !u!1 &1251065118678917962
@@ -2333,8 +2333,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Arrow
   SpriteNameFallback: []
 --- !u!1 &1325944097482752130
@@ -2439,8 +2439,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback: []
 --- !u!1 &1402420889238967457
@@ -2576,8 +2576,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Handle
   SpriteNameFallback: []
 --- !u!1 &1696113366450061020
@@ -2685,8 +2685,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Side
   SpriteNameFallback: []
 --- !u!1 &1708300845523771625
@@ -2791,8 +2791,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback: []
 --- !u!1 &1763054181799065479
@@ -2897,8 +2897,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Limb
   SpriteNameFallback: []
 --- !u!1 &1780517689873634917
@@ -3004,8 +3004,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback: []
 --- !u!1 &1794830035017138273
@@ -3110,8 +3110,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Side
   SpriteNameFallback: []
 --- !u!1 &1825193729541909880
@@ -3216,8 +3216,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightArmR
   SpriteNameFallback:
   - LeftArmL
@@ -3323,8 +3323,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Limb
   SpriteNameFallback: []
 --- !u!1 &1864321995780728962
@@ -3429,8 +3429,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightLegL
   SpriteNameFallback:
   - LeftLegR
@@ -3536,8 +3536,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftBody
   SpriteNameFallback: []
 --- !u!1 &2031694889505083207
@@ -3642,8 +3642,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Back
   SpriteNameFallback: []
 --- !u!1 &2031983761123856960
@@ -3748,8 +3748,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback: []
 --- !u!1 &2052027247672311939
@@ -3854,8 +3854,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackRight
   SpriteNameFallback:
   - BackLeft
@@ -3961,8 +3961,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontArmR
   SpriteNameFallback: []
 --- !u!1 &2066575799215059535
@@ -4067,8 +4067,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftLegR
   SpriteNameFallback: []
 --- !u!1 &2077092734819344322
@@ -4206,8 +4206,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontHandR
   SpriteNameFallback: []
 --- !u!1 &2083115634548570427
@@ -4312,8 +4312,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &2083311421841076165
@@ -4421,8 +4421,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftArmL
   SpriteNameFallback: []
 --- !u!1 &2155021799815031496
@@ -4527,8 +4527,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Arrow
   SpriteNameFallback: []
 --- !u!1 &2200850573723798487
@@ -4636,8 +4636,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontArmL
   SpriteNameFallback: []
 --- !u!1 &2215934517413153920
@@ -4773,8 +4773,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackHead
   SpriteNameFallback: []
 --- !u!1 &2272806258918714139
@@ -4911,8 +4911,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &2354899279041609717
@@ -5018,8 +5018,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Right
   SpriteNameFallback:
   - Left
@@ -5127,8 +5127,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightHandR
   SpriteNameFallback:
   - LeftHandL
@@ -5267,8 +5267,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Arrow
   SpriteNameFallback: []
 --- !u!1 &2685521961697988711
@@ -5375,8 +5375,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback:
   - Side
@@ -5556,8 +5556,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackArmL
   SpriteNameFallback: []
 --- !u!1 &2786788508766247268
@@ -5662,8 +5662,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackBody
   SpriteNameFallback: []
 --- !u!1 &2829290806883297253
@@ -5712,8 +5712,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa07006f64294964b84f79497751e149, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteCollection: {fileID: 11400000, guid: ed0b296bc13a33144a4e9ea08d0ad5d5, type: 2}
   Ears:
   - {fileID: 21300002, guid: 17d8c1b68153975408b54cbd158b6ce3, type: 3}
@@ -5895,7 +5895,7 @@ MonoBehaviour:
   LayerManager: {fileID: 1747531025320596104}
   Underwear: []
   UnderwearColor: {r: 0, g: 0, b: 0, a: 0}
-  EquipmentTags:
+  EquipmentTags: 
   ShowHelmet: 1
 --- !u!114 &1747531025320596104
 MonoBehaviour:
@@ -5907,8 +5907,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6dbda98e8614ec8a935809c1a0ace8a, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SortingGroup: {fileID: 0}
   DepthSortingPrecision: 100
   DepthSortingOffset: 0
@@ -5960,8 +5960,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9ac5cde981f663e49855fc6a42c56c96, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   Body: {fileID: 2746035256042339944}
   PrimaryWeapon: {fileID: 7720126959621739674}
   Bow: {fileID: 6603311810263098430}
@@ -6070,8 +6070,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontLegL
   SpriteNameFallback: []
 --- !u!1 &3065091769893854871
@@ -6176,8 +6176,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftBody
   SpriteNameFallback: []
 --- !u!1 &3070699781544028657
@@ -6282,8 +6282,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback: []
 --- !u!1 &3074743461132589341
@@ -6388,8 +6388,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Quiver
   SpriteNameFallback: []
 --- !u!1 &3087685127413998011
@@ -6494,8 +6494,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontRight
   SpriteNameFallback:
   - FrontLeft
@@ -6604,8 +6604,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightArmR
   SpriteNameFallback:
   - LeftArmL
@@ -6711,8 +6711,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontSleeveL
   SpriteNameFallback: []
 --- !u!1 &3255991865974335256
@@ -6817,8 +6817,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &3275784666348027330
@@ -6924,8 +6924,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackFingersR
   SpriteNameFallback: []
 --- !u!1 &3339404215158022961
@@ -7030,8 +7030,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightArmL
   SpriteNameFallback:
   - LeftArmR
@@ -7138,8 +7138,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Right
   SpriteNameFallback:
   - Left
@@ -7245,8 +7245,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackLeft
   SpriteNameFallback: []
 --- !u!1 &3381312234485871131
@@ -7352,8 +7352,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Right
   SpriteNameFallback:
   - Left
@@ -7460,8 +7460,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontLegR
   SpriteNameFallback: []
 --- !u!1 &3523160045961016360
@@ -7575,8 +7575,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontHead
   SpriteNameFallback: []
 --- !u!1 &3551727926511790486
@@ -7684,8 +7684,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftHandR
   SpriteNameFallback: []
 --- !u!1 &3573750427964123946
@@ -7792,8 +7792,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Side
   SpriteNameFallback: []
 --- !u!1 &3580888425028098249
@@ -7898,8 +7898,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Limb
   SpriteNameFallback: []
 --- !u!1 &3653569591322155100
@@ -8004,8 +8004,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackLegR
   SpriteNameFallback: []
 --- !u!1 &3721939330184819675
@@ -8110,8 +8110,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftLegL
   SpriteNameFallback: []
 --- !u!1 &3737659013361595402
@@ -8216,8 +8216,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Right
   SpriteNameFallback:
   - Left
@@ -8328,8 +8328,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftHandL
   SpriteNameFallback: []
 --- !u!1 &3826817980213421176
@@ -8465,8 +8465,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackBody
   SpriteNameFallback: []
 --- !u!1 &3964648776066833818
@@ -8644,8 +8644,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback:
   - Side
@@ -8783,8 +8783,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackLegL
   SpriteNameFallback: []
 --- !u!1 &4083509562026257714
@@ -8889,8 +8889,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightFingersL
   SpriteNameFallback:
   - LeftFingersR
@@ -8996,8 +8996,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Handle
   SpriteNameFallback: []
 --- !u!1 &4142879283589633510
@@ -9103,8 +9103,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightLegL
   SpriteNameFallback:
   - LeftLegR
@@ -9210,8 +9210,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Right
   SpriteNameFallback:
   - Left
@@ -9317,8 +9317,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackArmR
   SpriteNameFallback: []
 --- !u!1 &4187622018214961530
@@ -9458,8 +9458,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback:
   - Side
@@ -9565,8 +9565,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Limb
   SpriteNameFallback: []
 --- !u!1 &4284998802186106839
@@ -9671,8 +9671,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &4306097655596471111
@@ -9778,8 +9778,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightFingersL
   SpriteNameFallback:
   - LeftFingersR
@@ -9885,8 +9885,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback:
   - Right
@@ -9992,8 +9992,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Limb
   SpriteNameFallback: []
 --- !u!1 &4465496168861339236
@@ -10130,8 +10130,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &4569615518886982246
@@ -10236,8 +10236,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackFingersR
   SpriteNameFallback: []
 --- !u!1 &4617572958640913130
@@ -10342,8 +10342,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback: []
 --- !u!1 &4664236680515370493
@@ -10449,8 +10449,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontLeft
   SpriteNameFallback: []
 --- !u!1 &4732903562119520283
@@ -10499,8 +10499,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa07006f64294964b84f79497751e149, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteCollection: {fileID: 11400000, guid: ed0b296bc13a33144a4e9ea08d0ad5d5, type: 2}
   Ears:
   - {fileID: 21300002, guid: 17d8c1b68153975408b54cbd158b6ce3, type: 3}
@@ -10682,7 +10682,7 @@ MonoBehaviour:
   LayerManager: {fileID: 4683150309391353320}
   Underwear: []
   UnderwearColor: {r: 0, g: 0, b: 0, a: 0}
-  EquipmentTags:
+  EquipmentTags: 
   ShowHelmet: 1
 --- !u!114 &4683150309391353320
 MonoBehaviour:
@@ -10694,8 +10694,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6dbda98e8614ec8a935809c1a0ace8a, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SortingGroup: {fileID: 0}
   DepthSortingPrecision: 100
   DepthSortingOffset: 0
@@ -10751,8 +10751,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9ac5cde981f663e49855fc6a42c56c96, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   Body: {fileID: 3297835992637417336}
   PrimaryWeapon: {fileID: 5264247313935463640}
   Bow: {fileID: 7781893034141613559}
@@ -10861,8 +10861,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &4792815573643997382
@@ -10967,8 +10967,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightHead
   SpriteNameFallback:
   - LeftHead
@@ -11074,8 +11074,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontHead
   SpriteNameFallback: []
 --- !u!1 &4857242375650164617
@@ -11180,8 +11180,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &4889293117090681937
@@ -11286,8 +11286,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackArmL
   SpriteNameFallback: []
 --- !u!1 &5035438019063898091
@@ -11392,8 +11392,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback: []
 --- !u!1 &5036167899858554198
@@ -11539,8 +11539,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Quiver
   SpriteNameFallback: []
 --- !u!1 &5109026571436256440
@@ -11646,8 +11646,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontRight
   SpriteNameFallback:
   - FrontLeft
@@ -11753,8 +11753,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontBody
   SpriteNameFallback: []
 --- !u!1 &5138810493409718454
@@ -11859,8 +11859,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Right
   SpriteNameFallback:
   - Left
@@ -11908,7 +11908,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ae068552dfb671458052c0c93464725, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: FTR.Gameplay.Client::SpriteLoader
   logger: {fileID: 11400000, guid: 4357131c102db789ba4efe64b367f152, type: 2}
 --- !u!114 &4911763066085040946
@@ -11921,7 +11921,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a6f7196b6992ca54d9adb89a1fdc3480, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: FeedTheRealm_Shared::SpriteManager
 --- !u!1 &5187905278501266023
 GameObject:
@@ -12058,8 +12058,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightArmL
   SpriteNameFallback:
   - LeftArmR
@@ -12165,8 +12165,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightHandL
   SpriteNameFallback:
   - LeftHandR
@@ -12336,8 +12336,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Handle
   SpriteNameFallback: []
 --- !u!1 &5385305837484222079
@@ -12540,8 +12540,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontLeft
   SpriteNameFallback: []
 --- !u!1 &5514130592354371040
@@ -12646,8 +12646,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Limb
   SpriteNameFallback: []
 --- !u!1 &5531481038603333896
@@ -12753,8 +12753,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontLegL
   SpriteNameFallback: []
 --- !u!1 &5606422280002057143
@@ -12859,8 +12859,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Limb
   SpriteNameFallback: []
 --- !u!1 &5610467241108971590
@@ -13059,8 +13059,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Back
   SpriteNameFallback: []
 --- !u!1 &5679895026760473116
@@ -13196,8 +13196,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &5848680659216942603
@@ -13302,8 +13302,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftBody
   SpriteNameFallback: []
 --- !u!1 &5889575717954934190
@@ -13414,8 +13414,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackHead
   SpriteNameFallback: []
 --- !u!1 &5900292965927423973
@@ -13520,8 +13520,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftFingersR
   SpriteNameFallback: []
 --- !u!1 &5966010231023099851
@@ -13626,8 +13626,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Back
   SpriteNameFallback: []
 --- !u!1 &6010244366105707841
@@ -13732,8 +13732,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Right
   SpriteNameFallback:
   - Left
@@ -13839,8 +13839,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftHead
   SpriteNameFallback: []
 --- !u!1 &6150517632704232596
@@ -13945,8 +13945,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Quiver
   SpriteNameFallback: []
 --- !u!1 &6185101733696985767
@@ -14082,8 +14082,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Handle
   SpriteNameFallback: []
 --- !u!1 &6197263002109873418
@@ -14188,8 +14188,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontHandL
   SpriteNameFallback: []
 --- !u!1 &6204701900423034656
@@ -14326,8 +14326,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Arrow
   SpriteNameFallback: []
 --- !u!1 &6298052726594079166
@@ -14432,8 +14432,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftArmL
   SpriteNameFallback: []
 --- !u!1 &6363419357556295140
@@ -14538,8 +14538,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &6502286980270301192
@@ -14644,8 +14644,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontSleeveR
   SpriteNameFallback: []
 --- !u!1 &6580271896580981937
@@ -14750,8 +14750,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightHandR
   SpriteNameFallback:
   - LeftHandL
@@ -14889,8 +14889,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Side
   SpriteNameFallback: []
 --- !u!1 &6801272579828924036
@@ -14996,8 +14996,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackRight
   SpriteNameFallback:
   - BackLeft
@@ -15139,8 +15139,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontHandL
   SpriteNameFallback: []
 --- !u!1 &6947449832694112403
@@ -15248,8 +15248,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackHandR
   SpriteNameFallback: []
 --- !u!1 &7078815661159634582
@@ -15386,8 +15386,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &7151595045898716084
@@ -15492,8 +15492,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Back
   SpriteNameFallback: []
 --- !u!1 &7211835945808025576
@@ -15639,8 +15639,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Back
   SpriteNameFallback: []
 --- !u!1 &7246982519817149024
@@ -15751,8 +15751,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightHandL
   SpriteNameFallback:
   - LeftHandR
@@ -15858,8 +15858,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackHandR
   SpriteNameFallback: []
 --- !u!1 &7412950361449573045
@@ -15964,8 +15964,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftHandL
   SpriteNameFallback: []
 --- !u!1 &7417143480816951212
@@ -16071,8 +16071,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftLegL
   SpriteNameFallback: []
 --- !u!1 &7494265532161608152
@@ -16240,8 +16240,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontArmL
   SpriteNameFallback: []
 --- !u!1 &7708810689692124073
@@ -16346,8 +16346,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Right
   SpriteNameFallback:
   - Left
@@ -16486,8 +16486,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightLegR
   SpriteNameFallback:
   - LeftLegL
@@ -16593,8 +16593,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackFingersL
   SpriteNameFallback: []
 --- !u!1 &7867744105412866576
@@ -16733,8 +16733,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackLeft
   SpriteNameFallback: []
 --- !u!1 &7924194088684876643
@@ -16783,8 +16783,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa07006f64294964b84f79497751e149, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteCollection: {fileID: 11400000, guid: ed0b296bc13a33144a4e9ea08d0ad5d5, type: 2}
   Ears:
   - {fileID: 21300002, guid: 17d8c1b68153975408b54cbd158b6ce3, type: 3}
@@ -16964,7 +16964,7 @@ MonoBehaviour:
   LayerManager: {fileID: 7059667914548175724}
   Underwear: []
   UnderwearColor: {r: 0, g: 0, b: 0, a: 0}
-  EquipmentTags:
+  EquipmentTags: 
   ShowHelmet: 1
 --- !u!114 &7059667914548175724
 MonoBehaviour:
@@ -16976,8 +16976,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6dbda98e8614ec8a935809c1a0ace8a, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SortingGroup: {fileID: 0}
   DepthSortingPrecision: 100
   DepthSortingOffset: 0
@@ -17031,8 +17031,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9ac5cde981f663e49855fc6a42c56c96, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   Body: {fileID: 3116967982283293343}
   PrimaryWeapon: {fileID: 1109551981490940700}
   Bow: {fileID: 2476236934504390077}
@@ -17141,8 +17141,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Limb
   SpriteNameFallback: []
 --- !u!1 &8061933265418230904
@@ -17247,8 +17247,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &8123803390249308072
@@ -17353,8 +17353,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontHandR
   SpriteNameFallback: []
 --- !u!1 &8133593140495793042
@@ -17528,8 +17528,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback: []
 --- !u!1 &8168081002152013823
@@ -17634,8 +17634,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback: []
 --- !u!1 &8174243346001669937
@@ -17740,8 +17740,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback:
   - Side
@@ -17847,8 +17847,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &8280835756171348011
@@ -17953,8 +17953,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback: []
 --- !u!1 &8303884724839926097
@@ -18060,8 +18060,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftFingersR
   SpriteNameFallback: []
 --- !u!1 &8314728472965951588
@@ -18166,8 +18166,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Back
   SpriteNameFallback: []
 --- !u!1 &8331814576824655569
@@ -18303,8 +18303,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &8423516807607639715
@@ -18418,8 +18418,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightHead
   SpriteNameFallback:
   - LeftHead
@@ -18525,8 +18525,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: RightSleeveR
   SpriteNameFallback:
   - LeftSleeveL
@@ -18632,8 +18632,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Left
   SpriteNameFallback: []
 --- !u!1 &8581660826757436845
@@ -18747,8 +18747,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftHead
   SpriteNameFallback: []
 --- !u!1 &8607308115439764194
@@ -18885,8 +18885,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftLegR
   SpriteNameFallback: []
 --- !u!1 &8785336823903990377
@@ -19022,8 +19022,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftSleeveL
   SpriteNameFallback: []
 --- !u!1 &8793798780883249968
@@ -19129,8 +19129,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackLegR
   SpriteNameFallback: []
 --- !u!1 &8851208051227767979
@@ -19266,8 +19266,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Quiver
   SpriteNameFallback: []
 --- !u!1 &8879095207531032725
@@ -19372,8 +19372,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: BackLegL
   SpriteNameFallback: []
 --- !u!1 &8906214383917232684
@@ -19478,8 +19478,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: LeftArmR
   SpriteNameFallback: []
 --- !u!1 &8939721192415089239
@@ -19587,8 +19587,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: FrontArmR
   SpriteNameFallback: []
 --- !u!1 &9049428346537717830
@@ -19757,7 +19757,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56a85167256b1274eb498375253efd9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   SpriteName: Front
   SpriteNameFallback: []

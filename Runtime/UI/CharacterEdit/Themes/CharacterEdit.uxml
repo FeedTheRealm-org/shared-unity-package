@@ -1,6 +1,6 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Packages/com.feed_the_realm.shared/Runtime/UI/CharacterEdit/Themes/CharacterEdit.uss?fileID=7433441132597879392&amp;guid=ff7172fb9c1b50aa99fa604f2f3dae62&amp;type=3#CharacterEdit"/>
-    <ui:VisualElement name="Body" class="body body-background">
+    <ui:VisualElement name="Body" class="body body-background" style="background-image: url(&quot;project://database/Packages/com.feed_the_realm.shared/Runtime/UI/VisualAssets/bg_feed.jpg?fileID=2800000&amp;guid=8d8f8fd241019e57b9aee8d2035bd722&amp;type=3#bg_feed&quot;);">
         <ui:VisualElement name="CharacterEditContainer" tabindex="0" class="character-edit-container" style="top: 1px; left: 1px;">
             <ui:VisualElement name="Character" class="character-panel">
                 <ui:Label text="Character" class="panel-title"/>
@@ -41,6 +41,6 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:Button name="BackButton" tabindex="0" focusable="true" icon-image="project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=5923138177525885446&amp;guid=f65e45a379dc54fcc9499c23c4ce4729&amp;type=3#arrow-left" class="back-button back-button-background"/>
+        <ui:Button name="BackButton" tabindex="0" focusable="true" icon-image="" class="back-button back-button-background"/>
     </ui:VisualElement>
 </ui:UXML>

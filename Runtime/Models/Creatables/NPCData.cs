@@ -1,38 +1,30 @@
 using System;
+using System.Collections.Generic;
 
 namespace FTRShared.Runtime.Models
 {
     [Serializable]
     public class NPCData
     {
-        /// <summary>
-        /// Unique identifier for this NPC within the game data set.
-        /// </summary>
         public string id = "";
         public string name = "";
         public string description = "";
-
-        /// <summary>
-        /// Path or key used by the loading system to resolve this NPC's sprite
-        /// (for example, a Resources path, Addressables key, or relative path,
-        /// depending on the project's asset loading strategy).
-        /// </summary>
-        public string spriteFilePath = "";
         public NPCDialogData npcDialog = null;
+        public Dictionary<string, string> category_sprites;
 
         public NPCData(
             string id,
             string name,
             string description,
-            string spriteFilePath,
-            NPCDialogData npcDialog
+            NPCDialogData npcDialog,
+            Dictionary<string, string> category_sprites
         )
         {
             this.id = id;
             this.name = name;
             this.description = description;
-            this.spriteFilePath = spriteFilePath;
             this.npcDialog = npcDialog;
+            this.category_sprites = category_sprites;
         }
     }
 }

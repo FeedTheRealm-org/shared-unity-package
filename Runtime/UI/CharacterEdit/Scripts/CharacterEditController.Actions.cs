@@ -50,13 +50,7 @@ public partial class CharacterEditController
     private void onBackClicked()
     {
         logger.Log("Back Button Clicked", this);
-
-        if (canvasCharacterPreview != null)
-        {
-            canvasCharacterPreview.gameObject.SetActive(false);
-        }
-
-        transform.parent.gameObject.SetActive(false);
+        CloseEditorPopup();
     }
 
     /// <summary>
@@ -65,6 +59,11 @@ public partial class CharacterEditController
     private void onCancelClicked()
     {
         logger.Log("Cancel Button Clicked", this);
+
+        if (spritesOnlyEditorMode && closeOnCancelInEditorMode)
+        {
+            CloseEditorPopup();
+        }
     }
 
     /// <summary>
@@ -73,16 +72,23 @@ public partial class CharacterEditController
     private async Task onSaveClicked()
     {
         logger.Log("Save Button Clicked", this);
-        logger.Log($"Name: {_nameInput.value}, Bio {_bioInput.value}", this);
+        var nameValue = _nameInput?.value ?? characterInfoRequest.character_name;
+        var bioValue = _bioInput?.value ?? characterInfoRequest.character_bio;
+        logger.Log($"Name: {nameValue}, Bio {bioValue}", this);
 
-        if (string.IsNullOrWhiteSpace(_nameInput.value))
+        if (!spritesOnlyEditorMode && string.IsNullOrWhiteSpace(nameValue))
         {
             ShowToastError("Name cannot be empty.");
             return;
         }
 
-        characterInfoRequest.character_name = _nameInput.value;
-        characterInfoRequest.character_bio = _bioInput.value;
+        if (string.IsNullOrWhiteSpace(nameValue))
+        {
+            nameValue = "EditorCharacter";
+        }
+
+        characterInfoRequest.character_name = nameValue;
+        characterInfoRequest.character_bio = bioValue ?? string.Empty;
 
         if (characterSpriteRepository != null)
         {
@@ -198,7 +204,18 @@ public partial class CharacterEditController
     {
         if (characterSpriteRepository != null)
         {
-            var data = await characterSpriteRepository.LoadAsync(session.UserId);
+            var characterId = ResolveActiveCharacterId();
+            if (string.IsNullOrEmpty(characterId))
+            {
+                logger.Log(
+                    "Character id is missing, cannot load character info.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return;
+            }
+
+            var data = await characterSpriteRepository.LoadAsync(characterId);
             if (data == null)
             {
                 logger.Log("Failed to retrieve character info", this, Logging.LogType.Warning);
@@ -577,10 +594,19 @@ public partial class CharacterEditController
 
     private async Task saveCharacterWithPersistenceStrategy()
     {
-        var characterInfo = await characterSpriteRepository.SaveAsync(
-            session.UserId,
-            characterInfoRequest
-        );
+        var characterId = ResolveActiveCharacterId();
+        if (string.IsNullOrEmpty(characterId))
+        {
+            logger.Log(
+                "Character id is missing, cannot save character info.",
+                this,
+                Logging.LogType.Error
+            );
+            ShowToastError("Failed to update character info.");
+            return;
+        }
+
+        var characterInfo = await characterSpriteRepository.SaveAsync(characterId, characterInfoRequest);
 
         if (characterInfo != null)
         {
@@ -593,6 +619,12 @@ public partial class CharacterEditController
             }
 
             ShowToastSuccess("Character updated successfully.");
+
+            if (spritesOnlyEditorMode && closeOnSaveInEditorMode)
+            {
+                CloseEditorPopup();
+            }
+
             return;
         }
 
