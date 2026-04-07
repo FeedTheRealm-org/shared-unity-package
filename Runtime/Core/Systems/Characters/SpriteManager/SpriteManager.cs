@@ -83,6 +83,9 @@ public class SpriteManager : MonoBehaviour
             case CharacterPartCategory.Eyes:
                 spriteLoader.ChangeEyes(texture);
                 break;
+            case CharacterPartCategory.Mouth:
+                spriteLoader.ChangeMouth(texture);
+                break;
             case CharacterPartCategory.Back:
                 spriteLoader.ChangeBack(texture);
                 break;
