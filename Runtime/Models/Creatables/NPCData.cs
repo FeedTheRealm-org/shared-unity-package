@@ -1,16 +1,20 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace FTRShared.Runtime.Models
 {
     [Serializable]
-    public class NPCData
+    public class NPCData : ISerializationCallbackReceiver
     {
         public string id = "";
         public string name = "";
         public string description = "";
         public NPCDialogData npcDialog = null;
-        public Dictionary<string, string> category_sprites;
+        public Dictionary<string, string> category_sprites = new();
+
+        [SerializeField]
+        private List<StringDictionaryEntry> category_sprites_serialized = new();
 
         public NPCData(
             string id,
@@ -24,7 +28,19 @@ namespace FTRShared.Runtime.Models
             this.name = name;
             this.description = description;
             this.npcDialog = npcDialog;
-            this.category_sprites = category_sprites;
+            this.category_sprites = category_sprites != null
+                ? new Dictionary<string, string>(category_sprites)
+                : new Dictionary<string, string>();
+        }
+
+        public void OnBeforeSerialize()
+        {
+            category_sprites_serialized = StringDictionarySerialization.ToEntries(category_sprites);
+        }
+
+        public void OnAfterDeserialize()
+        {
+            category_sprites = StringDictionarySerialization.ToDictionary(category_sprites_serialized);
         }
     }
 }

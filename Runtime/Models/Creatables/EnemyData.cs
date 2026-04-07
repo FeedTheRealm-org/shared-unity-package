@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace FTRShared.Runtime.Models
 {
     [Serializable]
-    public class EnemyData
+    public class EnemyData : ISerializationCallbackReceiver
     {
         public string id = "";
         public string name = "";
@@ -14,7 +15,10 @@ namespace FTRShared.Runtime.Models
         public int speed = 0;
         public int range = 0;
         public string lootTableId = "";
-        public Dictionary<string, string> category_sprites;
+        public Dictionary<string, string> category_sprites = new();
+
+        [SerializeField]
+        private List<StringDictionaryEntry> category_sprites_serialized = new();
 
         public EnemyData(
             string id,
@@ -36,7 +40,19 @@ namespace FTRShared.Runtime.Models
             this.speed = speed;
             this.range = range;
             this.lootTableId = lootTableId;
-            this.category_sprites = category_sprites;
+            this.category_sprites = category_sprites != null
+                ? new Dictionary<string, string>(category_sprites)
+                : new Dictionary<string, string>();
+        }
+
+        public void OnBeforeSerialize()
+        {
+            category_sprites_serialized = StringDictionarySerialization.ToEntries(category_sprites);
+        }
+
+        public void OnAfterDeserialize()
+        {
+            category_sprites = StringDictionarySerialization.ToDictionary(category_sprites_serialized);
         }
     }
 }

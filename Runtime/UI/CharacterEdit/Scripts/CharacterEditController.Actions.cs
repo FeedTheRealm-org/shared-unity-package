@@ -495,7 +495,20 @@ public partial class CharacterEditController
 
     private bool IsSpritesRequestCurrent(int requestVersion, string requestCategoryId)
     {
-        return isActiveAndEnabled
+        if (this == null)
+            return false;
+
+        bool isControllerActive;
+        try
+        {
+            isControllerActive = isActiveAndEnabled;
+        }
+        catch (MissingReferenceException)
+        {
+            return false;
+        }
+
+        return isControllerActive
             && requestVersion == _spritesRequestVersion
             && requestCategoryId == _selectedCategoryId;
     }
