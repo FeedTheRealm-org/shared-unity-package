@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Enums;
 using UnityEngine;
 
@@ -14,8 +15,38 @@ namespace FTRShared.Runtime.Models
         public string targetId = "";
         public string targetInteractionId = "";
         public QuestType type;
+        public List<QuestRewardData> rewards = new();
 
-        // TODO: add a type enum or a condition abstract class, and reward system
+        public enum QuestRewardType
+        {
+            Gold,
+            Item,
+            LootTable,
+        }
+
+        [Serializable]
+        public class QuestRewardData
+        {
+            public QuestRewardType rewardType;
+            public int goldAmount = 0;
+            public string itemId = "";
+            public string lootTableId = "";
+
+            public QuestRewardData() { }
+
+            public QuestRewardData(
+                QuestRewardType rewardType,
+                int goldAmount,
+                string itemId,
+                string lootTableId
+            )
+            {
+                this.rewardType = rewardType;
+                this.goldAmount = goldAmount;
+                this.itemId = itemId;
+                this.lootTableId = lootTableId;
+            }
+        }
 
         public QuestData(
             string id,
@@ -24,7 +55,8 @@ namespace FTRShared.Runtime.Models
             QuestType type,
             string targetId,
             int targetAmount,
-            string targetInteractionId
+            string targetInteractionId,
+            List<QuestRewardData> rewards = null
         )
         {
             this.id = id;
@@ -34,6 +66,7 @@ namespace FTRShared.Runtime.Models
             this.targetId = targetId;
             this.targetAmount = targetAmount;
             this.targetInteractionId = targetInteractionId;
+            this.rewards = rewards ?? new List<QuestRewardData>();
         }
     }
 }
