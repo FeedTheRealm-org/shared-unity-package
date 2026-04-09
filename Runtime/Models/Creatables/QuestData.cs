@@ -17,37 +17,6 @@ namespace FTRShared.Runtime.Models
         public QuestType type;
         public List<QuestRewardData> rewards = new();
 
-        public enum QuestRewardType
-        {
-            Gold,
-            Item,
-            LootTable,
-        }
-
-        [Serializable]
-        public class QuestRewardData
-        {
-            public QuestRewardType rewardType;
-            public int goldAmount = 0;
-            public string itemId = "";
-            public string lootTableId = "";
-
-            public QuestRewardData() { }
-
-            public QuestRewardData(
-                QuestRewardType rewardType,
-                int goldAmount,
-                string itemId,
-                string lootTableId
-            )
-            {
-                this.rewardType = rewardType;
-                this.goldAmount = goldAmount;
-                this.itemId = itemId;
-                this.lootTableId = lootTableId;
-            }
-        }
-
         public QuestData(
             string id,
             string title,
