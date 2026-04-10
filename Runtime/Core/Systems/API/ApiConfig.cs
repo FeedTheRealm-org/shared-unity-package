@@ -7,4 +7,5 @@ public class ApiConfig : ScriptableObject
     public int Port;
 
     public string ModelsCDN;
+    public string CosmeticsCDN;
 }

@@ -1,38 +1,49 @@
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace FTRShared.Runtime.Models
 {
     [Serializable]
-    public class NPCData
+    public class NPCData : ISerializationCallbackReceiver
     {
-        /// <summary>
-        /// Unique identifier for this NPC within the game data set.
-        /// </summary>
         public string id = "";
         public string name = "";
         public string description = "";
-
-        /// <summary>
-        /// Path or key used by the loading system to resolve this NPC's sprite
-        /// (for example, a Resources path, Addressables key, or relative path,
-        /// depending on the project's asset loading strategy).
-        /// </summary>
-        public string spriteFilePath = "";
         public NPCDialogData npcDialog = null;
+        public Dictionary<string, string> category_sprites = new();
+
+        [SerializeField]
+        private List<StringDictionaryEntry> category_sprites_serialized = new();
 
         public NPCData(
             string id,
             string name,
             string description,
-            string spriteFilePath,
-            NPCDialogData npcDialog
+            NPCDialogData npcDialog,
+            Dictionary<string, string> category_sprites
         )
         {
             this.id = id;
             this.name = name;
             this.description = description;
-            this.spriteFilePath = spriteFilePath;
             this.npcDialog = npcDialog;
+            this.category_sprites =
+                category_sprites != null
+                    ? new Dictionary<string, string>(category_sprites)
+                    : new Dictionary<string, string>();
+        }
+
+        public void OnBeforeSerialize()
+        {
+            category_sprites_serialized = StringDictionarySerialization.ToEntries(category_sprites);
+        }
+
+        public void OnAfterDeserialize()
+        {
+            category_sprites = StringDictionarySerialization.ToDictionary(
+                category_sprites_serialized
+            );
         }
     }
 }
