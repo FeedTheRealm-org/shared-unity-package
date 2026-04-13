@@ -94,7 +94,7 @@ public partial class CharacterEditController
         characterInfoRequest.character_name = nameValue;
         characterInfoRequest.character_bio = bioValue ?? string.Empty;
 
-        if (characterSpriteRepository != null)
+        if (characterInfoRepository != null)
         {
             await saveCharacterWithPersistenceStrategy();
             return;
@@ -223,7 +223,7 @@ public partial class CharacterEditController
             return;
         }
 
-        if (characterSpriteRepository != null)
+        if (characterInfoRepository != null)
         {
             var characterId = ResolveActiveCharacterId();
             if (string.IsNullOrEmpty(characterId))
@@ -236,7 +236,7 @@ public partial class CharacterEditController
                 return;
             }
 
-            var data = await characterSpriteRepository.LoadAsync(characterId);
+            var data = await characterInfoRepository.LoadAsync(characterId);
             if (data == null)
             {
                 logger.Log("Failed to retrieve character info", this, Logging.LogType.Warning);
@@ -643,7 +643,7 @@ public partial class CharacterEditController
             return;
         }
 
-        var characterInfo = await characterSpriteRepository.SaveAsync(
+        var characterInfo = await characterInfoRepository.SaveAsync(
             characterId,
             characterInfoRequest
         );

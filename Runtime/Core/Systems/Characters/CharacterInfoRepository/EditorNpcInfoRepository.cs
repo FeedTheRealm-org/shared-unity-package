@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using VContainer;
 
-public class EditorNpcSpriteRepository : CharacterSpriteRepository
+public class EditorNpcInfoRepository : CharacterInfoRepository
 {
     private API.CharacterInfoResponse defaultData;
     private Action<Dictionary<string, string>> onDataChanged;
 
-    public EditorNpcSpriteRepository(
+    public EditorNpcInfoRepository(
         API.CharacterInfoResponse defaultData,
         Action<Dictionary<string, string>> onDataChanged
     )

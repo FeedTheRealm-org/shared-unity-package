@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using VContainer;
 
-public class PlayerSpriteRepository : CharacterSpriteRepository
+public class PlayerInfoRepository : CharacterInfoRepository
 {
     [Inject]
     private API.PlayerService playerService;

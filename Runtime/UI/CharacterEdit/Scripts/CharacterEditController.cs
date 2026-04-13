@@ -38,7 +38,7 @@ public partial class CharacterEditController : MonoBehaviour
     private Vector2 characterInContainerOffset = new Vector2(-12, 0);
 
     [Inject]
-    private CharacterSpriteRepository characterSpriteRepository;
+    private CharacterInfoRepository characterInfoRepository;
 
     private ICharacterIdSource activeCharacterIdSource;
     private string activeCharacterId = string.Empty;
@@ -233,7 +233,7 @@ public partial class CharacterEditController : MonoBehaviour
             activeCharacterIdSource = new SessionUserIdSource(session);
             spriteManager.Initialize(
                 spriteLoader,
-                characterSpriteRepository,
+                characterInfoRepository,
                 activeCharacterIdSource
             );
         }
@@ -275,10 +275,7 @@ public partial class CharacterEditController : MonoBehaviour
         closeOnCancelInEditorMode = true;
         loadFromSession = false;
 
-        characterSpriteRepository = new EditorNpcSpriteRepository(
-            safeCharacterInfo,
-            onSaveCallback
-        );
+        characterInfoRepository = new EditorNpcInfoRepository(safeCharacterInfo, onSaveCallback);
 
         activeCharacterId = !string.IsNullOrWhiteSpace(safeCharacterInfo.character_name)
             ? safeCharacterInfo.character_name
@@ -308,7 +305,7 @@ public partial class CharacterEditController : MonoBehaviour
 
         applyEditorModePresentation();
 
-        spriteManager.Initialize(spriteLoader, characterSpriteRepository, activeCharacterIdSource);
+        spriteManager.Initialize(spriteLoader, characterInfoRepository, activeCharacterIdSource);
         _ = ApplyCurrentCharacterSprites();
     }
 

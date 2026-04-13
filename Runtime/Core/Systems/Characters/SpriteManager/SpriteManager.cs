@@ -17,9 +17,11 @@ public class SpriteManager : MonoBehaviour
 
     private string characterId;
     private SpriteLoader spriteLoader;
-    private CharacterSpriteRepository spriteRepository;
+    private CharacterInfoRepository infoRepository;
     private ICharacterIdSource characterIdSource;
+    private ICharacterNameController nameController;
     private bool isInitialized = false;
+    private bool isLocalPlayer = false;
 
     private Dictionary<string, Texture2D> cachedCategoryTexturesByUrl =
         new Dictionary<string, Texture2D>();
@@ -38,13 +40,17 @@ public class SpriteManager : MonoBehaviour
 
     public void Initialize(
         SpriteLoader spriteLoader,
-        CharacterSpriteRepository spriteRepository,
-        ICharacterIdSource characterIdSource
+        CharacterInfoRepository infoRepository,
+        ICharacterIdSource characterIdSource,
+        ICharacterNameController nameController = null,
+        bool isLocalPlayer = false
     )
     {
         this.spriteLoader = spriteLoader;
-        this.spriteRepository = spriteRepository;
+        this.infoRepository = infoRepository;
         this.characterIdSource = characterIdSource;
+        this.nameController = nameController;
+        this.isLocalPlayer = isLocalPlayer;
 
         if (characterIdSource != null && string.IsNullOrEmpty(characterIdSource.CharacterId))
             characterIdSource.OnCharacterIdChanged += InitForCharacterId;
@@ -128,7 +134,7 @@ public class SpriteManager : MonoBehaviour
         this.characterId = characterId;
 
         // Get character info category_id -> sprite_id
-        API.CharacterInfoResponse characterInfo = await spriteRepository.LoadAsync(characterId);
+        API.CharacterInfoResponse characterInfo = await infoRepository.LoadAsync(characterId);
         if (characterInfo == null || characterInfo.category_sprites == null)
         {
             logger.Log(
@@ -137,6 +143,11 @@ public class SpriteManager : MonoBehaviour
                 Logging.LogType.Warning
             );
             return;
+        }
+
+        if (nameController != null && !isLocalPlayer)
+        {
+            nameController.SetName(characterInfo.character_name ?? "Guest");
         }
 
         // Get category_id -> category_name

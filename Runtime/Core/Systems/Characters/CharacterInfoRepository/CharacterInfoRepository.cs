@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-public interface CharacterSpriteRepository
+public interface CharacterInfoRepository
 {
     Task<API.CharacterInfoResponse> LoadAsync(string characterId);
 
