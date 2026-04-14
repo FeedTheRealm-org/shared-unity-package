@@ -10,7 +10,9 @@ namespace FTRShared.Runtime.Models
         public string id = "";
         public string name = "";
         public string description = "";
-        public NPCDialogData npcDialog = null;
+
+        public List<NPCDialogData> dialogProgression = new List<NPCDialogData>();
+
         public Dictionary<string, string> category_sprites = new();
 
         [SerializeField]
@@ -20,14 +22,17 @@ namespace FTRShared.Runtime.Models
             string id,
             string name,
             string description,
-            NPCDialogData npcDialog,
+            List<NPCDialogData> dialogProgression,
             Dictionary<string, string> category_sprites
         )
         {
             this.id = id;
             this.name = name;
             this.description = description;
-            this.npcDialog = npcDialog;
+            this.dialogProgression =
+                dialogProgression != null
+                    ? new List<NPCDialogData>(dialogProgression)
+                    : new List<NPCDialogData>();
             this.category_sprites =
                 category_sprites != null
                     ? new Dictionary<string, string>(category_sprites)
