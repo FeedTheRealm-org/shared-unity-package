@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -249,8 +250,8 @@ namespace API
             Task<(string, UnityWebRequest.Result, long)> task = SendRequestAsync(
                 url,
                 "GET",
-                null,
-                null,
+                session.APIToken,
+                "",
                 "CheckSession"
             );
             (string responseText, UnityWebRequest.Result result, long statusCode) = await task;
