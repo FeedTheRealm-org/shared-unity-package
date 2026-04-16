@@ -5,41 +5,55 @@ using UnityEngine;
 namespace FTRShared.Runtime.Models
 {
     [Serializable]
+    public class MessageQuestAssignment
+    {
+        public string messageId;
+        public string questId;
+
+        public MessageQuestAssignment() { }
+
+        public MessageQuestAssignment(string messageId, string questId)
+        {
+            this.messageId = messageId;
+            this.questId = questId;
+        }
+    }
+
+    [Serializable]
     public class NPCDialogData
     {
         public string dialogId;
 
-        // Map message id to quest id using lists
-        public List<string> messageIds = new List<string>();
+        public string onQuestAcceptedDialogId = "";
+        public string repeatableQuestCooldown = "";
 
-        public List<string> questIds = new List<string>();
+        public List<MessageQuestAssignment> questAssignments = new List<MessageQuestAssignment>();
+
+        public NPCDialogData() { }
 
         public NPCDialogData(string dialogId)
         {
             this.dialogId = dialogId;
-            this.messageIds = new List<string>();
-            this.questIds = new List<string>();
+            this.questAssignments = new List<MessageQuestAssignment>();
         }
+
+        public bool HasQuestAssigned => questAssignments != null && questAssignments.Count > 0;
+
+        public bool IsRepeatable => !string.IsNullOrEmpty(repeatableQuestCooldown);
 
         public Dictionary<string, string> GetMessageQuestMap()
         {
             var map = new Dictionary<string, string>();
-            for (int i = 0; i < messageIds.Count && i < questIds.Count; i++)
-            {
-                map[messageIds[i]] = questIds[i];
-            }
+            foreach (var a in questAssignments)
+                map[a.messageId] = a.questId;
             return map;
         }
 
         public void SetMessageQuestMap(Dictionary<string, string> map)
         {
-            messageIds.Clear();
-            questIds.Clear();
+            questAssignments.Clear();
             foreach (var kvp in map)
-            {
-                messageIds.Add(kvp.Key);
-                questIds.Add(kvp.Value);
-            }
+                questAssignments.Add(new MessageQuestAssignment(kvp.Key, kvp.Value));
         }
     }
 }
