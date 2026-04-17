@@ -102,6 +102,10 @@ public class SpriteManager : MonoBehaviour
             case CharacterPartCategory.Mask:
                 spriteLoader.ChangeMask(texture);
                 break;
+            case CharacterPartCategory.EquipmentR:
+                Debug.Log("SpriteManager: Changing equipment sprite");
+                spriteLoader.ChangeEquipment(texture);
+                break;
             default:
                 logger.Log($"No handler for: {part}", this, Logging.LogType.Warning);
                 break;

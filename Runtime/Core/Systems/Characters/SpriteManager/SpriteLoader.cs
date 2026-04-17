@@ -91,10 +91,9 @@ public class SpriteLoader : MonoBehaviour
         logger.Log("[SpriteLoader] Changed Mask sprites", this);
     }
 
-    public void ChangeWeapon(Texture2D texture)
+    public void ChangeEquipment(Texture2D texture)
     {
-        ChangeTexture(texture, director.BuildWeaponSpriteConfig(), true);
-        logger?.Log("[SpriteLoader] Changed Weapon sprites", this);
+        ChangeTexture(texture, director.BuildEquipmentSpriteConfig(), true);
     }
 
     /* --- CORE SPRITE CHANGE LOGIC --- */
@@ -206,7 +205,7 @@ public class SpriteLoader : MonoBehaviour
         cachedParts[CharacterPartCategory.EarringL] = f(dirTransform, "EarringL");
         cachedParts[CharacterPartCategory.Back] = f(dirTransform, "Back");
         cachedParts[CharacterPartCategory.Mask] = f(dirTransform, "Mask");
-        cachedParts[CharacterPartCategory.WeaponR] = f(dirTransform, "PrimaryWeapon");
+        cachedParts[CharacterPartCategory.EquipmentR] = f(dirTransform, "PrimaryWeapon");
 
         _cachedPartsPerDirections[dir] = cachedParts;
     }

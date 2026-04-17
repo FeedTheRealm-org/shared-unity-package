@@ -30,5 +30,5 @@ public enum CharacterPartCategory
     Mask,
 
     // Weapons
-    WeaponR,
+    EquipmentR,
 }
