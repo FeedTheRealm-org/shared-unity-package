@@ -14,6 +14,9 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
+        [SerializeField]
+        private ZoneService zoneService;
+
         private string BaseUrl => $"{apiConfig.Hostname}:{apiConfig.Port}/world";
 
         /// <summary>
@@ -208,6 +211,87 @@ namespace API
             );
 
             return (worldData, creatablesData, "", statusCode);
+        }
+
+        /// <summary>
+        /// Fetches the server address (ip and port) for a specific zone in a world.
+        /// </summary>
+        public async Task<(string ip, int port, string error, long statusCode)> GetZoneAddress(
+            string worldId,
+            int zoneId,
+            string accessToken
+        )
+        {
+            var (responseText, result, statusCode) = await SendRequestAsync(
+                $"{BaseUrl}/orchestrator/{worldId}/zones/{zoneId}/address",
+                "GET",
+                accessToken,
+                null,
+                "GetZoneAddress"
+            );
+
+            var error = ParseError(result, responseText, statusCode, "GetZoneAddress");
+            if (error != null)
+                return ("", 0, error, statusCode);
+
+            var envelope = JsonUtility.FromJson<DataEnvelope<ZoneAddressResponse>>(responseText);
+            if (envelope?.data == null)
+                return ("", 0, "Failed to parse zone address.", statusCode);
+
+            return (envelope.data.ip, envelope.data.port, "", statusCode);
+        }
+
+        /// <summary>
+        /// Fetches a page of worlds and filters to only those with an active zone address.
+        /// Returns world data paired with their active zone address.
+        /// </summary>
+        public async Task<(List<ActiveWorldData> activeWorlds, string error)> GetActiveWorlds(
+            int offset,
+            int limit,
+            string filter,
+            string accessToken
+        )
+        {
+            var (amount, worlds, error) = await GetWorldPage(offset, limit, filter, accessToken);
+            if (error != null)
+                return (null, error);
+            if (worlds == null || worlds.Count == 0)
+                return (new List<ActiveWorldData>(), "");
+
+            var activeWorlds = new List<ActiveWorldData>();
+
+            // fetch zones for each world then check for active address
+            foreach (var world in worlds)
+            {
+                var (zones, zonesError, _) = await zoneService.GetZonesList(
+                    world.worldId,
+                    accessToken
+                );
+                if (!string.IsNullOrEmpty(zonesError) || zones == null || zones.Count == 0)
+                    continue;
+
+                // check the starting zone first, fall back to first available
+                int startingZone = world.startingZone > 0 ? world.startingZone : zones[0];
+
+                var (ip, port, addressError, _) = await GetZoneAddress(
+                    world.worldId,
+                    startingZone,
+                    accessToken
+                );
+                if (!string.IsNullOrEmpty(addressError))
+                    continue;
+
+                activeWorlds.Add(
+                    new ActiveWorldData
+                    {
+                        worldData = world,
+                        zoneAddress = new ZoneAddressResponse { ip = ip, port = port },
+                        zoneId = startingZone,
+                    }
+                );
+            }
+
+            return (activeWorlds, "");
         }
     }
 }

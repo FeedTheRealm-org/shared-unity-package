@@ -26,4 +26,11 @@ namespace API
         public string world_id;
         public List<int> zones;
     }
+
+    [Serializable]
+    public class ZoneAddressResponse
+    {
+        public string ip;
+        public int port;
+    }
 }

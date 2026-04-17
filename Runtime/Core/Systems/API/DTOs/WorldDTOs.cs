@@ -74,4 +74,12 @@ namespace API
         public string created_at;
         public string updated_at;
     }
+
+    [Serializable]
+    public class ActiveWorldData
+    {
+        public WorldData worldData;
+        public ZoneAddressResponse zoneAddress;
+        public int zoneId;
+    }
 }
