@@ -14,9 +14,6 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        [SerializeField]
-        private ZoneService zoneService;
-
         private string BaseUrl => $"{apiConfig.Hostname}:{apiConfig.Port}/world";
 
         /// <summary>
@@ -140,7 +137,7 @@ namespace API
             string accessToken
         )
         {
-            var url = $"{BaseUrl}?offset={offset}&limit={limit}";
+            var url = $"{BaseUrl}?limit={limit}&offset={offset}";
             if (!string.IsNullOrWhiteSpace(filter))
                 url += $"&filter={UnityWebRequest.EscapeURL(filter.Trim())}";
 
@@ -253,43 +250,56 @@ namespace API
         )
         {
             var (amount, worlds, error) = await GetWorldPage(offset, limit, filter, accessToken);
-            if (error != null)
+            if (!string.IsNullOrEmpty(error))
+            {
+                logger.Log(
+                    $"[Active Worlds] Failed to fetch world page: {error}",
+                    this,
+                    Logging.LogType.Error
+                );
                 return (null, error);
+            }
             if (worlds == null || worlds.Count == 0)
                 return (new List<ActiveWorldData>(), "");
 
             var activeWorlds = new List<ActiveWorldData>();
 
+            logger.Log(
+                $"[Active Worlds] Fetched {worlds.Count} worlds. Checking for active zones...",
+                this,
+                Logging.LogType.Info
+            );
+
             // fetch zones for each world then check for active address
             foreach (var world in worlds)
             {
-                var (zones, zonesError, _) = await zoneService.GetZonesList(
-                    world.worldId,
-                    accessToken
-                );
-                if (!string.IsNullOrEmpty(zonesError) || zones == null || zones.Count == 0)
-                    continue;
-
-                // check the starting zone first, fall back to first available
-                int startingZone = world.startingZone > 0 ? world.startingZone : zones[0];
-
                 var (ip, port, addressError, _) = await GetZoneAddress(
                     world.worldId,
-                    startingZone,
+                    world.startingZone,
                     accessToken
                 );
                 if (!string.IsNullOrEmpty(addressError))
+                {
+                    logger.Log(
+                        $"[Active Worlds] Failed to fetch zone address for world {world.worldId}: {addressError}",
+                        this,
+                        Logging.LogType.Warning
+                    );
                     continue;
-
+                }
                 activeWorlds.Add(
                     new ActiveWorldData
                     {
                         worldData = world,
                         zoneAddress = new ZoneAddressResponse { ip = ip, port = port },
-                        zoneId = startingZone,
                     }
                 );
             }
+            logger.Log(
+                $"[Active Worlds] Found {activeWorlds.Count} active worlds.",
+                this,
+                Logging.LogType.Info
+            );
 
             return (activeWorlds, "");
         }

@@ -80,6 +80,5 @@ namespace API
     {
         public WorldData worldData;
         public ZoneAddressResponse zoneAddress;
-        public int zoneId;
     }
 }
