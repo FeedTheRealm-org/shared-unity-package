@@ -209,5 +209,22 @@ namespace API
 
             return (worldData, creatablesData, "", statusCode);
         }
+
+        public async Task<(string error, long statusCode)> DeleteWorld(
+            string worldId,
+            string accessToken
+        )
+        {
+            var (responseText, result, statusCode) = await SendRequestAsync(
+                $"{BaseUrl}/{worldId}",
+                "DELETE",
+                accessToken,
+                null,
+                "DeleteWorld"
+            );
+
+            var error = ParseError(result, responseText, statusCode, "DeleteWorld");
+            return (error ?? "", statusCode);
+        }
     }
 }
