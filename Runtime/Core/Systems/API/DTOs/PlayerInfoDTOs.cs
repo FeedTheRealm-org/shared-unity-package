@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 
 namespace API
 {
     /* --- Requests --- */
-    [System.Serializable]
+    [Serializable]
     public class PatchCharacterInfoRequest
     {
         public string character_name;
@@ -11,20 +12,20 @@ namespace API
         public Dictionary<string, string> category_sprites;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class IssueWorldJoinTokenRequest
     {
         public string world_id;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class ConsumeWorldJoinTokenRequest
     {
         public string token_id;
     }
 
     /* --- Responses --- */
-    [System.Serializable]
+    [Serializable]
     public class CharacterInfoResponse
     {
         public string character_name;
@@ -32,14 +33,14 @@ namespace API
         public Dictionary<string, string> category_sprites;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class WorldJoinTokenResponse
     {
         public string token_id;
         public string expires_at;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class ConsumeWorldJoinTokenResponse
     {
         public string user_id;
