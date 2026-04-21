@@ -103,7 +103,6 @@ public class SpriteManager : MonoBehaviour
                 spriteLoader.ChangeMask(texture);
                 break;
             case CharacterPartCategory.EquipmentR:
-                Debug.Log("SpriteManager: Changing equipment sprite");
                 spriteLoader.ChangeEquipment(texture);
                 break;
             default:

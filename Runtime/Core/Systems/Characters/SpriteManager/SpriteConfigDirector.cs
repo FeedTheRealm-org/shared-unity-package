@@ -320,7 +320,7 @@ public class SpriteConfigDirector
             .Build();
     }
 
-    /* --- Build Weapons --- */
+    /* --- Build Equipment --- */
 
     /// <summary>
     /// Builds the sprite configuration for equipment (right hand only, for now only primary equipment).
