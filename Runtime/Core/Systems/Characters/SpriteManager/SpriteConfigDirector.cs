@@ -320,20 +320,20 @@ public class SpriteConfigDirector
             .Build();
     }
 
-    /* --- Build Weapons --- */
+    /* --- Build Equipment --- */
 
     /// <summary>
-    /// Builds the sprite configuration for weapons (right hand only, for now only primary weapon).
+    /// Builds the sprite configuration for equipment (right hand only, for now only primary equipment).
     /// </summary>
-    public List<SpriteConfig> BuildWeaponSpriteConfig()
+    public List<SpriteConfig> BuildEquipmentSpriteConfig()
     {
         var tileY = 0;
         return _builder
             .Reset(0, 0, 0.5f, 0.25f)
-            .AddTile(CharacterPartCategory.WeaponR, FacingDirection.Front, 0, tileY)
-            .AddTile(CharacterPartCategory.WeaponR, FacingDirection.Back, 0, tileY)
-            .AddTile(CharacterPartCategory.WeaponR, FacingDirection.Left, 0, tileY)
-            .AddTile(CharacterPartCategory.WeaponR, FacingDirection.Right, 0, tileY)
+            .AddTile(CharacterPartCategory.EquipmentR, FacingDirection.Front, 0, tileY)
+            .AddTile(CharacterPartCategory.EquipmentR, FacingDirection.Back, 0, tileY)
+            .AddTile(CharacterPartCategory.EquipmentR, FacingDirection.Left, 0, tileY)
+            .AddTile(CharacterPartCategory.EquipmentR, FacingDirection.Right, 0, tileY)
             .Build();
     }
 }

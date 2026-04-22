@@ -29,6 +29,6 @@ public enum CharacterPartCategory
     Back,
     Mask,
 
-    // Weapons
-    WeaponR,
+    // Item Equipment
+    EquipmentR,
 }

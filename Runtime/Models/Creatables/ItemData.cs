@@ -10,6 +10,7 @@ namespace FTRShared.Runtime.Models
         public string name = "Item";
         public string description = "";
         public string spriteFilePath = "";
+        public int maxStack = 1;
 
         public ItemData(string id, string name, string description, string spriteFilePath)
         {
