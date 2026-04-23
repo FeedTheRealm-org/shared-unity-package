@@ -50,4 +50,10 @@ namespace API
     {
         public string email;
     }
+
+    [System.Serializable]
+    public class CheckSessionResponse
+    {
+        public string message;
+    }
 }

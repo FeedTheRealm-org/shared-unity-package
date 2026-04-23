@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -240,6 +241,57 @@ namespace API
                 >(responseText);
                 logger.Log($"Refresh Verification response: {responseText}", this);
                 return (true, "Your code has been refreshed.");
+            }
+        }
+
+        public async Task<(bool success, string message)> IsLogged()
+        {
+            string url = $"{GetBaseUrl()}/check-session";
+            Task<(string, UnityWebRequest.Result, long)> task = SendRequestAsync(
+                url,
+                "GET",
+                session.APIToken,
+                "",
+                "CheckSession"
+            );
+            (string responseText, UnityWebRequest.Result result, long statusCode) = await task;
+
+            if (result == UnityWebRequest.Result.ConnectionError)
+            {
+                logger.Log(
+                    $"Check Session connection error: {responseText}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (
+                    false,
+                    "Unable to connect to server. Please check your internet connection."
+                );
+            }
+            else if (result == UnityWebRequest.Result.ProtocolError)
+            {
+                ErrorResponse res = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<ErrorResponse>(responseText);
+                string errorMessage = res?.detail ?? responseText;
+                if (statusCode >= 500)
+                {
+                    errorMessage = "Server error. Please try again later.";
+                }
+                logger.Log(
+                    $"Check Session error ({statusCode}): {(res != null ? $"{res.title}: {errorMessage}" : responseText)}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (false, errorMessage);
+            }
+            else
+            {
+                DataEnvelope<CheckSessionResponse> res = JsonUtility.FromJson<
+                    DataEnvelope<CheckSessionResponse>
+                >(responseText);
+                logger.Log($"Check Session response: {responseText}", this);
+                return (true, res.data.message);
             }
         }
     }
