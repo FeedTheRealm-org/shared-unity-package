@@ -276,22 +276,38 @@ public partial class CharacterEditController
         ClearAppliedCharacterSprites();
         _previewSpriteByPart.Clear();
 
-        if (_categories == null || characterInfoRequest.category_sprites == null)
+        if (characterInfoRequest?.category_sprites == null)
             return;
 
         foreach (var kvp in characterInfoRequest.category_sprites)
         {
-            var category = _categories.FirstOrDefault(c => c.category_id == kvp.Key);
-            if (category == null)
-                continue;
-
             string spriteId = kvp.Value;
             if (string.IsNullOrEmpty(spriteId))
                 continue;
 
-            var part = spriteManager.GetPartCategoryFromCategoryName(category.category_name);
+            CharacterPartCategory part = CharacterPartCategory.None;
+
+            if (System.Enum.TryParse<CharacterPartCategory>(kvp.Key, true, out var parsedPart))
+            {
+                part = parsedPart;
+            }
+            else if (_categories != null)
+            {
+                var category = _categories.FirstOrDefault(c => c.category_id == kvp.Key);
+                if (category != null)
+                {
+                    part = spriteManager.GetPartCategoryFromCategoryName(category.category_name);
+                }
+            }
+
             if (part == CharacterPartCategory.None)
                 continue;
+
+            if (System.IO.Path.IsPathRooted(spriteId) || spriteId.StartsWith("file://"))
+            {
+                ApplyLocalSpriteOverride(part, spriteId);
+                continue;
+            }
 
             Texture2D texture = null;
             if (!textureCache.TryGetValue(spriteId, out texture))

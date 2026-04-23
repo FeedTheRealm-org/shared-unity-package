@@ -46,6 +46,8 @@ public partial class CharacterEditController : MonoBehaviour
     private bool closeOnSaveInEditorMode;
     private bool closeOnCancelInEditorMode;
 
+    public bool DisableApiFetches { get; set; }
+
     // Code-driven tuning values: edit these defaults directly in code.
     private float characterPreviewFillRatio = 0.82f;
 
@@ -258,8 +260,14 @@ public partial class CharacterEditController : MonoBehaviour
         _lastScreenWidth = Screen.width;
         _lastScreenHeight = Screen.height;
         centerCharacterPreview();
-        await fetchCharacterInfo();
-        await fetchCategories();
+
+        await System.Threading.Tasks.Task.Yield();
+
+        if (!DisableApiFetches)
+        {
+            await fetchCharacterInfo();
+            await fetchCategories();
+        }
         await ApplyCurrentCharacterSprites();
     }
 
