@@ -6,6 +6,6 @@ namespace Enums
     public enum ColliderType
     {
         Cube = 0,
-        Pyramid = 1,
+        Slope = 1,
     }
 }
