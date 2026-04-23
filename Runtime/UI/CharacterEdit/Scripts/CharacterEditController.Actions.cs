@@ -310,6 +310,37 @@ public partial class CharacterEditController
         }
     }
 
+    /// <summary>
+    /// Exclusive function for offline/creator tools to bypass API restrictions.
+    /// Manually loads a local PNG into the given character part.
+    /// </summary>
+    public void ApplyLocalSpriteOverride(CharacterPartCategory part, string localFilePath)
+    {
+        if (string.IsNullOrEmpty(localFilePath) || !System.IO.File.Exists(localFilePath))
+            return;
+
+        try
+        {
+            byte[] fileData = System.IO.File.ReadAllBytes(localFilePath);
+            Texture2D tex = new Texture2D(2, 2);
+            tex.filterMode = FilterMode.Point;
+            tex.wrapMode = TextureWrapMode.Clamp;
+
+            if (tex.LoadImage(fileData) && spriteManager != null)
+            {
+                spriteManager.ChangeSprite(part, tex);
+            }
+        }
+        catch (System.Exception ex)
+        {
+            logger.Log(
+                $"Failed to apply local override: {ex.Message}",
+                this,
+                Logging.LogType.Error
+            );
+        }
+    }
+
     /* --- CATEGORIES & ITEMS HANDLING --- */
 
     /// <summary>
