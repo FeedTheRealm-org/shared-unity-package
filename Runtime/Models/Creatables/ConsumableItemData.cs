@@ -30,9 +30,6 @@ namespace FTRShared.Runtime.Models
         [SerializeField]
         public float cooldown = 0f;
 
-        [SerializeField]
-        public int maxStack = 0;
-
         public ConsumableItemData(
             ItemData itemData,
             EffectType effectType,
@@ -47,7 +44,7 @@ namespace FTRShared.Runtime.Models
             this.value = value;
             this.duration = duration;
             this.cooldown = cooldown;
-            this.maxStack = maxStack;
+            this.maxStack = maxStack > 0 ? maxStack : 1;
         }
     }
 }
