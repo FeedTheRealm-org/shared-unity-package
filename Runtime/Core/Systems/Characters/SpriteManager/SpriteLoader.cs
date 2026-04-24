@@ -118,26 +118,7 @@ public class SpriteLoader : MonoBehaviour
                 {
                     finalRect = new Rect(0, 0, texture.width, texture.height);
                 }
-
-                if (
-                    finalRect.width > 0
-                    && finalRect.height > 0
-                    && finalRect.xMin >= 0
-                    && finalRect.yMin >= 0
-                    && finalRect.xMax <= texture.width
-                    && finalRect.yMax <= texture.height
-                )
-                {
-                    sprite = Sprite.Create(texture, finalRect, config.Pivot, config.PixelsPerUnit);
-                }
-                else
-                {
-                    logger?.Log(
-                        $"Sprite Rect {finalRect} is out of texture bounds {texture.width}x{texture.height} for {config.Part}",
-                        this,
-                        Logging.LogType.Warning
-                    );
-                }
+                sprite = Sprite.Create(texture, finalRect, config.Pivot, config.PixelsPerUnit);
             }
 
             ReplacePartSprite(sprite, config.Direction, config.Part);
