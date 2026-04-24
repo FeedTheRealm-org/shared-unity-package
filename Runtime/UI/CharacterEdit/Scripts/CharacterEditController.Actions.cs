@@ -303,9 +303,21 @@ public partial class CharacterEditController
             if (part == CharacterPartCategory.None)
                 continue;
 
-            if (System.IO.Path.IsPathRooted(spriteId) || spriteId.StartsWith("file://"))
+            if (
+                System.IO.Path.IsPathRooted(spriteId)
+                || spriteId.StartsWith("file://")
+                || spriteId.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase)
+            )
             {
-                ApplyLocalSpriteOverride(part, spriteId);
+                string loadPath = spriteId;
+                if (!System.IO.Path.IsPathRooted(spriteId) && !spriteId.StartsWith("file://"))
+                {
+                    loadPath = System.IO.Path.GetFullPath(
+                        System.IO.Path.Combine(Application.streamingAssetsPath, "Sprites", spriteId)
+                    );
+                }
+
+                ApplyLocalSpriteOverride(part, loadPath);
                 continue;
             }
 

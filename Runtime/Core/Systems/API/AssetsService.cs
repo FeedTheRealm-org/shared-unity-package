@@ -321,6 +321,87 @@ namespace API
             return MapToSpriteResponse(envelope.data);
         }
 
+        [System.Serializable]
+        private class CategoryResponse
+        {
+            public string category_id;
+            public string category_name;
+        }
+
+        /// <summary>
+        /// Upload a cosmetic sprite.
+        /// </summary>
+        public async Task<SpriteResponse> UploadSpriteAsync(string categoryId, string spritePath)
+        {
+            var url = $"{GetBaseUrl()}/categories/{categoryId}";
+
+            var formData = new System.Collections.Generic.List<IMultipartFormSection>();
+            byte[] fileData = System.IO.File.ReadAllBytes(spritePath);
+            formData.Add(
+                new MultipartFormFileSection(
+                    "sprite",
+                    fileData,
+                    System.IO.Path.GetFileName(spritePath),
+                    "image/png"
+                )
+            );
+            formData.Add(new MultipartFormDataSection("category_id", categoryId));
+
+            var uwr = UnityWebRequest.Post(url, formData);
+            uwr.method = "PUT";
+            uwr.downloadHandler = new DownloadHandlerBuffer();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            await uwr.SendWebRequest();
+            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+
+            if (
+                uwr.result == UnityWebRequest.Result.ConnectionError
+                || uwr.result == UnityWebRequest.Result.ProtocolError
+            )
+            {
+                logger.Log(
+                    $"UploadSpriteAsync error: {responseText}",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return null;
+            }
+
+            var res = JsonUtility.FromJson<DataEnvelope<CosmeticResponse>>(responseText);
+            return MapToSpriteResponse(res.data);
+        }
+
+        /// <summary>
+        /// Link a sprite by ID.
+        /// </summary>
+        public async Task<SpriteResponse> LinkSpriteByIdAsync(string categoryId, string spriteId)
+        {
+            var url = $"{GetBaseUrl()}/categories/{categoryId}/sprites/{spriteId}";
+            var uwr = new UnityWebRequest(url, "PUT");
+            uwr.downloadHandler = new DownloadHandlerBuffer();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            await uwr.SendWebRequest();
+            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+
+            if (
+                uwr.result == UnityWebRequest.Result.ConnectionError
+                || uwr.result == UnityWebRequest.Result.ProtocolError
+            )
+            {
+                logger.Log(
+                    $"LinkSpriteByIdAsync error: {responseText}",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return null;
+            }
+
+            var res = JsonUtility.FromJson<DataEnvelope<CosmeticResponse>>(responseText);
+            return MapToSpriteResponse(res.data);
+        }
+
         /// <summary>
         /// Download a sprite texture by sprite URL (or by sprite ID for backward compatibility).
         /// </summary>

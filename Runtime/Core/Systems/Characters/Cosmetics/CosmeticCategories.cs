@@ -13,14 +13,7 @@ namespace FTRShared.Runtime.Models
                     {
                         CharacterPartCategory.ArmorBody,
                         CharacterPartCategory.ArmorHelmet,
-                        CharacterPartCategory.ArmorArmR,
-                        CharacterPartCategory.ArmorArmL,
-                        CharacterPartCategory.ArmorSleeveR,
-                        CharacterPartCategory.ArmorSleeveL,
-                        CharacterPartCategory.ArmorHandR,
-                        CharacterPartCategory.ArmorHandL,
                         CharacterPartCategory.ArmorLegR,
-                        CharacterPartCategory.ArmorLegL,
                     }
                 },
                 { "Hair", new[] { CharacterPartCategory.Hair } },

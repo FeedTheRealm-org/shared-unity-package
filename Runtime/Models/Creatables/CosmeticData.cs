@@ -11,9 +11,13 @@ namespace FTRShared.Runtime.Models
         public string name = "";
         public string description = "";
         public Dictionary<string, string> category_sprites = new();
+        public Dictionary<string, string> category_urls = new();
 
         [SerializeField]
         private List<StringDictionaryEntry> category_sprites_serialized = new();
+
+        [SerializeField]
+        private List<StringDictionaryEntry> category_urls_serialized = new();
 
         public CosmeticData(
             string id,
@@ -34,6 +38,7 @@ namespace FTRShared.Runtime.Models
         public void OnBeforeSerialize()
         {
             category_sprites_serialized = StringDictionarySerialization.ToEntries(category_sprites);
+            category_urls_serialized = StringDictionarySerialization.ToEntries(category_urls);
         }
 
         public void OnAfterDeserialize()
@@ -41,6 +46,7 @@ namespace FTRShared.Runtime.Models
             category_sprites = StringDictionarySerialization.ToDictionary(
                 category_sprites_serialized
             );
+            category_urls = StringDictionarySerialization.ToDictionary(category_urls_serialized);
         }
     }
 }
