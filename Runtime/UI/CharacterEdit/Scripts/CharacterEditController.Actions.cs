@@ -38,8 +38,8 @@ public partial class CharacterEditController
             case CharacterPartCategory.Mask:
                 return director.BuildMaskSpriteConfig();
             default:
-                const string err = "This code's vibecoded af im tired boss";
-                logger.Log(err, this, Logging.LogType.Error);
+                const string err = "Unhandled character part category";
+                logger?.Log(err, this, Logging.LogType.Error);
                 return null;
         }
     }
@@ -330,10 +330,10 @@ public partial class CharacterEditController
     /// Exclusive function for offline/creator tools to bypass API restrictions.
     /// Manually loads a local PNG into the given character part.
     /// </summary>
-    public void ApplyLocalSpriteOverride(CharacterPartCategory part, string localFilePath)
+    public bool ApplyLocalSpriteOverride(CharacterPartCategory part, string localFilePath)
     {
         if (string.IsNullOrEmpty(localFilePath) || !System.IO.File.Exists(localFilePath))
-            return;
+            return false;
 
         try
         {
@@ -345,15 +345,18 @@ public partial class CharacterEditController
             if (tex.LoadImage(fileData) && spriteManager != null)
             {
                 spriteManager.ChangeSprite(part, tex);
+                return true;
             }
+            return false;
         }
         catch (System.Exception ex)
         {
-            logger.Log(
+            logger?.Log(
                 $"Failed to apply local override: {ex.Message}",
                 this,
                 Logging.LogType.Error
             );
+            return false;
         }
     }
 
@@ -367,7 +370,7 @@ public partial class CharacterEditController
         var response = await assetsService.GetCategoriesAsync();
         if (response == null || response.category_list == null)
         {
-            logger.Log("Failed to fetch categories", this, Logging.LogType.Error);
+            logger?.Log("Failed to fetch categories", this, Logging.LogType.Error);
             ShowToastError("Failed to load categories.");
             return;
         }
@@ -377,7 +380,7 @@ public partial class CharacterEditController
 
         if (response.category_list.Length == 0)
         {
-            logger.Log("No categories returned from server", this, Logging.LogType.Warning);
+            logger?.Log("No categories returned from server", this, Logging.LogType.Warning);
             _selectedCategoryId = string.Empty;
             _selectedCategoryName = string.Empty;
             ClearItems();
@@ -390,7 +393,7 @@ public partial class CharacterEditController
             var btn = _categoriesList.Q<Button>(category.category_name);
             if (btn == null)
             {
-                logger.Log(
+                logger?.Log(
                     $"Error: Category button {category.category_name} not found in UI.",
                     this,
                     Logging.LogType.Error
@@ -401,12 +404,12 @@ public partial class CharacterEditController
             btn.clicked += action;
             categoryButtonActions[btn] = action;
         }
-        logger.Log("Categories successfully populated", this);
+        logger?.Log("Categories successfully populated", this);
         await onCategoryClicked(
             response.category_list[0].category_id,
             response.category_list[0].category_name
         );
-        logger.Log("First category auto-selected", this);
+        logger?.Log("First category auto-selected", this);
     }
 
     /// <summary>
@@ -441,7 +444,7 @@ public partial class CharacterEditController
 
         if (response == null || response.sprites_list == null)
         {
-            logger.Log("Failed to fetch sprites", this, Logging.LogType.Error);
+            logger?.Log("Failed to fetch sprites", this, Logging.LogType.Error);
             ShowToastError("Failed to load sprites.");
             ClearItems();
             _currentCosmeticsTotalCount = 0;
@@ -546,7 +549,7 @@ public partial class CharacterEditController
             else
             {
                 btn.text = sprite.sprite_id;
-                logger.Log(
+                logger?.Log(
                     $"Failed to load texture for sprite: {sprite.sprite_id}",
                     this,
                     Logging.LogType.Warning
@@ -681,7 +684,7 @@ public partial class CharacterEditController
         var characterId = ResolveActiveCharacterId();
         if (string.IsNullOrEmpty(characterId))
         {
-            logger.Log(
+            logger?.Log(
                 "Character id is missing, cannot save character info.",
                 this,
                 Logging.LogType.Error
@@ -724,7 +727,7 @@ public partial class CharacterEditController
             return;
         }
 
-        logger.Log("Failed to save character info", this, Logging.LogType.Error);
+        logger?.Log("Failed to save character info", this, Logging.LogType.Error);
         ShowToastError("Failed to update character info.");
     }
 

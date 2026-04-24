@@ -106,7 +106,7 @@ public class SpriteManager : MonoBehaviour
                 spriteLoader.ChangeEquipment(texture);
                 break;
             default:
-                logger.Log($"No handler for: {part}", this, Logging.LogType.Warning);
+                logger?.Log($"No handler for: {part}", this, Logging.LogType.Warning);
                 break;
         }
     }
@@ -119,7 +119,7 @@ public class SpriteManager : MonoBehaviour
             return part;
         }
 
-        logger.Log(
+        logger?.Log(
             $"SpriteManager: Unknown category name {categoryName}",
             this,
             Logging.LogType.Warning
@@ -140,7 +140,7 @@ public class SpriteManager : MonoBehaviour
         API.CharacterInfoResponse characterInfo = await infoRepository.LoadAsync(characterId);
         if (characterInfo == null || characterInfo.category_sprites == null)
         {
-            logger.Log(
+            logger?.Log(
                 $"SpriteManager: Character info not found for characterId '{characterId}'.",
                 this,
                 Logging.LogType.Warning

@@ -28,67 +28,67 @@ public class SpriteLoader : MonoBehaviour
     public void ChangeHelmet(Texture2D texture)
     {
         ChangeTexture(texture, director.BuildArmorHelmetSpriteConfig());
-        logger.Log("[SpriteLoader] Changed Armor Helmet sprites", this);
+        logger?.Log("[SpriteLoader] Changed Armor Helmet sprites", this);
     }
 
     public void ChangeBody(Texture2D texture)
     {
         ChangeTexture(texture, director.BuildArmorBodySpriteConfig());
-        logger.Log("[SpriteLoader] Changed Armor Body sprites", this);
+        logger?.Log("[SpriteLoader] Changed Armor Body sprites", this);
     }
 
     public void ChangeLegs(Texture2D texture)
     {
         ChangeTexture(texture, director.BuildArmorLegsSpriteConfig());
-        logger.Log("[SpriteLoader] Changed Armor Legs sprites", this);
+        logger?.Log("[SpriteLoader] Changed Armor Legs sprites", this);
     }
 
     public void ChangeHair(Texture2D texture)
     {
         ChangeTexture(texture, director.BuildHairSpriteConfig());
-        logger.Log("[SpriteLoader] Changed Hair sprites", this);
+        logger?.Log("[SpriteLoader] Changed Hair sprites", this);
     }
 
     public void ChangeBeard(Texture2D texture)
     {
         ChangeTexture(texture, director.BuildBeardSpriteConfig());
-        logger.Log("[SpriteLoader] Changed Beard sprites", this);
+        logger?.Log("[SpriteLoader] Changed Beard sprites", this);
     }
 
     public void ChangeEyeBrows(Texture2D texture)
     {
         ChangeTexture(texture, director.BuildEyeBrowsSpriteConfig());
-        logger.Log("[SpriteLoader] Changed EyeBrows sprites", this);
+        logger?.Log("[SpriteLoader] Changed EyeBrows sprites", this);
     }
 
     public void ChangeEyes(Texture2D texture)
     {
         ChangeTexture(texture, director.BuildEyesSpriteConfig());
-        logger.Log("[SpriteLoader] Changed Eyes sprites", this);
+        logger?.Log("[SpriteLoader] Changed Eyes sprites", this);
     }
 
     public void ChangeMouth(Texture2D texture)
     {
         ChangeTexture(texture, director.BuildMouthSpriteConfig());
-        logger.Log("[SpriteLoader] Changed Mouth sprites", this);
+        logger?.Log("[SpriteLoader] Changed Mouth sprites", this);
     }
 
     public void ChangeBack(Texture2D texture)
     {
         ChangeTexture(texture, director.BuildBackSpriteConfig());
-        logger.Log("[SpriteLoader] Changed Back sprites", this);
+        logger?.Log("[SpriteLoader] Changed Back sprites", this);
     }
 
     public void ChangeEarrings(Texture2D texture)
     {
         ChangeTexture(texture, director.BuildEarringsSpriteConfig());
-        logger.Log("[SpriteLoader] Changed Earrings sprites", this);
+        logger?.Log("[SpriteLoader] Changed Earrings sprites", this);
     }
 
     public void ChangeMask(Texture2D texture)
     {
         ChangeTexture(texture, director.BuildMaskSpriteConfig());
-        logger.Log("[SpriteLoader] Changed Mask sprites", this);
+        logger?.Log("[SpriteLoader] Changed Mask sprites", this);
     }
 
     public void ChangeEquipment(Texture2D texture)
@@ -119,7 +119,25 @@ public class SpriteLoader : MonoBehaviour
                     finalRect = new Rect(0, 0, texture.width, texture.height);
                 }
 
-                sprite = Sprite.Create(texture, finalRect, config.Pivot, config.PixelsPerUnit);
+                if (
+                    finalRect.width > 0
+                    && finalRect.height > 0
+                    && finalRect.xMin >= 0
+                    && finalRect.yMin >= 0
+                    && finalRect.xMax <= texture.width
+                    && finalRect.yMax <= texture.height
+                )
+                {
+                    sprite = Sprite.Create(texture, finalRect, config.Pivot, config.PixelsPerUnit);
+                }
+                else
+                {
+                    logger?.Log(
+                        $"Sprite Rect {finalRect} is out of texture bounds {texture.width}x{texture.height} for {config.Part}",
+                        this,
+                        Logging.LogType.Warning
+                    );
+                }
             }
 
             ReplacePartSprite(sprite, config.Direction, config.Part);
@@ -176,7 +194,7 @@ public class SpriteLoader : MonoBehaviour
         var dirTransform = f(transform, dir.ToString());
         if (dirTransform == null)
         {
-            logger.Log($"Direction {dir} not found!", this, Logging.LogType.Warning);
+            logger?.Log($"Direction {dir} not found!", this, Logging.LogType.Warning);
             return;
         }
 
