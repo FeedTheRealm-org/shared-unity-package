@@ -1,4 +1,5 @@
 using System;
+using Enums;
 using UnityEngine;
 
 namespace FTRShared.Runtime.Models
@@ -14,9 +15,12 @@ namespace FTRShared.Runtime.Models
         public string structureName = "New Structure";
         public bool isShop = false;
         public string shopId = null;
-        public Vector3 colliderSize = Vector3.zero;
         public Vector3 colliderCenter = Vector3.zero;
+        public Vector3 colliderSize = Vector3.zero;
+        public Vector3 colliderRotation = Vector3.zero;
+
         public bool hasColliders = true;
+        public ColliderType colliderType = ColliderType.Cube;
 
         [NonSerialized]
         public string structureFilepath;
