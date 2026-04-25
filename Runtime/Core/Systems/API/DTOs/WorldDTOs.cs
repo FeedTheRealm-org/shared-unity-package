@@ -43,13 +43,20 @@ namespace API
     }
 
     [Serializable]
-    public class WorldListItemResponse
+    public class WorldZoneMetadata
+    {
+        public int zone_id;
+        public bool is_active;
+    }
+
+    [Serializable]
+    public class WorldMetadata
     {
         public string id;
         public string user_id;
         public string name;
-        public string data;
         public string description;
+        public List<WorldZoneMetadata> zones;
         public string created_at;
         public string updated_at;
     }
@@ -57,7 +64,7 @@ namespace API
     [Serializable]
     public class WorldListResponse
     {
-        public List<WorldListItemResponse> worlds;
+        public List<WorldMetadata> worlds;
         public int amount;
         public int limit;
         public int offset;
@@ -69,10 +76,35 @@ namespace API
         public string id;
         public string user_id;
         public string name;
+        public string description;
         public string data;
         public string createable_data;
+        public List<WorldZoneMetadata> zones;
         public string created_at;
         public string updated_at;
+    }
+
+    [Serializable]
+    public class WorldAddressResponse
+    {
+        public string ip;
+        public int port;
+    }
+
+    [Serializable]
+    public class WorldZonesResponse
+    {
+        public string world_id;
+        public List<WorldZoneMetadata> zones;
+    }
+
+    [Serializable]
+    public class WorldZoneResponse
+    {
+        public string world_id;
+        public int zone_id;
+        public string zone_data;
+        public bool is_active;
     }
 
     [Serializable]

@@ -130,7 +130,7 @@ namespace API
         /// <summary>
         /// Fetches a page of worlds from the server.
         /// </summary>
-        public async Task<(int amount, List<WorldData> worlds, string error)> GetWorldPage(
+        public async Task<(int amount, List<WorldMetadata> worlds, string error)> GetWorldPage(
             int offset,
             int limit,
             string filter,
@@ -157,16 +157,7 @@ namespace API
             if (envelope?.data == null)
                 return (0, null, "Failed to parse world list.");
 
-            var worlds = envelope
-                .data.worlds.Select(w => new WorldData
-                {
-                    worldId = w.id,
-                    worldName = w.name,
-                    description = w.description ?? "",
-                })
-                .ToList();
-
-            return (envelope.data.amount, worlds, "");
+            return (envelope.data.amount, envelope.data.worlds, "");
         }
 
         /// <summary>
@@ -274,14 +265,14 @@ namespace API
             foreach (var world in worlds)
             {
                 var (ip, port, addressError, _) = await GetZoneAddress(
-                    world.worldId,
-                    world.startingZone,
+                    world.id,
+                    0, // Assume 0 or first zone for starting request
                     accessToken
                 );
                 if (!string.IsNullOrEmpty(addressError))
                 {
                     logger.Log(
-                        $"[Active Worlds] Failed to fetch zone address for world {world.worldId}: {addressError}",
+                        $"[Active Worlds] Failed to fetch zone address for world {world.id}: {addressError}",
                         this,
                         Logging.LogType.Warning
                     );
@@ -290,7 +281,12 @@ namespace API
                 activeWorlds.Add(
                     new ActiveWorldData
                     {
-                        worldData = world,
+                        worldData = new WorldData
+                        {
+                            worldId = world.id,
+                            worldName = world.name,
+                            description = world.description ?? "",
+                        },
                         zoneAddress = new ZoneAddressResponse { ip = ip, port = port },
                     }
                 );
