@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &762210551970715286
 Transform:
   m_ObjectHideFlags: 0
@@ -81,6 +81,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 6f06a0899edbde9feab5770d904ff8ac, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: 6f06a0899edbde9feab5770d904ff8ac, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value:
       objectReference: {fileID: 2100000, guid: 5c00f53a4d64f0141b884dbe1a22065d, type: 2}
@@ -122,7 +126,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8589238423526468862}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
