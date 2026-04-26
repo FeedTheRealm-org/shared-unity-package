@@ -252,6 +252,16 @@ namespace API
             string worldId = null
         )
         {
+            if (string.IsNullOrWhiteSpace(worldId))
+            {
+                logger.Log(
+                    "GetSpritesByCategoryAsync called without worldId.",
+                    this,
+                    Logging.LogType.Error
+                );
+                return null;
+            }
+
             var safeOffset = Mathf.Max(0, offset);
             var safeLimit = Mathf.Max(1, limit);
             var url =
