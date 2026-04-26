@@ -10,6 +10,7 @@ namespace FTRShared.Runtime.Models
         public string id = "";
         public string name = "";
         public string description = "";
+        public float price = 0f;
         public Dictionary<string, string> category_sprites = new();
         public Dictionary<string, string> category_urls = new();
 
@@ -23,12 +24,14 @@ namespace FTRShared.Runtime.Models
             string id,
             string name,
             string description,
+            float price,
             Dictionary<string, string> category_sprites
         )
         {
             this.id = id;
             this.name = name;
             this.description = description;
+            this.price = price;
             this.category_sprites =
                 category_sprites != null
                     ? new Dictionary<string, string>(category_sprites)
