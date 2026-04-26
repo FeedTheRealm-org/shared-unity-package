@@ -220,7 +220,7 @@ namespace API
             bool success,
             string message,
             GemBalanceResponse updatedBalance
-        )> PurchaseWithGems(string productId, int amount, string accessToken)
+        )> PurchaseWithGems(string productId, string accessToken)
         {
             string url = $"{GetGemsBaseUrl()}/purchase/{productId}";
             (string responseText, UnityWebRequest.Result result, long statusCode) =
