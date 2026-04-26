@@ -248,13 +248,24 @@ namespace API
         public async Task<SpritesListResponse> GetSpritesByCategoryAsync(
             string categoryId,
             int offset = 0,
-            int limit = 24
+            int limit = 24,
+            string worldId = null
         )
         {
+            if (string.IsNullOrWhiteSpace(worldId))
+            {
+                logger.Log(
+                    "GetSpritesByCategoryAsync called without worldId.",
+                    this,
+                    Logging.LogType.Error
+                );
+                return null;
+            }
+
             var safeOffset = Mathf.Max(0, offset);
             var safeLimit = Mathf.Max(1, limit);
             var url =
-                $"{GetBaseUrl()}/categories/{categoryId}?offset={safeOffset}&limit={safeLimit}";
+                $"{GetBaseUrl()}/categories/{categoryId}?offset={safeOffset}&limit={safeLimit}&world_id={worldId}";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
@@ -331,7 +342,12 @@ namespace API
         /// <summary>
         /// Upload a cosmetic sprite.
         /// </summary>
-        public async Task<SpriteResponse> UploadSpriteAsync(string categoryId, string spritePath)
+        public async Task<SpriteResponse> UploadSpriteAsync(
+            string categoryId,
+            string spritePath,
+            string worldId,
+            float price = 0
+        )
         {
             var url = $"{GetBaseUrl()}/categories/{categoryId}";
 
@@ -346,6 +362,8 @@ namespace API
                 )
             );
             formData.Add(new MultipartFormDataSection("category_id", categoryId));
+            formData.Add(new MultipartFormDataSection("world_id", worldId ?? string.Empty));
+            formData.Add(new MultipartFormDataSection("price", price.ToString()));
 
             var uwr = UnityWebRequest.Post(url, formData);
             uwr.method = "PUT";
@@ -373,12 +391,22 @@ namespace API
         }
 
         /// <summary>
-        /// Link a sprite by ID.
+        /// Link a sprite by ID. Returns (response, httpStatusCode).
         /// </summary>
-        public async Task<SpriteResponse> LinkSpriteByIdAsync(string categoryId, string spriteId)
+        public async Task<(SpriteResponse response, long statusCode)> LinkSpriteByIdAsync(
+            string categoryId,
+            string spriteId,
+            string worldId,
+            float price = 0
+        )
         {
             var url = $"{GetBaseUrl()}/categories/{categoryId}/sprites/{spriteId}";
-            var uwr = new UnityWebRequest(url, "PUT");
+            var formData = new System.Collections.Generic.List<IMultipartFormSection>();
+            formData.Add(new MultipartFormDataSection("world_id", worldId ?? string.Empty));
+            formData.Add(new MultipartFormDataSection("price", price.ToString()));
+
+            var uwr = UnityWebRequest.Post(url, formData);
+            uwr.method = "PUT";
             uwr.downloadHandler = new DownloadHandlerBuffer();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
 
@@ -391,15 +419,15 @@ namespace API
             )
             {
                 logger.Log(
-                    $"LinkSpriteByIdAsync error: {responseText}",
+                    $"LinkSpriteByIdAsync error (status {uwr.responseCode}): {responseText}",
                     this,
                     Logging.LogType.Warning
                 );
-                return null;
+                return (null, uwr.responseCode);
             }
 
             var res = JsonUtility.FromJson<DataEnvelope<CosmeticResponse>>(responseText);
-            return MapToSpriteResponse(res.data);
+            return (MapToSpriteResponse(res.data), uwr.responseCode);
         }
 
         /// <summary>

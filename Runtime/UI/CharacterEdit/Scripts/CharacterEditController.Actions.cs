@@ -6,6 +6,8 @@ using UnityEngine.UIElements;
 
 public partial class CharacterEditController
 {
+    private string assetsWorldId = string.Empty;
+
     private List<SpriteConfig> GetConfigsForPart(
         SpriteConfigDirector director,
         CharacterPartCategory part
@@ -446,7 +448,8 @@ public partial class CharacterEditController
         var response = await assetsService.GetSpritesByCategoryAsync(
             categoryId,
             _currentCosmeticsOffset,
-            cosmeticsPageLimit
+            cosmeticsPageLimit,
+            assetsWorldId
         );
 
         if (!IsSpritesRequestCurrent(requestVersion, categoryId))
@@ -803,5 +806,10 @@ public partial class CharacterEditController
 
         if (_saveButton != null)
             _saveButton.text = "Saved";
+    }
+
+    public void SetAssetsWorldId(string worldId)
+    {
+        assetsWorldId = worldId?.Trim() ?? string.Empty;
     }
 }
