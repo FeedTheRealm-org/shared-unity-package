@@ -16,6 +16,7 @@ namespace FTRShared.Runtime.Models
         public ChestModelData closedChestModelData;
     }
 
+    [Serializable]
     public class ChestModelData
     {
         public string modelId;
