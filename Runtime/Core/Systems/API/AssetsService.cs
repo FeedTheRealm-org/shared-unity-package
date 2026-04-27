@@ -249,7 +249,8 @@ namespace API
             string categoryId,
             int offset = 0,
             int limit = 24,
-            string worldId = null
+            string worldId = null,
+            string playerId = null
         )
         {
             if (string.IsNullOrWhiteSpace(worldId))
@@ -257,15 +258,33 @@ namespace API
                 logger.Log(
                     "GetSpritesByCategoryAsync called without worldId.",
                     this,
-                    Logging.LogType.Error
+                    Logging.LogType.Warning
                 );
-                return null;
+                worldId = new System.Guid().ToString();
+            }
+
+            if (string.IsNullOrWhiteSpace(playerId))
+            {
+                logger.Log(
+                    "GetSpritesByCategoryAsync called without playerId.",
+                    this,
+                    Logging.LogType.Warning
+                );
             }
 
             var safeOffset = Mathf.Max(0, offset);
             var safeLimit = Mathf.Max(1, limit);
-            var url =
-                $"{GetBaseUrl()}/categories/{categoryId}?offset={safeOffset}&limit={safeLimit}&world_id={worldId}";
+            var url = "";
+            if (playerId == null)
+            {
+                url =
+                    $"{GetBaseUrl()}/categories/{categoryId}?offset={safeOffset}&limit={safeLimit}&world_id={worldId}";
+            }
+            else
+            {
+                url =
+                    $"{GetBaseUrl()}/categories/{categoryId}?offset={safeOffset}&limit={safeLimit}&world_id={worldId}&player_id={playerId}";
+            }
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
