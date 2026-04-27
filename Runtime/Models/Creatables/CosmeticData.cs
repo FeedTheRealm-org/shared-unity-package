@@ -13,6 +13,10 @@ namespace FTRShared.Runtime.Models
         public float price = 0f;
         public Dictionary<string, string> category_sprites = new();
         public Dictionary<string, string> category_urls = new();
+        public Dictionary<string, float> category_prices = new();
+
+        [SerializeField]
+        private List<StringFloatDictionaryEntry> category_prices_serialized = new();
 
         [SerializeField]
         private List<StringDictionaryEntry> category_sprites_serialized = new();
@@ -42,6 +46,9 @@ namespace FTRShared.Runtime.Models
         {
             category_sprites_serialized = StringDictionarySerialization.ToEntries(category_sprites);
             category_urls_serialized = StringDictionarySerialization.ToEntries(category_urls);
+            category_prices_serialized = StringFloatDictionarySerialization.ToEntries(
+                category_prices
+            );
         }
 
         public void OnAfterDeserialize()
@@ -50,6 +57,9 @@ namespace FTRShared.Runtime.Models
                 category_sprites_serialized
             );
             category_urls = StringDictionarySerialization.ToDictionary(category_urls_serialized);
+            category_prices = StringFloatDictionarySerialization.ToDictionary(
+                category_prices_serialized
+            );
         }
     }
 }
