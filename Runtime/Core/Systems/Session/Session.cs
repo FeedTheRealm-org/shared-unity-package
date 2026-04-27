@@ -5,21 +5,22 @@ namespace Session
     [CreateAssetMenu(fileName = "Session", menuName = "Scriptable Objects/Session")]
     public class Session : ScriptableObject
     {
-        // Metadata
-        [SerializeField]
-        private string apiToken = "";
+        public string APIToken = "";
 
-        [SerializeField]
-        private bool isFirstLogin = false;
+        public bool isFirstLogin = false;
 
-        public string APIToken
-        {
-            get => apiToken;
-        }
         public bool IsFirstLogin
         {
             get => isFirstLogin;
             set => isFirstLogin = value;
+        }
+
+        private void OnEnable()
+        {
+            APIToken = "";
+            UserId = "";
+            Email = "";
+            CharacterName = "";
         }
 
         // User Info
@@ -27,11 +28,6 @@ namespace Session
         public string Email { get; private set; } = "";
         public string Password { get; private set; } = "";
         public string CharacterName { get; set; } = "";
-
-        public void SetAPIToken(string token)
-        {
-            apiToken = token;
-        }
 
         public void SetEmail(string email)
         {
@@ -50,7 +46,7 @@ namespace Session
 
         public void ClearSession()
         {
-            apiToken = "";
+            APIToken = "";
             IsFirstLogin = false;
             UserId = "";
             Email = "";
