@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 public partial class CharacterEditController
 {
     private string assetsWorldId = string.Empty;
+    private string assetsPlayerId = string.Empty;
 
     private List<SpriteConfig> GetConfigsForPart(
         SpriteConfigDirector director,
@@ -811,5 +812,10 @@ public partial class CharacterEditController
     public void SetAssetsWorldId(string worldId)
     {
         assetsWorldId = worldId?.Trim() ?? string.Empty;
+    }
+
+    public void SetAssetsPlayerId(string playerId)
+    {
+        assetsPlayerId = playerId?.Trim() ?? string.Empty;
     }
 }
