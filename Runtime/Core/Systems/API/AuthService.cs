@@ -72,8 +72,9 @@ namespace API
                     >(responseText);
                     logger.Log($"Login response: {responseText}", this);
                     logger.Log($"Login successful UserID: {res.data.id}", this);
+                    session.ClearSession();
                     session.SetUserId(res.data.id);
-                    session.SetAPIToken(res.data.access_token);
+                    session.APIToken = res.data.access_token;
                     session.SetEmail(res.data.email);
                     return "";
                 }

@@ -23,8 +23,7 @@ namespace API
         [SerializeField]
         private Logging.Logger logger;
 
-        private string GetBaseUrl() =>
-            $"http://{apiConfig.Hostname}:{apiConfig.Port}/assets/cosmetics";
+        private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/assets/cosmetics";
 
         [System.Serializable]
         private class CosmeticResponse
@@ -46,10 +45,6 @@ namespace API
                 return string.Empty;
 
             var baseUrl = apiConfig.CosmeticsCDN.Trim();
-            if (!baseUrl.StartsWith("http://") && !baseUrl.StartsWith("https://"))
-            {
-                baseUrl = $"http://{baseUrl}";
-            }
 
             return baseUrl.TrimEnd('/');
         }
@@ -213,7 +208,7 @@ namespace API
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
             uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
-
+            Debug.Log($"GetCategoriesAsync: Sending request to {url}");
             await uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
