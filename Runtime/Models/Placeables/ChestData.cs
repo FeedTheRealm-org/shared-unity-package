@@ -12,6 +12,7 @@ namespace FTRShared.Runtime.Models
         public Vector3 size = Vector3.one;
         public Vector3 rotation = Vector3.zero;
         public Vector3 position = Vector3.zero;
+        public int chestCooldownMinutes = 1;
         public ChestModelData opendedChestModelData;
         public ChestModelData closedChestModelData;
     }
