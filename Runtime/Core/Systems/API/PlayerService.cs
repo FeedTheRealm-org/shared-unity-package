@@ -24,14 +24,13 @@ namespace API
         [SerializeField]
         private Logging.Logger logger;
 
-        private string GetBaseUrl() =>
-            $"http://{apiConfig.Hostname}:{apiConfig.Port}/player/character";
+        private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/player/character";
 
         private string GetWorldJoinTokenUrl() =>
-            $"http://{apiConfig.Hostname}:{apiConfig.Port}/player/world-access/token";
+            $"{apiConfig.Hostname}:{apiConfig.Port}/player/world-access/token";
 
         private string GetWorldJoinTokenConsumeUrl() =>
-            $"http://{apiConfig.Hostname}:{apiConfig.Port}/player/world-access/token/consume";
+            $"{apiConfig.Hostname}:{apiConfig.Port}/player/world-access/token/consume";
 
         /// <summary>
         /// Update the character information such as name and bio.

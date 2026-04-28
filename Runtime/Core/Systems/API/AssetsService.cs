@@ -45,10 +45,6 @@ namespace API
                 return string.Empty;
 
             var baseUrl = apiConfig.CosmeticsCDN.Trim();
-            if (!baseUrl.StartsWith("http://") && !baseUrl.StartsWith("https://"))
-            {
-                baseUrl = $"http://{baseUrl}";
-            }
 
             return baseUrl.TrimEnd('/');
         }
