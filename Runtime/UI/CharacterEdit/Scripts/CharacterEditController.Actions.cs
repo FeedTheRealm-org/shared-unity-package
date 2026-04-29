@@ -450,7 +450,8 @@ public partial class CharacterEditController
             categoryId,
             _currentCosmeticsOffset,
             cosmeticsPageLimit,
-            assetsWorldId
+            assetsWorldId,
+            assetsPlayerId
         );
 
         if (!IsSpritesRequestCurrent(requestVersion, categoryId))
