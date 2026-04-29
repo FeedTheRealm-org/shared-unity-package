@@ -222,7 +222,7 @@ namespace API
             GemBalanceResponse updatedBalance
         )> PurchaseWithGems(string productId, string accessToken)
         {
-            string url = $"{GetGemsBaseUrl()}/purchase/{productId}";
+            string url = $"{GetPaymentBaseUrl()}/purchase/{productId}";
             (string responseText, UnityWebRequest.Result result, long statusCode) =
                 await SendRequestAsync(url, "POST", accessToken, null, "PurchaseWithGems");
 
@@ -249,11 +249,11 @@ namespace API
                     string errorMessage = res?.detail ?? responseText;
 
                     if (statusCode == 400)
-                        errorMessage = res?.detail ?? "Not enough gems.";
+                        errorMessage = "You don't have enough gems.";
                     else if (statusCode == 404)
-                        errorMessage = res?.detail ?? "Cosmetic not found.";
+                        errorMessage = "Server error, cosmetic not found.";
                     else if (statusCode == 409)
-                        errorMessage = res?.detail ?? "You already own this cosmetic.";
+                        errorMessage = "You already purchased this cosmetic.";
                     else if (statusCode == 401)
                         errorMessage = "Unauthorized. Please log in again.";
                     else if (statusCode >= 500)
