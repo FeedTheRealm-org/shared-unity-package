@@ -10,56 +10,71 @@ namespace FTRShared.Runtime.Models
         public string id = "";
         public string name = "";
         public string description = "";
-        public float price = 0f;
-        public Dictionary<string, string> category_sprites = new();
-        public Dictionary<string, string> category_urls = new();
-        public Dictionary<string, float> category_prices = new();
+
+        public Dictionary<string, CosmeticCategoryEntry> categories = new();
+
+        [Serializable]
+        private class CategoryEntryPair
+        {
+            public string key = "";
+            public CosmeticCategoryEntry value = new();
+        }
 
         [SerializeField]
-        private List<StringFloatDictionaryEntry> category_prices_serialized = new();
-
-        [SerializeField]
-        private List<StringDictionaryEntry> category_sprites_serialized = new();
-
-        [SerializeField]
-        private List<StringDictionaryEntry> category_urls_serialized = new();
+        private List<CategoryEntryPair> categories_serialized = new();
 
         public CosmeticData(
             string id,
             string name,
             string description,
-            float price,
             Dictionary<string, string> category_sprites
         )
         {
             this.id = id;
             this.name = name;
             this.description = description;
-            this.price = price;
-            this.category_sprites =
-                category_sprites != null
-                    ? new Dictionary<string, string>(category_sprites)
-                    : new Dictionary<string, string>();
+
+            categories = new Dictionary<string, CosmeticCategoryEntry>();
+            if (category_sprites != null)
+            {
+                foreach (var kvp in category_sprites)
+                    categories[kvp.Key] = new CosmeticCategoryEntry(kvp.Value);
+            }
         }
 
         public void OnBeforeSerialize()
         {
-            category_sprites_serialized = StringDictionarySerialization.ToEntries(category_sprites);
-            category_urls_serialized = StringDictionarySerialization.ToEntries(category_urls);
-            category_prices_serialized = StringFloatDictionarySerialization.ToEntries(
-                category_prices
-            );
+            categories_serialized = new List<CategoryEntryPair>(categories.Count);
+            foreach (var kvp in categories)
+            {
+                categories_serialized.Add(
+                    new CategoryEntryPair
+                    {
+                        key = kvp.Key,
+                        value = kvp.Value ?? new CosmeticCategoryEntry(),
+                    }
+                );
+            }
         }
 
         public void OnAfterDeserialize()
         {
-            category_sprites = StringDictionarySerialization.ToDictionary(
-                category_sprites_serialized
+            categories = new Dictionary<string, CosmeticCategoryEntry>(
+                categories_serialized?.Count ?? 0
             );
-            category_urls = StringDictionarySerialization.ToDictionary(category_urls_serialized);
-            category_prices = StringFloatDictionarySerialization.ToDictionary(
-                category_prices_serialized
-            );
+            if (categories_serialized == null)
+                return;
+            foreach (var pair in categories_serialized)
+            {
+                if (pair?.key != null)
+                    categories[pair.key] = pair.value ?? new CosmeticCategoryEntry();
+            }
         }
+
+        public string GetSpritePath(string categoryName) =>
+            categories.TryGetValue(categoryName, out var e) ? e.sprite_path : "";
+
+        public string GetUrlId(string categoryName) =>
+            categories.TryGetValue(categoryName, out var e) ? e.url_id : "";
     }
 }
