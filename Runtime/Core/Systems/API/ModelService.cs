@@ -89,48 +89,71 @@ namespace API
                 return "No assets to upload.";
             }
 
+            foreach (var structure in structureModels)
+            {
+                string error = await UploadModel(structure, worldId, accessToken);
+                if (!string.IsNullOrEmpty(error))
+                    return error;
+            }
+
+            return string.Empty;
+        }
+
+        private async Task<string> UploadModel(
+            ModelRequest structure,
+            string worldId,
+            string accessToken
+        )
+        {
             var url = $"{GetBaseUrl()}/assets/models/world/{worldId}";
-            logger.Log($"[ModelService] Uploading {structureModels.Count} models to: {url}", this);
+
+            byte[] modelData = File.ReadAllBytes(structure.filePath);
+            float sizeInMB = modelData.Length / 1024f / 1024f;
+
+            logger.Log(
+                $"[ModelService] Uploading model: id={structure.id} | file={Path.GetFileName(structure.filePath)} | size={sizeInMB:F2} MB",
+                this
+            );
+
+            if (sizeInMB > 10f) // adjust threshold as needed
+                logger.Log(
+                    $"[ModelService] WARNING: Model {structure.id} is large ({sizeInMB:F2} MB) and may be rejected by the server.",
+                    this,
+                    Logging.LogType.Warning
+                );
 
             var form = new WWWForm();
-            for (int i = 0; i < structureModels.Count; i++)
-            {
-                var structure = structureModels[i];
-                string prefix = $"models[{i}]";
-
-                logger.Log(
-                    $"[ModelService] Model [{i}]: id={structure.id}, filePath={structure.filePath}, fileExists={File.Exists(structure.filePath)}, fileSize={new FileInfo(structure.filePath).Length} bytes",
-                    this
-                );
-
-                form.AddField($"{prefix}.model_id", structure.id);
-                byte[] modelData = File.ReadAllBytes(structure.filePath);
-                form.AddBinaryData(
-                    $"{prefix}.model_file",
-                    modelData,
-                    Path.GetFileName(structure.filePath),
-                    "application/octet-stream"
-                );
-            }
+            form.AddField("models[0].model_id", structure.id);
+            form.AddBinaryData(
+                "models[0].model_file",
+                modelData,
+                Path.GetFileName(structure.filePath),
+                "application/octet-stream"
+            );
 
             UnityWebRequest uwr = UnityWebRequest.Post(url, form);
             uwr.method = "PUT";
             uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
 
-            logger.Log($"[ModelService] Sending PUT to {url}", this);
             await uwr.SendWebRequest();
 
-            logger.Log($"[ModelService] Response code: {uwr.responseCode}", this);
+            logger.Log(
+                $"[ModelService] Response code: {uwr.responseCode} | id={structure.id}",
+                this
+            );
             logger.Log($"[ModelService] Response body: {uwr.downloadHandler?.text}", this);
 
             if (uwr.result == UnityWebRequest.Result.Success)
             {
-                logger.Log("[ModelService] Models uploaded successfully.", this);
+                logger.Log(
+                    $"[ModelService] Model {structure.id} uploaded successfully ({sizeInMB:F2} MB).",
+                    this
+                );
                 return string.Empty;
             }
 
             logger.Log(
-                $"[ModelService] Upload error: {uwr.error} | Response: {uwr.downloadHandler?.text}",
+                $"[ModelService] Upload error for {structure.id} ({sizeInMB:F2} MB): {uwr.error} | Response: {uwr.downloadHandler?.text}",
                 this,
                 Logging.LogType.Error
             );
