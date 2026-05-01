@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0152e4cd065109215ae7d245d975f24d, type: 3}
   m_Name: ApiConfig
   m_EditorClassIdentifier: FeedTheRealm_Shared::ApiConfig
-  Hostname: https://core.feedtherealm.world
-  Port: 443
-  ModelsCDN: https://d632z6itue3st.cloudfront.net/
-  CosmeticsCDN: https://d3ry8oaxnx8r71.cloudfront.net/
+  _environment: 0
+  _localHostname: http://localhost
+  _localPort: 8000
+  _localModelsCDN: http://localhost:8081/worlds
+  _localCosmeticsCDN: http://localhost:8081/cosmetics
+  _prodHostname: https://core.feedtherealm.world
+  _prodPort: 443
+  _prodModelsCDN: https://d632z6itue3st.cloudfront.net/
+  _prodCosmeticsCDN: https://d3ry8oaxnx8r71.cloudfront.net/
