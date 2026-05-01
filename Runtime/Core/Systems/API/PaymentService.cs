@@ -314,10 +314,10 @@ namespace API
 
             try
             {
-                var data = JsonUtility.FromJson<CreatorBalanceResponse>(
+                var data = JsonUtility.FromJson<DataEnvelope<CreatorBalanceResponse>>(
                     request.downloadHandler.text
                 );
-                return (data, null, status);
+                return (data.data, null, status);
             }
             catch (System.Exception ex)
             {
