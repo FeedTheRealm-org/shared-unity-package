@@ -10,7 +10,7 @@ public enum ApiEnvironment
 public class ApiConfig : ScriptableObject
 {
     [SerializeField]
-    private ApiEnvironment _environment;
+    private ApiEnvironment _environment = ApiEnvironment.Local;
 
     [Header("Local")]
     [SerializeField]
