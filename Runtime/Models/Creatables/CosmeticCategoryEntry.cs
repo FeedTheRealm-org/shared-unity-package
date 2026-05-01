@@ -10,11 +10,11 @@ namespace FTRShared.Runtime.Models
 
         public string url_id = "";
 
-        public float price = 0f;
+        public float price = 1f;
 
         public CosmeticCategoryEntry() { }
 
-        public CosmeticCategoryEntry(string spritePath, string urlId = "", float price = 0f)
+        public CosmeticCategoryEntry(string spritePath, string urlId = "", float price = 1f)
         {
             this.sprite_path = spritePath ?? "";
             this.url_id = urlId ?? "";
