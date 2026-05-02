@@ -18,7 +18,7 @@ namespace API
 
         private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/auth";
 
-        public async Task<string> Login(string email, string password)
+        public async Task<string> Login(string email, string password, string adminToken = null)
         {
             string url = $"{GetBaseUrl()}/login";
             LoginRequest payload = new LoginRequest { email = email, password = password };
@@ -27,7 +27,7 @@ namespace API
             Task<(string, UnityWebRequest.Result, long)> task = SendRequestAsync(
                 url,
                 "POST",
-                null,
+                adminToken,
                 json,
                 "Login"
             );
