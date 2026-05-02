@@ -47,6 +47,7 @@ namespace API
     {
         public int zone_id;
         public bool is_active;
+        public bool is_online;
     }
 
     [Serializable]
@@ -105,6 +106,7 @@ namespace API
         public int zone_id;
         public string zone_data;
         public bool is_active;
+        public bool is_online;
     }
 
     [Serializable]
