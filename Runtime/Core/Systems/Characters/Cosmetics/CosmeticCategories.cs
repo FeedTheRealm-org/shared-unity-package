@@ -21,10 +21,7 @@ namespace FTRShared.Runtime.Models
                 { "Eye Brows", new[] { CharacterPartCategory.EyeBrows } },
                 { "Eyes", new[] { CharacterPartCategory.Eyes } },
                 { "Mouth", new[] { CharacterPartCategory.Mouth } },
-                {
-                    "Earrings",
-                    new[] { CharacterPartCategory.EarringR, CharacterPartCategory.EarringL }
-                },
+                { "Earrings", new[] { CharacterPartCategory.EarringR } },
                 { "Back", new[] { CharacterPartCategory.Back } },
                 { "Mask", new[] { CharacterPartCategory.Mask } },
             };

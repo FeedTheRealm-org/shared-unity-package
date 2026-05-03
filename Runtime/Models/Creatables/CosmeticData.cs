@@ -47,6 +47,9 @@ namespace FTRShared.Runtime.Models
             categories_serialized = new List<CategoryEntryPair>(categories.Count);
             foreach (var kvp in categories)
             {
+                if (kvp.Key == "EarringL")
+                    continue;
+
                 categories_serialized.Add(
                     new CategoryEntryPair
                     {
@@ -68,6 +71,15 @@ namespace FTRShared.Runtime.Models
             {
                 if (pair?.key != null)
                     categories[pair.key] = pair.value ?? new CosmeticCategoryEntry();
+            }
+
+            if (categories.ContainsKey("EarringR") && !categories.ContainsKey("EarringL"))
+            {
+                categories["EarringL"] = new CosmeticCategoryEntry(
+                    categories["EarringR"].sprite_path,
+                    categories["EarringR"].url_id,
+                    categories["EarringR"].price
+                );
             }
         }
 
