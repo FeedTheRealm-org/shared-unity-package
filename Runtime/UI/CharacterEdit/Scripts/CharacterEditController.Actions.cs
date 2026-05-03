@@ -6,6 +6,9 @@ using UnityEngine.UIElements;
 
 public partial class CharacterEditController
 {
+    private string assetsWorldId = string.Empty;
+    private string assetsPlayerId = string.Empty;
+
     private List<SpriteConfig> GetConfigsForPart(
         SpriteConfigDirector director,
         CharacterPartCategory part
@@ -38,8 +41,8 @@ public partial class CharacterEditController
             case CharacterPartCategory.Mask:
                 return director.BuildMaskSpriteConfig();
             default:
-                const string err = "This code's vibecoded af im tired boss";
-                logger.Log(err, this, Logging.LogType.Error);
+                const string err = "Unhandled character part category";
+                logger?.Log(err, this, Logging.LogType.Error);
                 return null;
         }
     }
@@ -276,22 +279,50 @@ public partial class CharacterEditController
         ClearAppliedCharacterSprites();
         _previewSpriteByPart.Clear();
 
-        if (_categories == null || characterInfoRequest.category_sprites == null)
+        if (characterInfoRequest?.category_sprites == null)
             return;
 
         foreach (var kvp in characterInfoRequest.category_sprites)
         {
-            var category = _categories.FirstOrDefault(c => c.category_id == kvp.Key);
-            if (category == null)
-                continue;
-
             string spriteId = kvp.Value;
             if (string.IsNullOrEmpty(spriteId))
                 continue;
 
-            var part = spriteManager.GetPartCategoryFromCategoryName(category.category_name);
+            CharacterPartCategory part = CharacterPartCategory.None;
+
+            if (System.Enum.TryParse<CharacterPartCategory>(kvp.Key, true, out var parsedPart))
+            {
+                part = parsedPart;
+            }
+            else if (_categories != null)
+            {
+                var category = _categories.FirstOrDefault(c => c.category_id == kvp.Key);
+                if (category != null)
+                {
+                    part = spriteManager.GetPartCategoryFromCategoryName(category.category_name);
+                }
+            }
+
             if (part == CharacterPartCategory.None)
                 continue;
+
+            if (
+                System.IO.Path.IsPathRooted(spriteId)
+                || spriteId.StartsWith("file://")
+                || spriteId.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase)
+            )
+            {
+                string loadPath = spriteId;
+                if (!System.IO.Path.IsPathRooted(spriteId) && !spriteId.StartsWith("file://"))
+                {
+                    loadPath = System.IO.Path.GetFullPath(
+                        System.IO.Path.Combine(Application.streamingAssetsPath, "Sprites", spriteId)
+                    );
+                }
+
+                ApplyLocalSpriteOverride(part, loadPath);
+                continue;
+            }
 
             Texture2D texture = null;
             if (!textureCache.TryGetValue(spriteId, out texture))
@@ -310,6 +341,40 @@ public partial class CharacterEditController
         }
     }
 
+    /// <summary>
+    /// Exclusive function for offline/creator tools to bypass API restrictions.
+    /// Manually loads a local PNG into the given character part.
+    /// </summary>
+    public bool ApplyLocalSpriteOverride(CharacterPartCategory part, string localFilePath)
+    {
+        if (string.IsNullOrEmpty(localFilePath) || !System.IO.File.Exists(localFilePath))
+            return false;
+
+        try
+        {
+            byte[] fileData = System.IO.File.ReadAllBytes(localFilePath);
+            Texture2D tex = new Texture2D(2, 2);
+            tex.filterMode = FilterMode.Point;
+            tex.wrapMode = TextureWrapMode.Clamp;
+
+            if (tex.LoadImage(fileData) && spriteManager != null)
+            {
+                spriteManager.ChangeSprite(part, tex);
+                return true;
+            }
+            return false;
+        }
+        catch (System.Exception ex)
+        {
+            logger?.Log(
+                $"Failed to apply local override: {ex.Message}",
+                this,
+                Logging.LogType.Error
+            );
+            return false;
+        }
+    }
+
     /* --- CATEGORIES & ITEMS HANDLING --- */
 
     /// <summary>
@@ -320,7 +385,7 @@ public partial class CharacterEditController
         var response = await assetsService.GetCategoriesAsync();
         if (response == null || response.category_list == null)
         {
-            logger.Log("Failed to fetch categories", this, Logging.LogType.Error);
+            logger?.Log("Failed to fetch categories", this, Logging.LogType.Error);
             ShowToastError("Failed to load categories.");
             return;
         }
@@ -330,7 +395,7 @@ public partial class CharacterEditController
 
         if (response.category_list.Length == 0)
         {
-            logger.Log("No categories returned from server", this, Logging.LogType.Warning);
+            logger?.Log("No categories returned from server", this, Logging.LogType.Warning);
             _selectedCategoryId = string.Empty;
             _selectedCategoryName = string.Empty;
             ClearItems();
@@ -343,7 +408,7 @@ public partial class CharacterEditController
             var btn = _categoriesList.Q<Button>(category.category_name);
             if (btn == null)
             {
-                logger.Log(
+                logger?.Log(
                     $"Error: Category button {category.category_name} not found in UI.",
                     this,
                     Logging.LogType.Error
@@ -354,12 +419,12 @@ public partial class CharacterEditController
             btn.clicked += action;
             categoryButtonActions[btn] = action;
         }
-        logger.Log("Categories successfully populated", this);
+        logger?.Log("Categories successfully populated", this);
         await onCategoryClicked(
             response.category_list[0].category_id,
             response.category_list[0].category_name
         );
-        logger.Log("First category auto-selected", this);
+        logger?.Log("First category auto-selected", this);
     }
 
     /// <summary>
@@ -384,7 +449,9 @@ public partial class CharacterEditController
         var response = await assetsService.GetSpritesByCategoryAsync(
             categoryId,
             _currentCosmeticsOffset,
-            cosmeticsPageLimit
+            cosmeticsPageLimit,
+            assetsWorldId,
+            assetsPlayerId
         );
 
         if (!IsSpritesRequestCurrent(requestVersion, categoryId))
@@ -394,7 +461,7 @@ public partial class CharacterEditController
 
         if (response == null || response.sprites_list == null)
         {
-            logger.Log("Failed to fetch sprites", this, Logging.LogType.Error);
+            logger?.Log("Failed to fetch sprites", this, Logging.LogType.Error);
             ShowToastError("Failed to load sprites.");
             ClearItems();
             _currentCosmeticsTotalCount = 0;
@@ -499,7 +566,7 @@ public partial class CharacterEditController
             else
             {
                 btn.text = sprite.sprite_id;
-                logger.Log(
+                logger?.Log(
                     $"Failed to load texture for sprite: {sprite.sprite_id}",
                     this,
                     Logging.LogType.Warning
@@ -634,7 +701,7 @@ public partial class CharacterEditController
         var characterId = ResolveActiveCharacterId();
         if (string.IsNullOrEmpty(characterId))
         {
-            logger.Log(
+            logger?.Log(
                 "Character id is missing, cannot save character info.",
                 this,
                 Logging.LogType.Error
@@ -677,7 +744,7 @@ public partial class CharacterEditController
             return;
         }
 
-        logger.Log("Failed to save character info", this, Logging.LogType.Error);
+        logger?.Log("Failed to save character info", this, Logging.LogType.Error);
         ShowToastError("Failed to update character info.");
     }
 
@@ -741,5 +808,15 @@ public partial class CharacterEditController
 
         if (_saveButton != null)
             _saveButton.text = "Saved";
+    }
+
+    public void SetAssetsWorldId(string worldId)
+    {
+        assetsWorldId = worldId?.Trim() ?? string.Empty;
+    }
+
+    public void SetAssetsPlayerId(string playerId)
+    {
+        assetsPlayerId = playerId?.Trim() ?? string.Empty;
     }
 }

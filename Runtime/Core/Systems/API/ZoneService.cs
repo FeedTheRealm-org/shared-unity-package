@@ -116,5 +116,43 @@ namespace API
             var zoneData = JsonUtility.FromJson<ZoneData>(envelope.data.zone_data);
             return (zoneData, "", statusCode);
         }
+
+        public async Task<(string error, long statusCode)> ActivateZone(
+            string worldId,
+            int zoneId,
+            string accessToken
+        )
+        {
+            string url = $"{BaseUrl(worldId)}/{zoneId}/activate";
+            var (responseText, result, statusCode) = await SendRequestAsync(
+                url,
+                "GET",
+                accessToken,
+                null,
+                "ActivateZone"
+            );
+
+            var error = ParseError(result, responseText, statusCode, "ActivateZone");
+            return (error, statusCode);
+        }
+
+        public async Task<(string error, long statusCode)> DeactivateZone(
+            string worldId,
+            int zoneId,
+            string accessToken
+        )
+        {
+            string url = $"{BaseUrl(worldId)}/{zoneId}/deactivate";
+            var (responseText, result, statusCode) = await SendRequestAsync(
+                url,
+                "GET",
+                accessToken,
+                null,
+                "DeactivateZone"
+            );
+
+            var error = ParseError(result, responseText, statusCode, "DeactivateZone");
+            return (error, statusCode);
+        }
     }
 }

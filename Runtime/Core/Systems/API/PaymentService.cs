@@ -52,13 +52,9 @@ namespace API
                         : JsonUtility.FromJson<ErrorResponse>(responseText);
                     string errorMessage = res?.detail ?? responseText;
                     if (statusCode == 401 || statusCode == 403)
-                    {
                         errorMessage = "Unauthorized access. Please log in again.";
-                    }
                     else if (statusCode >= 500)
-                    {
                         errorMessage = "Server error. Please try again later.";
-                    }
                     logger.Log(
                         $"GetAllGemPacks error ({statusCode}): {errorMessage}",
                         this,
@@ -71,31 +67,14 @@ namespace API
                     DataEnvelope<List<GemPackResponse>> res = JsonUtility.FromJson<
                         DataEnvelope<List<GemPackResponse>>
                     >(responseText);
-                    logger.Log($"CreateCheckoutSession response: {responseText}", this);
+                    logger.Log($"GetAllGemPacks response: {responseText}", this);
                     return (true, "", res.data);
                 }
             }
             catch (System.Exception ex)
             {
                 logger.Log($"GetAllGemPacks exception: {ex.Message}", this, Logging.LogType.Error);
-                logger.Log(
-                    $"GetAllGemPacks exception (result: {result}, status: {statusCode}): {ex.Message}",
-                    this,
-                    Logging.LogType.Error
-                );
-
-                string userMessage;
-                if (result == UnityWebRequest.Result.ConnectionError)
-                {
-                    userMessage =
-                        "Unable to connect to server. Please check your internet connection.";
-                }
-                else
-                {
-                    string statusInfo = statusCode > 0 ? $" (HTTP {statusCode})" : string.Empty;
-                    userMessage =
-                        $"Received an unexpected response from the server{statusInfo}. Please try again later.";
-                }
+                string userMessage = BuildUserMessage(result, statusCode);
                 return (false, userMessage, null);
             }
         }
@@ -153,19 +132,7 @@ namespace API
             catch (System.Exception ex)
             {
                 logger.Log($"GetGemBalance exception: {ex.Message}", this, Logging.LogType.Error);
-                string userMessage;
-                if (result == UnityWebRequest.Result.ConnectionError)
-                {
-                    userMessage =
-                        "Unable to connect to server. Please check your internet connection.";
-                }
-                else
-                {
-                    userMessage =
-                        statusCode > 0
-                            ? $"Unexpected response from server (status code {statusCode}). Please try again later."
-                            : "Unexpected response from server. Please try again later.";
-                }
+                string userMessage = BuildUserMessage(result, statusCode);
                 return (false, userMessage, null);
             }
         }
@@ -243,26 +210,89 @@ namespace API
                     this,
                     Logging.LogType.Error
                 );
-                logger.Log(
-                    $"CreateCheckoutSession exception (result: {result}, status: {statusCode}): {ex.Message}",
-                    this,
-                    Logging.LogType.Error
-                );
+                string userMessage = BuildUserMessage(result, statusCode);
+                return (false, userMessage, null);
+            }
+        }
 
-                string userMessage;
+        public async Task<(
+            bool success,
+            string message,
+            GemBalanceResponse updatedBalance
+        )> PurchaseWithGems(string productId, string accessToken)
+        {
+            string url = $"{GetPaymentBaseUrl()}/purchase/{productId}";
+            (string responseText, UnityWebRequest.Result result, long statusCode) =
+                await SendRequestAsync(url, "POST", accessToken, null, "PurchaseWithGems");
+
+            try
+            {
                 if (result == UnityWebRequest.Result.ConnectionError)
                 {
-                    userMessage =
-                        "Unable to connect to server. Please check your internet connection.";
+                    logger.Log(
+                        $"PurchaseWithGems connection error: {responseText}",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    return (
+                        false,
+                        "Unable to connect to server. Please check your internet connection.",
+                        null
+                    );
+                }
+                else if (result == UnityWebRequest.Result.ProtocolError)
+                {
+                    ErrorResponse res = string.IsNullOrEmpty(responseText)
+                        ? null
+                        : JsonUtility.FromJson<ErrorResponse>(responseText);
+                    string errorMessage = res?.detail ?? responseText;
+
+                    if (statusCode == 400)
+                        errorMessage = "You don't have enough gems.";
+                    else if (statusCode == 404)
+                        errorMessage = "Server error, cosmetic not found.";
+                    else if (statusCode == 409)
+                        errorMessage = "You already purchased this cosmetic.";
+                    else if (statusCode == 401)
+                        errorMessage = "Unauthorized. Please log in again.";
+                    else if (statusCode >= 500)
+                        errorMessage = "Server error. Please try again later.";
+
+                    logger.Log(
+                        $"PurchaseWithGems error ({statusCode}): {errorMessage}",
+                        this,
+                        Logging.LogType.Error
+                    );
+                    return (false, errorMessage, null);
                 }
                 else
                 {
-                    string statusInfo = statusCode > 0 ? $" (HTTP {statusCode})" : string.Empty;
-                    userMessage =
-                        $"Received an unexpected response from the server{statusInfo}. Please try again later.";
+                    DataEnvelope<GemBalanceResponse> res = JsonUtility.FromJson<
+                        DataEnvelope<GemBalanceResponse>
+                    >(responseText);
+                    logger.Log($"PurchaseWithGems success: {responseText}", this);
+                    return (true, "", res.data);
                 }
+            }
+            catch (System.Exception ex)
+            {
+                logger.Log(
+                    $"PurchaseWithGems exception: {ex.Message}",
+                    this,
+                    Logging.LogType.Error
+                );
+                string userMessage = BuildUserMessage(result, statusCode);
                 return (false, userMessage, null);
             }
+        }
+
+        private static string BuildUserMessage(UnityWebRequest.Result result, long statusCode)
+        {
+            if (result == UnityWebRequest.Result.ConnectionError)
+                return "Unable to connect to server. Please check your internet connection.";
+
+            string statusInfo = statusCode > 0 ? $" (HTTP {statusCode})" : string.Empty;
+            return $"Received an unexpected response from the server{statusInfo}. Please try again later.";
         }
     }
 }

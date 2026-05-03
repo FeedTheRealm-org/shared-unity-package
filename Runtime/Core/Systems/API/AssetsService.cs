@@ -243,13 +243,43 @@ namespace API
         public async Task<SpritesListResponse> GetSpritesByCategoryAsync(
             string categoryId,
             int offset = 0,
-            int limit = 24
+            int limit = 24,
+            string worldId = null,
+            string playerId = null
         )
         {
+            if (string.IsNullOrWhiteSpace(worldId))
+            {
+                logger.Log(
+                    "GetSpritesByCategoryAsync called without worldId.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                worldId = new System.Guid().ToString();
+            }
+
+            if (string.IsNullOrWhiteSpace(playerId))
+            {
+                logger.Log(
+                    "GetSpritesByCategoryAsync called without playerId.",
+                    this,
+                    Logging.LogType.Warning
+                );
+            }
+
             var safeOffset = Mathf.Max(0, offset);
             var safeLimit = Mathf.Max(1, limit);
-            var url =
-                $"{GetBaseUrl()}/categories/{categoryId}?offset={safeOffset}&limit={safeLimit}";
+            var url = "";
+            if (playerId == null)
+            {
+                url =
+                    $"{GetBaseUrl()}/categories/{categoryId}?offset={safeOffset}&limit={safeLimit}&world_id={worldId}";
+            }
+            else
+            {
+                url =
+                    $"{GetBaseUrl()}/categories/{categoryId}?offset={safeOffset}&limit={safeLimit}&world_id={worldId}&player_id={playerId}";
+            }
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
@@ -314,6 +344,104 @@ namespace API
 
             var envelope = JsonUtility.FromJson<DataEnvelope<CosmeticResponse>>(responseText);
             return MapToSpriteResponse(envelope.data);
+        }
+
+        [System.Serializable]
+        private class CategoryResponse
+        {
+            public string category_id;
+            public string category_name;
+        }
+
+        /// <summary>
+        /// Upload a cosmetic sprite.
+        /// </summary>
+        public async Task<SpriteResponse> UploadSpriteAsync(
+            string categoryId,
+            string spritePath,
+            string worldId,
+            float price = 1f
+        )
+        {
+            var url = $"{GetBaseUrl()}/categories/{categoryId}";
+
+            var formData = new System.Collections.Generic.List<IMultipartFormSection>();
+            byte[] fileData = System.IO.File.ReadAllBytes(spritePath);
+            formData.Add(
+                new MultipartFormFileSection(
+                    "sprite",
+                    fileData,
+                    System.IO.Path.GetFileName(spritePath),
+                    "image/png"
+                )
+            );
+            formData.Add(new MultipartFormDataSection("category_id", categoryId));
+            formData.Add(new MultipartFormDataSection("world_id", worldId ?? string.Empty));
+            formData.Add(new MultipartFormDataSection("price", price.ToString()));
+
+            var uwr = UnityWebRequest.Post(url, formData);
+            uwr.method = "PUT";
+            uwr.downloadHandler = new DownloadHandlerBuffer();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            await uwr.SendWebRequest();
+            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+
+            if (
+                uwr.result == UnityWebRequest.Result.ConnectionError
+                || uwr.result == UnityWebRequest.Result.ProtocolError
+            )
+            {
+                logger.Log(
+                    $"UploadSpriteAsync error: {responseText}",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return null;
+            }
+
+            var res = JsonUtility.FromJson<DataEnvelope<CosmeticResponse>>(responseText);
+            return MapToSpriteResponse(res.data);
+        }
+
+        /// <summary>
+        /// Link a sprite by ID. Returns (response, httpStatusCode).
+        /// </summary>
+        public async Task<(SpriteResponse response, long statusCode)> LinkSpriteByIdAsync(
+            string categoryId,
+            string spriteId,
+            string worldId,
+            float price = 1f
+        )
+        {
+            var url = $"{GetBaseUrl()}/categories/{categoryId}/sprites/{spriteId}";
+            var formData = new System.Collections.Generic.List<IMultipartFormSection>();
+            formData.Add(new MultipartFormDataSection("world_id", worldId ?? string.Empty));
+            formData.Add(new MultipartFormDataSection("price", price.ToString()));
+
+            var uwr = UnityWebRequest.Post(url, formData);
+            uwr.method = "PUT";
+            uwr.downloadHandler = new DownloadHandlerBuffer();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            await uwr.SendWebRequest();
+            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+
+            if (
+                uwr.result == UnityWebRequest.Result.ConnectionError
+                || uwr.result == UnityWebRequest.Result.ProtocolError
+            )
+            {
+                logger.Log(
+                    $"LinkSpriteByIdAsync error (status {uwr.responseCode}): {responseText}",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return (null, uwr.responseCode);
+            }
+
+            var res = JsonUtility.FromJson<DataEnvelope<CosmeticResponse>>(responseText);
+            return (MapToSpriteResponse(res.data), uwr.responseCode);
         }
 
         /// <summary>
