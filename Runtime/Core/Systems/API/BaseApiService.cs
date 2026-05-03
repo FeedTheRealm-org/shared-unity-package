@@ -43,7 +43,8 @@ namespace API
             }
             uwr.downloadHandler = new DownloadHandlerBuffer();
             uwr.SetRequestHeader("Content-Type", "application/json");
-            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+            if (!string.IsNullOrEmpty(accessToken))
+                uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
 
             if (!string.IsNullOrEmpty(logPrefix))
                 logger.Log($"{logPrefix} Request to {url}: {jsonBody}", this);
