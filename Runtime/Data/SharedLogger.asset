@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SharedLogger
   m_EditorClassIdentifier: FeedTheRealm_Shared::Logging.Logger
   showLogs: 1
-  loggerPrefix:
+  loggerPrefix: '[Shared]'
   loggerColor: {r: 1, g: 0.94592744, b: 0.94592744, a: 0}
   showColor: 0
