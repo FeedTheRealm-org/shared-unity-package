@@ -16,7 +16,7 @@ namespace FTRShared.Runtime.Models
         public bool isShop = false;
         public string shopId = null;
         public Vector3 colliderCenter = Vector3.zero;
-        public Vector3 colliderSize = Vector3.zero;
+        public Vector3 colliderSize = Vector3.one;
         public Vector3 colliderRotation = Vector3.zero;
 
         public bool hasColliders = true;
@@ -43,8 +43,9 @@ namespace FTRShared.Runtime.Models
             this.fileName = fileName;
             this.hasColliders = hasColliders;
             position = Vector3.zero;
-            colliderSize = Vector3.zero;
+            colliderSize = Vector3.one;
             colliderCenter = Vector3.zero;
+            colliderRotation = Vector3.zero;
         }
 
         public StructureData Clone()
@@ -61,13 +62,14 @@ namespace FTRShared.Runtime.Models
                 shopId = shopId,
                 colliderSize = colliderSize,
                 colliderCenter = colliderCenter,
+                colliderRotation = colliderRotation,
                 hasColliders = hasColliders,
             };
         }
 
         public override string ToString()
         {
-            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, IsShop: {isShop}, ShopId: {shopId}, ColliderSize: {colliderSize}, ColliderCenter: {colliderCenter}, HasCustomCollider: {hasColliders}";
+            return $"StructureData: {structureName} (ID: {id}) at Position: {position}, Size: {size}, Rotation: {rotation}, IsShop: {isShop}, ShopId: {shopId}, ColliderSize: {colliderSize}, ColliderCenter: {colliderCenter}, ColliderRotation: {colliderRotation},s HasCustomCollider: {hasColliders}";
         }
     }
 }
