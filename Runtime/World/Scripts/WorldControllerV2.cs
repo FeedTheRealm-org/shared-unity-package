@@ -21,19 +21,52 @@ public class WorldControllerV2 : MonoBehaviour
             _renderer = GetComponent<Renderer>();
     }
 
+    void Start()
+    {
+        ApplyTextureScale();
+    }
+
     void OnValidate()
     {
         if (_renderer == null)
             _renderer = GetComponent<Renderer>();
 
-        if (_renderer != null)
+        transform.localScale = new Vector3(worldSize, worldHeight, worldSize);
+    }
+
+    public void OnFloorMaterialChanged(Material newMat)
+    {
+        Debug.Log($"Changing floor material to: {newMat.name}");
+        if (_renderer != null && newMat != null)
         {
-            _renderer.sharedMaterial.mainTextureScale = new Vector2(
+            _renderer.material = newMat;
+            ApplyTextureScale();
+        }
+    }
+
+    private void ApplyTextureScale()
+    {
+        if (_renderer == null)
+            return;
+
+#if UNITY_EDITOR
+        if (UnityEditor.PrefabUtility.IsPartOfPrefabAsset(this))
+        {
+            if (_renderer.sharedMaterial != null)
+                _renderer.sharedMaterial.mainTextureScale = new Vector2(
+                    textureGranularity,
+                    textureGranularity
+                );
+            return;
+        }
+#endif
+
+        if (_renderer.material != null)
+        {
+            _renderer.material.mainTextureScale = new Vector2(
                 textureGranularity,
                 textureGranularity
             );
         }
-
-        transform.localScale = new Vector3(worldSize, worldHeight, worldSize);
     }
 }
