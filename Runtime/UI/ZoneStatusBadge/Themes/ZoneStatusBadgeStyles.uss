@@ -1,0 +1,54 @@
+.zone-status-badge {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 18px;
+  padding: 0 6px;
+  margin: 0;
+  border-radius: 10px;
+  opacity: 1;
+}
+
+.zone-status-badge__dot {
+  font-size: 10px;
+  -unity-font-style: bold;
+  margin: 0 4px 0 0;
+  padding: 0;
+}
+
+.zone-status-badge__text {
+  font-size: 10px;
+  -unity-font-style: bold;
+  margin: 0;
+  padding: 0;
+}
+
+/* ONLINE */
+.zone-status-badge--online {
+  background-color: rgba(26, 89, 38, 140);
+}
+
+.zone-status-badge--online .zone-status-badge__dot,
+.zone-status-badge--online .zone-status-badge__text {
+  color: rgba(51, 217, 102, 255);
+}
+
+/* DEGRADED */
+.zone-status-badge--degraded {
+  background-color: rgba(89, 71, 5, 140);
+}
+
+.zone-status-badge--degraded .zone-status-badge__dot,
+.zone-status-badge--degraded .zone-status-badge__text {
+  color: rgba(255, 204, 26, 255);
+}
+
+/* OFFLINE */
+.zone-status-badge--offline {
+  background-color: rgba(102, 20, 20, 140);
+}
+
+.zone-status-badge--offline .zone-status-badge__dot,
+.zone-status-badge--offline .zone-status-badge__text {
+  color: rgba(230, 64, 64, 255);
+}

@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Packages/com.feed_the_realm.shared/Runtime/UI/ZoneStatusBadge/Themes/ZoneStatusBadgeStyles.uss?fileID=7433441132597879392&amp;guid=a632c3df5c611ea4c9ef8c4e7b4f5c4a&amp;type=3#ZoneStatusBadgeStyles"/>
+    <ui:Label name="ZoneStatusBadge" class="zone-status-badge">
+        <ui:Label name="BadgeDot" text="●" class="zone-status-badge__dot"/>
+        <ui:Label name="BadgeText" text="Offline" class="zone-status-badge__text"/>
+    </ui:Label>
+</ui:UXML>
