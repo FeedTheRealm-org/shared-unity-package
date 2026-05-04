@@ -128,3 +128,4 @@ MonoBehaviour:
   worldSize: 200
   worldHeight: 2
   textureGranularity: 100
+  materialsRepository: {fileID: 11400000, guid: 8eddecd1e78388e4ea262ae3516cd3d1, type: 2}

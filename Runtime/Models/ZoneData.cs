@@ -19,6 +19,8 @@ namespace FTRShared.Runtime.Models
 
         public string worldName;
         public int zoneId;
+        public string floorMaterialId = String.Empty;
+        public float textureGranularity = 100.0f;
         public List<StructureData> objectPlacementData = new();
         public List<EnemySpawnerData> enemySpawnAreas = new();
         public List<NPCSpawnerData> npcSpawnAreas = new();

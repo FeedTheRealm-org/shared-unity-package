@@ -1,3 +1,4 @@
+using FeedTheRealm.Core.Repository;
 using UnityEngine;
 
 [RequireComponent(typeof(Renderer))]
@@ -12,6 +13,12 @@ public class WorldControllerV2 : MonoBehaviour
 
     [SerializeField]
     private float textureGranularity = 4;
+
+    [SerializeField]
+    private MaterialsRepository materialsRepository;
+
+    public string CurrentMaterialId { get; private set; } = string.Empty;
+    public float CurrentGranularity => textureGranularity;
 
     private Renderer _renderer;
 
@@ -34,12 +41,13 @@ public class WorldControllerV2 : MonoBehaviour
         transform.localScale = new Vector3(worldSize, worldHeight, worldSize);
     }
 
-    public void OnFloorMaterialChanged(Material newMat, float granularity = -1f)
+    public void OnFloorMaterialChanged(string newMat, float granularity = -1f)
     {
-        Debug.Log($"Changing floor material to: {newMat.name}");
+        Debug.Log($"Changing floor material to: {newMat}");
         if (_renderer != null && newMat != null)
         {
-            _renderer.material = newMat;
+            CurrentMaterialId = newMat;
+            _renderer.material = materialsRepository.Search(newMat)[0];
 
             if (granularity > 0f)
                 textureGranularity = granularity;
