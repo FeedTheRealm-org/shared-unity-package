@@ -221,7 +221,7 @@ namespace API
             GemBalanceResponse updatedBalance
         )> PurchaseWithGems(string productId, string accessToken)
         {
-            string url = $"{GetPaymentBaseUrl()}/purchase/{productId}";
+            string url = $"{GetGemsBaseUrl()}/balances/purchase/{productId}";
             (string responseText, UnityWebRequest.Result result, long statusCode) =
                 await SendRequestAsync(url, "POST", accessToken, null, "PurchaseWithGems");
 
@@ -283,6 +283,45 @@ namespace API
                 );
                 string userMessage = BuildUserMessage(result, statusCode);
                 return (false, userMessage, null);
+            }
+        }
+
+        /// <summary>
+        /// GET /payments/balances/creators
+        /// The creator id is resolved server-side from the Authorization header.
+        /// </summary>
+        public async Task<(
+            CreatorBalanceResponse data,
+            string error,
+            long statusCode
+        )> GetCreatorBalance(string apiToken)
+        {
+            using var request = UnityWebRequest.Get($"{GetPaymentBaseUrl()}/balances/creators");
+            request.SetRequestHeader("Authorization", $"Bearer {apiToken}");
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            var op = request.SendWebRequest();
+            while (!op.isDone)
+                await Task.Yield();
+
+            long status = request.responseCode;
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                string body = request.downloadHandler?.text ?? string.Empty;
+                return (null, string.IsNullOrEmpty(body) ? request.error : body, status);
+            }
+
+            try
+            {
+                var data = JsonUtility.FromJson<DataEnvelope<CreatorBalanceResponse>>(
+                    request.downloadHandler.text
+                );
+                return (data.data, null, status);
+            }
+            catch (System.Exception ex)
+            {
+                return (null, $"Parse error: {ex.Message}", status);
             }
         }
 

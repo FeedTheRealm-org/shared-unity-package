@@ -38,4 +38,11 @@ namespace API
     {
         public string checkout_url;
     }
+
+    [System.Serializable]
+    public class CreatorBalanceResponse
+    {
+        public string user_id;
+        public float balance;
+    }
 }
