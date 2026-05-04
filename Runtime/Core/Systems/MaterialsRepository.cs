@@ -14,33 +14,42 @@ namespace FeedTheRealm.Core.Repository
         private Material defaultMaterial;
 
         [SerializeField]
-        private List<(string name, Material material)> materials = new();
+        private List<Material> materials = new();
 
-        public List<Material> GetAllMaterials() => materials.Select(m => m.material).ToList();
+        public List<Material> GetAllMaterials()
+        {
+            var result = new List<Material>();
+
+            if (defaultMaterial != null)
+                result.Add(defaultMaterial);
+
+            result.AddRange(materials.Where(m => m != null && m != defaultMaterial));
+
+            return result;
+        }
 
         public List<Material> Search(string query)
         {
             if (string.IsNullOrWhiteSpace(query))
                 return GetAllMaterials();
 
-            return materials
+            return GetAllMaterials()
                 .Where(m => m.name.ToLowerInvariant().Contains(query.ToLowerInvariant()))
-                .Select(m => m.material)
                 .ToList();
         }
 
         public void Add(Material mat)
         {
-            if (mat == null || materials.Any(m => m.material == mat))
+            if (mat == null || materials.Contains(mat))
                 return;
-            materials.Add((mat.name, mat));
+            materials.Add(mat);
         }
 
         public void Remove(Material mat)
         {
-            materials.RemoveAll(m => m.material == mat);
+            materials.Remove(mat);
         }
 
-        public bool Contains(Material mat) => materials.Any(m => m.material == mat);
+        public bool Contains(Material mat) => mat == defaultMaterial || materials.Contains(mat);
     }
 }

@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: FeedTheRealm_Shared::FeedTheRealm.Core.Repository.MaterialsRepository
   defaultMaterial: {fileID: 2100000, guid: d5f09047f4a3ca407985bde260eeb86e, type: 2}
   materials:
-  - {fileID: 2100000, guid: 90bc802ac027a974196df98d652eac14, type: 2}
-  - {fileID: 2100000, guid: 53fea407df5fd294393652dc76882d5e, type: 2}
-  - {fileID: 2100000, guid: 6015400315f291e48aa54dfe395b0591, type: 2}
+  - {fileID: 2100000, guid: 28702d1b59555ff47b733620604f0dba, type: 2}
+  - {fileID: 2100000, guid: b394045a2aff70f40aa6b45b6d91898b, type: 2}
+  - {fileID: 2100000, guid: dc12d52befb58bf4da349d49b2419ac9, type: 2}

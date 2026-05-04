@@ -34,14 +34,24 @@ public class WorldControllerV2 : MonoBehaviour
         transform.localScale = new Vector3(worldSize, worldHeight, worldSize);
     }
 
-    public void OnFloorMaterialChanged(Material newMat)
+    public void OnFloorMaterialChanged(Material newMat, float granularity = -1f)
     {
         Debug.Log($"Changing floor material to: {newMat.name}");
         if (_renderer != null && newMat != null)
         {
             _renderer.material = newMat;
+
+            if (granularity > 0f)
+                textureGranularity = granularity;
+
             ApplyTextureScale();
         }
+    }
+
+    public void ApplyTextureGranularity(float granularity)
+    {
+        textureGranularity = granularity;
+        ApplyTextureScale();
     }
 
     private void ApplyTextureScale()
