@@ -221,7 +221,7 @@ namespace API
             GemBalanceResponse updatedBalance
         )> PurchaseWithGems(string productId, string accessToken)
         {
-            string url = $"{GetPaymentBaseUrl()}/purchase/{productId}";
+            string url = $"{GetGemsBaseUrl()}/balances/purchase/{productId}";
             (string responseText, UnityWebRequest.Result result, long statusCode) =
                 await SendRequestAsync(url, "POST", accessToken, null, "PurchaseWithGems");
 
