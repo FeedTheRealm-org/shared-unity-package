@@ -80,6 +80,14 @@ namespace FTRShared.UI.ZoneStatusBadge
 
         private void ApplyState(Label badge, State state)
         {
+            if (badge == null)
+            {
+                Debug.LogWarning(
+                    "[ZoneStatusBadge] Target badge element is null. Ensure the template contains a Label named 'ZoneStatusBadge' or a valid badge was provided."
+                );
+                return;
+            }
+
             foreach (var cls in StateClasses)
                 badge.RemoveFromClassList(cls);
 
@@ -123,7 +131,7 @@ namespace FTRShared.UI.ZoneStatusBadge
         {
             Debug.LogWarning(
                 "[ZoneStatusBadge] UXML template not found. "
-                    + "Assign ZoneStatusBadge.Template or place the asset at Resources/UI/ZoneStatusBadge.uxml"
+                    + "Assign ZoneStatusBadge.Template. Falling back to a programmatically built badge"
             );
 
             var badge = new Label { name = "ZoneStatusBadge" };
