@@ -25,30 +25,30 @@
 
 /* ONLINE */
 .zone-status-badge--online {
-  background-color: rgba(26, 89, 38, 140);
+  background-color: rgba(26, 89, 38, 0.55);
 }
 
 .zone-status-badge--online .zone-status-badge__dot,
 .zone-status-badge--online .zone-status-badge__text {
-  color: rgba(51, 217, 102, 255);
+  color: rgba(51, 217, 102, 1);
 }
 
 /* DEGRADED */
 .zone-status-badge--degraded {
-  background-color: rgba(89, 71, 5, 140);
+  background-color: rgba(89, 71, 5, 0.55);
 }
 
 .zone-status-badge--degraded .zone-status-badge__dot,
 .zone-status-badge--degraded .zone-status-badge__text {
-  color: rgba(255, 204, 26, 255);
+  color: rgba(255, 204, 26, 1);
 }
 
 /* OFFLINE */
 .zone-status-badge--offline {
-  background-color: rgba(102, 20, 20, 140);
+  background-color: rgba(102, 20, 20, 0.55);
 }
 
 .zone-status-badge--offline .zone-status-badge__dot,
 .zone-status-badge--offline .zone-status-badge__text {
-  color: rgba(230, 64, 64, 255);
+  color: rgba(230, 64, 64, 1);
 }

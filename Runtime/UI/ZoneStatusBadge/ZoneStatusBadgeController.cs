@@ -72,6 +72,10 @@ namespace FTRShared.UI.ZoneStatusBadge
                 handle.Pause();
                 badge.userData = null;
             }
+
+            var dot = badge?.Q<Label>("BadgeDot");
+            if (dot != null)
+                dot.style.opacity = 1f;
         }
 
         private void ApplyState(Label badge, State state)
@@ -101,6 +105,7 @@ namespace FTRShared.UI.ZoneStatusBadge
         {
             StopBlink(badge);
 
+            dot.style.opacity = 1f;
             bool visible = true;
             var handle = dot
                 .schedule.Execute(() =>
@@ -108,6 +113,7 @@ namespace FTRShared.UI.ZoneStatusBadge
                     visible = !visible;
                     dot.style.opacity = visible ? 1f : 0f;
                 })
+                .StartingIn(600)
                 .Every(600);
 
             badge.userData = handle;
