@@ -67,6 +67,7 @@ namespace FTRShared.Runtime.Models
                 colliderCenter = colliderCenter,
                 colliderRotation = colliderRotation,
                 hasColliders = hasColliders,
+                isDefault = isDefault,
             };
         }
 
