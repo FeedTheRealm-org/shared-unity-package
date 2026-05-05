@@ -31,4 +31,12 @@ public enum CharacterPartCategory
 
     // Item Equipment
     EquipmentR,
+
+    WeaponRangedHandheld,
+
+    WeaponRangedBow,
+    BowLimbL,
+    BowLimbU,
+    BowHandle,
+    BowQuiver,
 }

@@ -93,7 +93,21 @@ public class SpriteLoader : MonoBehaviour
 
     public void ChangeEquipment(Texture2D texture)
     {
-        ChangeTexture(texture, director.BuildEquipmentSpriteConfig(), true);
+        Debug.Log($"[SpriteLoader] Changing Equipment sprites");
+        ChangeTexture(null, director.BuildRangedBowEquipmentSpriteConfig()); // Reset bow
+        ChangeTexture(texture, director.BuildEquipmentSpriteConfig());
+    }
+
+    public void ChangeRangedHandheld(Texture2D texture)
+    {
+        ChangeTexture(null, director.BuildRangedBowEquipmentSpriteConfig()); // Reset bow
+        ChangeTexture(texture, director.BuildRangedHandheldEquipmentSpriteConfig());
+    }
+
+    public void ChangeRangedBow(Texture2D texture)
+    {
+        ChangeTexture(null, director.BuildEquipmentSpriteConfig()); // Reset handheld
+        ChangeTexture(texture, director.BuildRangedBowEquipmentSpriteConfig());
     }
 
     /* --- CORE SPRITE CHANGE LOGIC --- */
@@ -205,6 +219,11 @@ public class SpriteLoader : MonoBehaviour
         cachedParts[CharacterPartCategory.Back] = f(dirTransform, "Back");
         cachedParts[CharacterPartCategory.Mask] = f(dirTransform, "Mask");
         cachedParts[CharacterPartCategory.EquipmentR] = f(dirTransform, "PrimaryWeapon");
+
+        cachedParts[CharacterPartCategory.BowLimbL] = f(dirTransform, "LimbL");
+        cachedParts[CharacterPartCategory.BowLimbU] = f(dirTransform, "LimbU");
+        cachedParts[CharacterPartCategory.BowHandle] = f(dirTransform, "Handle");
+        cachedParts[CharacterPartCategory.BowQuiver] = f(dirTransform, "Quiver");
 
         _cachedPartsPerDirections[dir] = cachedParts;
     }

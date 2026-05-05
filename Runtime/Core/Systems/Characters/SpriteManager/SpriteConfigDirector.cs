@@ -329,11 +329,82 @@ public class SpriteConfigDirector
     {
         var tileY = 0;
         return _builder
-            .Reset(0, 0, 0.5f, 0.25f)
-            .AddTile(CharacterPartCategory.EquipmentR, FacingDirection.Front, 0, tileY)
-            .AddTile(CharacterPartCategory.EquipmentR, FacingDirection.Back, 0, tileY)
-            .AddTile(CharacterPartCategory.EquipmentR, FacingDirection.Left, 0, tileY)
-            .AddTile(CharacterPartCategory.EquipmentR, FacingDirection.Right, 0, tileY)
+            .Reset(256, 512, 0.5f, 0.25f)
+            .AddTileToAllDirections(CharacterPartCategory.EquipmentR, 0, tileY, 0, tileY, 0, tileY)
             .Build();
+    }
+
+    /// <summary>
+    /// Builds the sprite configuration for ranged equipment (right hand only, for now only primary equipment).
+    /// </summary>
+    public List<SpriteConfig> BuildRangedHandheldEquipmentSpriteConfig()
+    {
+        var tileY = 0;
+        return _builder
+            .Reset(256, 448, 0.6f, 0.25f)
+            .AddTileToAllDirections(CharacterPartCategory.EquipmentR, 0, tileY, 0, tileY, 0, tileY)
+            .Build();
+    }
+
+    /// <summary>
+    /// Builds the sprite configuration for ranged equipment (right hand only, for now only primary equipment).
+    /// </summary>
+    public List<SpriteConfig> BuildRangedBowEquipmentSpriteConfig()
+    {
+        var tileY = 0;
+        const int limbX = 128;
+        const int handleX = 0;
+        const int quiverX = 256;
+        var limb = _builder
+            .Reset(128, 256, 0.6f, 0.1f)
+            .AddTileToAllDirections(
+                CharacterPartCategory.BowLimbU,
+                limbX,
+                tileY,
+                limbX,
+                tileY,
+                limbX,
+                tileY
+            )
+            .AddTileToAllDirections(
+                CharacterPartCategory.BowLimbL,
+                limbX,
+                tileY,
+                limbX,
+                tileY,
+                limbX,
+                tileY
+            )
+            .Build();
+        tileY = 128;
+        var handle = _builder
+            .Reset(128, 128, 0.4f, 0.5f)
+            .AddTileToAllDirections(
+                CharacterPartCategory.BowHandle,
+                handleX,
+                tileY,
+                handleX,
+                tileY,
+                handleX,
+                tileY
+            )
+            .Build();
+        tileY = 0;
+        var quiver = _builder
+            .Reset(128, 256, 0.5f, 0.5f)
+            .AddTileToAllDirections(
+                CharacterPartCategory.BowQuiver,
+                quiverX,
+                tileY,
+                quiverX,
+                tileY,
+                quiverX,
+                tileY
+            )
+            .Build();
+
+        limb.AddRange(handle);
+        limb.AddRange(quiver);
+        return limb;
     }
 }
