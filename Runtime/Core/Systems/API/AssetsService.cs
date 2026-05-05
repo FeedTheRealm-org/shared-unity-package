@@ -360,7 +360,7 @@ namespace API
             string categoryId,
             string spritePath,
             string worldId,
-            float price = 1f
+            int price = 1
         )
         {
             var url = $"{GetBaseUrl()}/categories/{categoryId}";
@@ -411,7 +411,7 @@ namespace API
             string categoryId,
             string spriteId,
             string worldId,
-            float price = 1f
+            int price = 1
         )
         {
             var url = $"{GetBaseUrl()}/categories/{categoryId}/sprites/{spriteId}";
