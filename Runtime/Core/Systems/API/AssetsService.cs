@@ -1,13 +1,11 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace API
 {
-    /// <summary>
-    /// Service to manage assets downloading.
-    /// </summary>
     [CreateAssetMenu(fileName = "AssetsService", menuName = "Scriptable Objects/API/AssetsService")]
     public class AssetsService : ScriptableObject
     {
@@ -25,6 +23,9 @@ namespace API
 
         private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/assets/cosmetics";
 
+        private string GetMaterialsUrl() =>
+            $"{apiConfig.Hostname}:{apiConfig.Port}/assets/materials";
+
         [System.Serializable]
         private class CosmeticResponse
         {
@@ -39,44 +40,39 @@ namespace API
             public int total_count;
         }
 
+        [System.Serializable]
+        private class CategoryResponse
+        {
+            public string category_id;
+            public string category_name;
+        }
+
         private string GetCosmeticsCdnBaseUrl()
         {
             if (string.IsNullOrWhiteSpace(apiConfig.CosmeticsCDN))
                 return string.Empty;
-
-            var baseUrl = apiConfig.CosmeticsCDN.Trim();
-
-            return baseUrl.TrimEnd('/');
+            return apiConfig.CosmeticsCDN.Trim().TrimEnd('/');
         }
 
         private string BuildCosmeticsCdnUrl(string spriteUrl)
         {
             if (string.IsNullOrWhiteSpace(spriteUrl))
                 return string.Empty;
-
             if (spriteUrl.StartsWith("http://") || spriteUrl.StartsWith("https://"))
-            {
                 return spriteUrl;
-            }
 
             var path = spriteUrl.Trim();
             if (!path.StartsWith('/'))
-            {
                 path = $"/{path}";
-            }
 
             var baseUrl = GetCosmeticsCdnBaseUrl();
-            if (string.IsNullOrEmpty(baseUrl))
-                return string.Empty;
-
-            return $"{baseUrl}{path}";
+            return string.IsNullOrEmpty(baseUrl) ? string.Empty : $"{baseUrl}{path}";
         }
 
         private static SpriteResponse MapToSpriteResponse(CosmeticResponse cosmetic)
         {
             if (cosmetic == null)
                 return null;
-
             return new SpriteResponse
             {
                 sprite_id = cosmetic.cosmetic_id,
@@ -95,29 +91,176 @@ namespace API
             if (cosmetics?.cosmetics_list == null)
                 return sprites;
 
-            for (int idx = 0; idx < cosmetics.cosmetics_list.Length; idx++)
-            {
-                sprites.sprites_list[idx] = MapToSpriteResponse(cosmetics.cosmetics_list[idx]);
-            }
+            for (int i = 0; i < cosmetics.cosmetics_list.Length; i++)
+                sprites.sprites_list[i] = MapToSpriteResponse(cosmetics.cosmetics_list[i]);
 
             return sprites;
         }
 
-        /// <summary>
-        /// Retrieve the list of categories for sprites.
-        /// </summary>
+        public async Task<MaterialResponse[]> GetMaterialsListAsync(
+            string worldId = null,
+            int offset = 0,
+            int limit = 24
+        )
+        {
+            var safeOffset = Mathf.Max(0, offset);
+            var safeLimit = Mathf.Max(1, limit);
+            var url = $"{GetMaterialsUrl()}?offset={safeOffset}&limit={safeLimit}";
+
+            if (!string.IsNullOrWhiteSpace(worldId))
+                url += $"&world_id={worldId}";
+
+            var uwr = new UnityWebRequest(url, "GET");
+            uwr.downloadHandler = new DownloadHandlerBuffer();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            await uwr.SendWebRequest();
+
+            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+
+            if (
+                uwr.result == UnityWebRequest.Result.ConnectionError
+                || uwr.result == UnityWebRequest.Result.ProtocolError
+            )
+            {
+                var err = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<ErrorResponse>(responseText);
+                logger.Log(
+                    $"GetMaterialsListAsync error: {(err != null ? $"{err.title}: {err.detail}" : responseText)}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return null;
+            }
+
+            // The endpoint returns a JSON array — wrap it so JsonUtility can parse it
+            var wrapped = JsonUtility.FromJson<MaterialListWrapper>(
+                $"{{\"items\":{responseText}}}"
+            );
+            return wrapped?.items;
+        }
+
+        public async Task<MaterialResponse> GetMaterialByIdAsync(string materialId)
+        {
+            if (string.IsNullOrWhiteSpace(materialId))
+            {
+                logger.Log(
+                    "GetMaterialByIdAsync called with empty materialId.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return null;
+            }
+
+            var url = $"{GetMaterialsUrl()}/{materialId}";
+            var uwr = new UnityWebRequest(url, "GET");
+            uwr.downloadHandler = new DownloadHandlerBuffer();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            await uwr.SendWebRequest();
+
+            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+
+            if (
+                uwr.result == UnityWebRequest.Result.ConnectionError
+                || uwr.result == UnityWebRequest.Result.ProtocolError
+            )
+            {
+                var err = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<ErrorResponse>(responseText);
+                logger.Log(
+                    $"GetMaterialByIdAsync error: {(err != null ? $"{err.title}: {err.detail}" : responseText)}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return null;
+            }
+
+            var envelope = JsonUtility.FromJson<DataEnvelope<MaterialResponse>>(responseText);
+            return envelope?.data;
+        }
+
+        public async Task<MaterialResponse[]> UploadMaterialsAsync(
+            string worldId,
+            string[] ids,
+            string[] filePaths
+        )
+        {
+            if (string.IsNullOrWhiteSpace(worldId))
+            {
+                logger.Log(
+                    "UploadMaterialsAsync called without worldId.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return null;
+            }
+
+            if (ids == null || filePaths == null || ids.Length != filePaths.Length)
+            {
+                logger.Log(
+                    "UploadMaterialsAsync: ids and filePaths must be non-null and the same length.",
+                    this,
+                    Logging.LogType.Warning
+                );
+                return null;
+            }
+
+            var url = $"{GetMaterialsUrl()}/world/{worldId}";
+            var formData = new List<IMultipartFormSection>();
+
+            foreach (var id in ids)
+                formData.Add(new MultipartFormDataSection("ids", id));
+
+            foreach (var path in filePaths)
+            {
+                byte[] fileData = System.IO.File.ReadAllBytes(path);
+                string fileName = System.IO.Path.GetFileName(path);
+                formData.Add(
+                    new MultipartFormFileSection("materials", fileData, fileName, "image/png")
+                );
+            }
+
+            var uwr = UnityWebRequest.Post(url, formData);
+            uwr.method = "PUT";
+            uwr.downloadHandler = new DownloadHandlerBuffer();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            await uwr.SendWebRequest();
+
+            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+
+            if (
+                uwr.result == UnityWebRequest.Result.ConnectionError
+                || uwr.result == UnityWebRequest.Result.ProtocolError
+            )
+            {
+                logger.Log(
+                    $"UploadMaterialsAsync error (status {uwr.responseCode}): {responseText}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return null;
+            }
+
+            // The endpoint returns a JSON array on 201
+            var wrapped = JsonUtility.FromJson<MaterialListWrapper>(
+                $"{{\"items\":{responseText}}}"
+            );
+            return wrapped?.items;
+        }
+
         public IEnumerator GetCategories(System.Action<SpriteCategoryListResponse, string> handler)
         {
             var url = $"{GetBaseUrl()}/categories";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
-
             uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
-
             yield return uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
-
             if (
                 uwr.result == UnityWebRequest.Result.ConnectionError
                 || uwr.result == UnityWebRequest.Result.ProtocolError
@@ -127,7 +270,7 @@ namespace API
                     ? null
                     : JsonUtility.FromJson<ErrorResponse>(responseText);
                 logger.Log(
-                    $"GetCategories error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}",
+                    $"GetCategories error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}",
                     this,
                     Logging.LogType.Error
                 );
@@ -142,20 +285,11 @@ namespace API
             }
         }
 
-        /// <summary>
-        /// Retrieve the list of sprites for a given category.
-        /// </summary>
         public IEnumerator GetSpritesByCategory(
             string categoryId,
             System.Action<SpritesListResponse, string> handler
-        )
-        {
-            return GetSpritesByCategory(categoryId, 0, 24, handler);
-        }
+        ) => GetSpritesByCategory(categoryId, 0, 24, handler);
 
-        /// <summary>
-        /// Retrieve a paginated list of sprites for a given category.
-        /// </summary>
         public IEnumerator GetSpritesByCategory(
             string categoryId,
             int offset,
@@ -163,19 +297,14 @@ namespace API
             System.Action<SpritesListResponse, string> handler
         )
         {
-            var safeOffset = Mathf.Max(0, offset);
-            var safeLimit = Mathf.Max(1, limit);
             var url =
-                $"{GetBaseUrl()}/categories/{categoryId}?offset={safeOffset}&limit={safeLimit}";
+                $"{GetBaseUrl()}/categories/{categoryId}?offset={Mathf.Max(0, offset)}&limit={Mathf.Max(1, limit)}";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
-
             uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
-
             yield return uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
-
             if (
                 uwr.result == UnityWebRequest.Result.ConnectionError
                 || uwr.result == UnityWebRequest.Result.ProtocolError
@@ -185,7 +314,7 @@ namespace API
                     ? null
                     : JsonUtility.FromJson<ErrorResponse>(responseText);
                 logger.Log(
-                    $"GetSpritesByCategory error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}",
+                    $"GetSpritesByCategory error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}",
                     this,
                     Logging.LogType.Error
                 );
@@ -198,21 +327,15 @@ namespace API
             }
         }
 
-        /// <summary>
-        /// Retrieve the list of categories for sprites asynchronously.
-        /// </summary>
         public async Task<SpriteCategoryListResponse> GetCategoriesAsync()
         {
             var url = $"{GetBaseUrl()}/categories";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
-
             uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
-            Debug.Log($"GetCategoriesAsync: Sending request to {url}");
             await uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
-
             if (
                 uwr.result == UnityWebRequest.Result.ConnectionError
                 || uwr.result == UnityWebRequest.Result.ProtocolError
@@ -222,24 +345,18 @@ namespace API
                     ? null
                     : JsonUtility.FromJson<ErrorResponse>(responseText);
                 logger.Log(
-                    $"GetCategories error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}",
+                    $"GetCategories error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}",
                     this,
                     Logging.LogType.Warning
                 );
                 return null;
             }
-            else
-            {
-                var res = JsonUtility.FromJson<DataEnvelope<SpriteCategoryListResponse>>(
-                    responseText
-                );
-                return res.data;
-            }
+            var envelope = JsonUtility.FromJson<DataEnvelope<SpriteCategoryListResponse>>(
+                responseText
+            );
+            return envelope.data;
         }
 
-        /// <summary>
-        /// Retrieve the list of sprites for a given category asynchronously.
-        /// </summary>
         public async Task<SpritesListResponse> GetSpritesByCategoryAsync(
             string categoryId,
             int offset = 0,
@@ -258,37 +375,17 @@ namespace API
                 worldId = new System.Guid().ToString();
             }
 
-            if (string.IsNullOrWhiteSpace(playerId))
-            {
-                logger.Log(
-                    "GetSpritesByCategoryAsync called without playerId.",
-                    this,
-                    Logging.LogType.Warning
-                );
-            }
+            var url =
+                playerId == null
+                    ? $"{GetBaseUrl()}/categories/{categoryId}?offset={Mathf.Max(0, offset)}&limit={Mathf.Max(1, limit)}&world_id={worldId}"
+                    : $"{GetBaseUrl()}/categories/{categoryId}?offset={Mathf.Max(0, offset)}&limit={Mathf.Max(1, limit)}&world_id={worldId}&player_id={playerId}";
 
-            var safeOffset = Mathf.Max(0, offset);
-            var safeLimit = Mathf.Max(1, limit);
-            var url = "";
-            if (playerId == null)
-            {
-                url =
-                    $"{GetBaseUrl()}/categories/{categoryId}?offset={safeOffset}&limit={safeLimit}&world_id={worldId}";
-            }
-            else
-            {
-                url =
-                    $"{GetBaseUrl()}/categories/{categoryId}?offset={safeOffset}&limit={safeLimit}&world_id={worldId}&player_id={playerId}";
-            }
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
-
             uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
-
             await uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
-
             if (
                 uwr.result == UnityWebRequest.Result.ConnectionError
                 || uwr.result == UnityWebRequest.Result.ProtocolError
@@ -298,34 +395,25 @@ namespace API
                     ? null
                     : JsonUtility.FromJson<ErrorResponse>(responseText);
                 logger.Log(
-                    $"GetSpritesByCategory error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}",
+                    $"GetSpritesByCategory error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}",
                     this,
                     Logging.LogType.Error
                 );
                 return null;
             }
-            else
-            {
-                var res = JsonUtility.FromJson<DataEnvelope<CosmeticsListResponse>>(responseText);
-                return MapToSpritesListResponse(res.data);
-            }
+            var envelope = JsonUtility.FromJson<DataEnvelope<CosmeticsListResponse>>(responseText);
+            return MapToSpritesListResponse(envelope.data);
         }
 
-        /// <summary>
-        /// Retrieve one sprite metadata record by ID.
-        /// </summary>
         public async Task<SpriteResponse> GetSpriteByIdAsync(string spriteId)
         {
             var url = $"{GetBaseUrl()}/{spriteId}";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
-
             uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
-
             await uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
-
             if (
                 uwr.result == UnityWebRequest.Result.ConnectionError
                 || uwr.result == UnityWebRequest.Result.ProtocolError
@@ -335,27 +423,16 @@ namespace API
                     ? null
                     : JsonUtility.FromJson<ErrorResponse>(responseText);
                 logger.Log(
-                    $"GetSpriteById error: {(res != null ? $"{res.title}: {res.detail}" : responseText)} - {responseText}",
+                    $"GetSpriteById error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}",
                     this,
                     Logging.LogType.Error
                 );
                 return null;
             }
-
             var envelope = JsonUtility.FromJson<DataEnvelope<CosmeticResponse>>(responseText);
             return MapToSpriteResponse(envelope.data);
         }
 
-        [System.Serializable]
-        private class CategoryResponse
-        {
-            public string category_id;
-            public string category_name;
-        }
-
-        /// <summary>
-        /// Upload a cosmetic sprite.
-        /// </summary>
         public async Task<SpriteResponse> UploadSpriteAsync(
             string categoryId,
             string spritePath,
@@ -364,8 +441,7 @@ namespace API
         )
         {
             var url = $"{GetBaseUrl()}/categories/{categoryId}";
-
-            var formData = new System.Collections.Generic.List<IMultipartFormSection>();
+            var formData = new List<IMultipartFormSection>();
             byte[] fileData = System.IO.File.ReadAllBytes(spritePath);
             formData.Add(
                 new MultipartFormFileSection(
@@ -383,10 +459,9 @@ namespace API
             uwr.method = "PUT";
             uwr.downloadHandler = new DownloadHandlerBuffer();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
-
             await uwr.SendWebRequest();
-            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
+            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
             if (
                 uwr.result == UnityWebRequest.Result.ConnectionError
                 || uwr.result == UnityWebRequest.Result.ProtocolError
@@ -399,14 +474,10 @@ namespace API
                 );
                 return null;
             }
-
             var res = JsonUtility.FromJson<DataEnvelope<CosmeticResponse>>(responseText);
             return MapToSpriteResponse(res.data);
         }
 
-        /// <summary>
-        /// Link a sprite by ID. Returns (response, httpStatusCode).
-        /// </summary>
         public async Task<(SpriteResponse response, long statusCode)> LinkSpriteByIdAsync(
             string categoryId,
             string spriteId,
@@ -415,7 +486,7 @@ namespace API
         )
         {
             var url = $"{GetBaseUrl()}/categories/{categoryId}/sprites/{spriteId}";
-            var formData = new System.Collections.Generic.List<IMultipartFormSection>();
+            var formData = new List<IMultipartFormSection>();
             formData.Add(new MultipartFormDataSection("world_id", worldId ?? string.Empty));
             formData.Add(new MultipartFormDataSection("price", price.ToString()));
 
@@ -423,10 +494,9 @@ namespace API
             uwr.method = "PUT";
             uwr.downloadHandler = new DownloadHandlerBuffer();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
-
             await uwr.SendWebRequest();
-            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
+            var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
             if (
                 uwr.result == UnityWebRequest.Result.ConnectionError
                 || uwr.result == UnityWebRequest.Result.ProtocolError
@@ -439,14 +509,10 @@ namespace API
                 );
                 return (null, uwr.responseCode);
             }
-
             var res = JsonUtility.FromJson<DataEnvelope<CosmeticResponse>>(responseText);
             return (MapToSpriteResponse(res.data), uwr.responseCode);
         }
 
-        /// <summary>
-        /// Download a sprite texture by sprite URL (or by sprite ID for backward compatibility).
-        /// </summary>
         public async Task<Texture2D> DownloadTexture2D(string spriteReference)
         {
             if (string.IsNullOrWhiteSpace(spriteReference))
@@ -472,7 +538,6 @@ namespace API
                     );
                     return null;
                 }
-
                 spriteUrl = sprite.sprite_url;
             }
 
@@ -487,37 +552,31 @@ namespace API
                 return null;
             }
 
-            using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(url))
+            using var uwr = UnityWebRequestTexture.GetTexture(url);
+            await uwr.SendWebRequest();
+
+            if (
+                uwr.result == UnityWebRequest.Result.ConnectionError
+                || uwr.result == UnityWebRequest.Result.ProtocolError
+            )
             {
-                await uwr.SendWebRequest();
-
-                if (
-                    uwr.result == UnityWebRequest.Result.ConnectionError
-                    || uwr.result == UnityWebRequest.Result.ProtocolError
-                )
-                {
-                    var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
-                    var res = string.IsNullOrEmpty(responseText)
-                        ? null
-                        : JsonUtility.FromJson<ErrorResponse>(responseText);
-
-                    logger.Log(
-                        $"DownloadTexture2D error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}",
-                        this,
-                        Logging.LogType.Error
-                    );
-
-                    return null;
-                }
-
-                Texture2D texture = DownloadHandlerTexture.GetContent(uwr);
-                texture.filterMode = FilterMode.Point;
-                texture.wrapMode = TextureWrapMode.Clamp;
-
-                logger.Log($"DownloadTexture2D success for sprite_url: {spriteUrl}", this);
-
-                return texture;
+                var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
+                var res = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<ErrorResponse>(responseText);
+                logger.Log(
+                    $"DownloadTexture2D error: {(res != null ? $"{res.title}: {res.detail}" : responseText)}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return null;
             }
+
+            var texture = DownloadHandlerTexture.GetContent(uwr);
+            texture.filterMode = FilterMode.Point;
+            texture.wrapMode = TextureWrapMode.Clamp;
+            logger.Log($"DownloadTexture2D success for sprite_url: {spriteUrl}", this);
+            return texture;
         }
     }
 }
