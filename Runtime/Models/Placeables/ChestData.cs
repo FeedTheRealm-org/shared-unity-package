@@ -21,6 +21,7 @@ namespace FTRShared.Runtime.Models
     public class ChestModelData
     {
         public string modelId;
+        public bool isDefault;
         public Vector3 relativePosition = Vector3.zero;
         public Vector3 relativeRotation = Vector3.zero;
         public Vector3 relativeSize = Vector3.one;

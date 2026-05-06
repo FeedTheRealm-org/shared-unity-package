@@ -15,6 +15,8 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
+        private const string DefaultModelsWorldId = "00000000-0000-0000-0000-000000000000";
+
         private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}";
 
         /// <summary>
@@ -74,6 +76,11 @@ namespace API
             return models;
         }
 
+        public async Task<Dictionary<string, ModelInfo>> ListDefaultModels(string accessToken)
+        {
+            return await ListWorldModels(DefaultModelsWorldId, accessToken);
+        }
+
         /// <summary>
         /// Uploads asset model & material files for a world.
         /// </summary>
@@ -115,7 +122,7 @@ namespace API
                 this
             );
 
-            if (sizeInMB > 10f) // adjust threshold as needed
+            if (sizeInMB > 10f)
                 logger.Log(
                     $"[ModelService] WARNING: Model {structure.id} is large ({sizeInMB:F2} MB) and may be rejected by the server.",
                     this,
@@ -123,9 +130,9 @@ namespace API
                 );
 
             var form = new WWWForm();
-            form.AddField("models[0].model_id", structure.id);
+            form.AddField("model_id", structure.id);
             form.AddBinaryData(
-                "models[0].model_file",
+                "model_file",
                 modelData,
                 Path.GetFileName(structure.filePath),
                 "application/octet-stream"
@@ -158,6 +165,36 @@ namespace API
                 Logging.LogType.Error
             );
             return uwr.error;
+        }
+
+        public async Task<string> DownloadModel(ModelInfo modelInfo, string accessToken)
+        {
+            // Extract filename from the URL path
+            string fileName = Path.GetFileName(modelInfo.url);
+            string downloadUrl = $"{apiConfig.ModelsCDN}{modelInfo.url}";
+
+            string tempPath = Path.Combine(Application.temporaryCachePath, fileName);
+
+            logger.Log($"[ModelService] Downloading model: {fileName} from {downloadUrl}", this);
+
+            UnityWebRequest uwr = UnityWebRequest.Get(downloadUrl);
+            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+            uwr.downloadHandler = new DownloadHandlerFile(tempPath);
+
+            await uwr.SendWebRequest();
+
+            if (uwr.result != UnityWebRequest.Result.Success)
+            {
+                logger.Log(
+                    $"[ModelService] Failed to download model {fileName}: {uwr.error}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return null;
+            }
+
+            logger.Log($"[ModelService] Downloaded model: {fileName} to {tempPath}", this);
+            return tempPath;
         }
     }
 }
