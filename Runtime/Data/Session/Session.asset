@@ -14,4 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Session.Session
   mustSaveSession: 1
   mustLoadSession: 1
-  authService: {fileID: 11400000, guid: 1282de622dd369eb8982f3332245567f, type: 2}
+  authService: {fileID: 11400000, guid: 796f631f7180aed42809cfa02b26627c, type: 2}
+  AccessToken:
+  RefreshToken:
+  UserID:
+  Email:
