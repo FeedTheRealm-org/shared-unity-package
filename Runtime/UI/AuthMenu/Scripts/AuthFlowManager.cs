@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace FTRShared.UI.AuthMenu
@@ -15,26 +16,46 @@ namespace FTRShared.UI.AuthMenu
         private readonly GameObject loginPanel;
         private readonly GameObject signUpPanel;
         private readonly GameObject verifyCodePanel;
+        private readonly API.AuthService authService;
+
+        private readonly Session.Session session;
 
         public AuthFlowManager(
             GameObject loginPanel,
             GameObject signUpPanel,
-            GameObject verifyCodePanel
+            GameObject verifyCodePanel,
+            API.AuthService authService = null,
+            Session.Session session = null
         )
         {
             this.loginPanel = loginPanel;
             this.signUpPanel = signUpPanel;
             this.verifyCodePanel = verifyCodePanel;
+            this.authService = authService;
+            this.session = session;
         }
 
         /// <summary>
         /// Shows only the login panel and connects the navigation events between panels.
         /// </summary>
-        public void Initialize()
+        public async Task Initialize()
         {
             signUpPanel.SetActive(false);
             verifyCodePanel.SetActive(false);
-            loginPanel.SetActive(true);
+            await session.EnsureValidSession();
+
+            (bool isSuccess, string error) = await authService.IsLogged();
+
+            if (!isSuccess)
+            {
+                loginPanel.SetActive(true);
+            }
+            else
+            {
+                loginPanel.SetActive(false);
+                OnAuthComplete?.Invoke();
+                return;
+            }
 
             SetupLoginController();
             SetupSignUpController();

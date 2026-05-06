@@ -80,6 +80,7 @@ public class LoginController : MonoBehaviour, IAuthUIController
     {
         if (_loginButton != null)
             _loginButton.clicked -= OnLoginClicked;
+        _backgroundInstance.SetActive(false);
     }
 
     private async void OnLoginClicked()
