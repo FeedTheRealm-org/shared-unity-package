@@ -437,7 +437,7 @@ namespace API
             string categoryId,
             string spritePath,
             string worldId,
-            float price = 1f
+            int price = 1
         )
         {
             var url = $"{GetBaseUrl()}/categories/{categoryId}";
@@ -482,11 +482,37 @@ namespace API
             string categoryId,
             string spriteId,
             string worldId,
-            float price = 1f
+            int price = 1,
+            string spritePath = null
         )
         {
             var url = $"{GetBaseUrl()}/categories/{categoryId}/sprites/{spriteId}";
             var formData = new List<IMultipartFormSection>();
+
+            if (!string.IsNullOrEmpty(spritePath) && System.IO.File.Exists(spritePath))
+            {
+                byte[] fileData = System.IO.File.ReadAllBytes(spritePath);
+                formData.Add(
+                    new MultipartFormFileSection(
+                        "sprite",
+                        fileData,
+                        System.IO.Path.GetFileName(spritePath),
+                        "image/png"
+                    )
+                );
+            }
+            else
+            {
+                // Fallback dummy file to force multipart/form-data
+                formData.Add(
+                    new MultipartFormFileSection(
+                        "dummy_force_multipart",
+                        new byte[0],
+                        "dummy.bin",
+                        "application/octet-stream"
+                    )
+                );
+            }
             formData.Add(new MultipartFormDataSection("world_id", worldId ?? string.Empty));
             formData.Add(new MultipartFormDataSection("price", price.ToString()));
 

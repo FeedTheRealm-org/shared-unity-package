@@ -266,7 +266,7 @@ namespace API
             {
                 var (ip, port, addressError, _) = await GetZoneAddress(
                     world.id,
-                    0, // Assume 0 or first zone for starting request
+                    1, // Assume 1 or first zone for starting request
                     accessToken
                 );
                 if (!string.IsNullOrEmpty(addressError))

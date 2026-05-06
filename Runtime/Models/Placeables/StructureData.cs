@@ -7,6 +7,7 @@ namespace FTRShared.Runtime.Models
     [Serializable]
     public class StructureData
     {
+        public bool isDefault = false;
         public string id;
         public Vector3 size = Vector3.one;
         public Vector3 rotation = Vector3.zero;
@@ -33,7 +34,8 @@ namespace FTRShared.Runtime.Models
             Vector3 size,
             Vector3 rotation,
             string fileName = null,
-            bool hasColliders = true
+            bool hasColliders = true,
+            bool isDefault = false
         )
         {
             this.id = id;
@@ -46,6 +48,7 @@ namespace FTRShared.Runtime.Models
             colliderSize = Vector3.zero;
             colliderCenter = Vector3.zero;
             colliderRotation = Vector3.zero;
+            this.isDefault = isDefault;
         }
 
         public StructureData Clone()
@@ -64,6 +67,7 @@ namespace FTRShared.Runtime.Models
                 colliderCenter = colliderCenter,
                 colliderRotation = colliderRotation,
                 hasColliders = hasColliders,
+                isDefault = isDefault,
             };
         }
 
