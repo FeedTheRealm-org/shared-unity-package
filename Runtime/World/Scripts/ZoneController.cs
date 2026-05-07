@@ -19,8 +19,6 @@ public class ZoneController : MonoBehaviour
     private float defaultGranularity = 100f;
     public ZoneAreaData Data { get; set; } = new ZoneAreaData();
 
-    public string CurrentMaterialId { get; private set; } = string.Empty;
-
     private Renderer worldRenderer;
 
     void OnEnable()
@@ -56,11 +54,9 @@ public class ZoneController : MonoBehaviour
     {
         if (material == null)
             return;
-
-        worldRenderer ??= GetComponent<Renderer>();
-        CurrentMaterialId = materialId;
         worldRenderer.material = material;
         Data.zoneMaterialId = materialId;
+        Debug.Log($"[ZoneController] Material set to '{Data.zoneMaterialId}'");
         ApplyTextureScale();
     }
 
