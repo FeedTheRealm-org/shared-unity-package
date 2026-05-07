@@ -45,6 +45,13 @@ public class ZoneController : MonoBehaviour
         transform.localScale = new Vector3(worldSize, worldHeight, worldSize);
     }
 
+    public void SetSkyboxMaterial(Material material, string materialId)
+    {
+        RenderSettings.skybox = material;
+        DynamicGI.UpdateEnvironment();
+        Data.skyboxMaterialId = materialId;
+    }
+
     public void ChangeMaterial(Material material, string materialId)
     {
         if (material == null)

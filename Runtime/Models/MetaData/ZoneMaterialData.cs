@@ -13,6 +13,7 @@ namespace FTRShared.Runtime.Models
     public class ZoneAreaData
     {
         public string zoneMaterialId;
+        public string skyboxMaterialId;
         public float textureGranularity = 100.0f;
     }
 }
