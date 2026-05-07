@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FTRShared.Runtime.Models;
 using UnityEngine;
 
 /// <summary>
@@ -27,7 +28,13 @@ public class CharacterAnimator : MonoBehaviour
 
     private Dictionary<FacingDirection, GameObject> spriteMap;
 
+    private WeaponType currentWeaponType;
+    private SubWeaponType currentSubWeaponType;
+    private bool hasEquipment = false;
+
     public event Action OnUseAnimationEnd;
+
+    public FacingDirection CurrentFacing { get; private set; }
 
     private void Start()
     {
@@ -64,6 +71,8 @@ public class CharacterAnimator : MonoBehaviour
         {
             kvp.Value.SetActive(kvp.Key == facing);
         }
+
+        CurrentFacing = facing;
     }
 
     public void SetMoving(bool isMoving)
@@ -81,15 +90,70 @@ public class CharacterAnimator : MonoBehaviour
         animator.SetBool("Action", isAction);
     }
 
+    public void SetEquipment(WeaponType weaponType, SubWeaponType subWeaponType)
+    {
+        switch (weaponType)
+        {
+            case WeaponType.Melee:
+                animator.SetInteger("WeaponType", 0);
+                break;
+            case WeaponType.Ranged:
+                switch (subWeaponType)
+                {
+                    case SubWeaponType.HandHeld:
+                        animator.SetInteger("WeaponType", 5);
+                        break;
+                    case SubWeaponType.Bow:
+                        animator.SetInteger("WeaponType", 0);
+                        break;
+                }
+                break;
+            default:
+                animator.SetInteger("WeaponType", 0);
+                break;
+        }
+        this.currentWeaponType = weaponType;
+        this.currentSubWeaponType = subWeaponType;
+        this.hasEquipment = true;
+    }
+
+    public void UnSetWeaponType()
+    {
+        animator.SetInteger("WeaponType", 0);
+        this.currentWeaponType = default;
+        this.currentSubWeaponType = default;
+        hasEquipment = false;
+    }
+
     /* --- Players --- */
     public void PlayIdle()
     {
         animator.SetInteger("State", 0);
     }
 
-    public void PlayAttack()
+    public void PlayUse()
     {
-        animator.SetTrigger("Slash1H");
+        if (!hasEquipment)
+        {
+            animator.SetTrigger("Jab");
+            return;
+        }
+
+        switch (currentWeaponType)
+        {
+            case WeaponType.Melee:
+                animator.SetTrigger("Slash1H");
+                break;
+            case WeaponType.Ranged:
+                if (currentSubWeaponType == SubWeaponType.Bow)
+                    animator.SetTrigger("ShotBow");
+                else
+                    animator.SetTrigger("Fire");
+                break;
+            default:
+                Debug.LogWarning($"PlayUse called with unhandled weapon type: {currentWeaponType}");
+                break;
+        }
     }
 
     public void PlayDamaged()
