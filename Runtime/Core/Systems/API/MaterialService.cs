@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -26,7 +27,7 @@ namespace API
         public async Task<MaterialResponse[]> GetMaterialsListAsync(
             string worldId = null,
             int offset = 0,
-            int limit = 24
+            int limit = 200
         )
         {
             var safeOffset = Mathf.Max(0, offset);
@@ -59,11 +60,8 @@ namespace API
                 );
                 return null;
             }
-
-            var wrapped = JsonUtility.FromJson<MaterialResponseList>(
-                $"{{\"data\":{responseText}}}"
-            );
-            return wrapped?.data ?? Array.Empty<MaterialResponse>();
+            var response = JsonUtility.FromJson<MaterialResponseList>(responseText);
+            return response?.data ?? Array.Empty<MaterialResponse>();
         }
 
         public async Task<MaterialResponse> GetMaterialByIdAsync(string materialId)
@@ -183,6 +181,51 @@ namespace API
 
             var wrapped = JsonUtility.FromJson<MaterialResponseList>(responseText);
             return wrapped?.data;
+        }
+
+        public async Task<string> DownloadMaterialAsync(
+            MaterialResponse material,
+            string displayName = null
+        )
+        {
+            string fileName = Path.GetFileName(material.url);
+            string downloadUrl = $"{apiConfig.WorldsCDN}{material.url}";
+            string tempPath = Path.Combine(Application.temporaryCachePath, fileName);
+
+            logger.Log(
+                $"[MaterialService] Downloading material: {fileName} from {downloadUrl}",
+                this
+            );
+
+            var uwr = UnityWebRequest.Get(downloadUrl);
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+            uwr.downloadHandler = new DownloadHandlerFile(tempPath);
+
+            await uwr.SendWebRequest();
+
+            if (uwr.result != UnityWebRequest.Result.Success)
+            {
+                logger.Log(
+                    $"[MaterialService] Failed to download material {fileName}: {uwr.error}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return null;
+            }
+
+            if (displayName != null)
+            {
+                string ext = Path.GetExtension(fileName);
+                string renamedPath = Path.Combine(
+                    Application.temporaryCachePath,
+                    displayName + ext
+                );
+                File.Move(tempPath, renamedPath);
+                return renamedPath;
+            }
+
+            logger.Log($"[MaterialService] Downloaded material: {fileName} to {tempPath}", this);
+            return tempPath;
         }
     }
 }

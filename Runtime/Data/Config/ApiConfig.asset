@@ -15,7 +15,7 @@ MonoBehaviour:
   _environment: 0
   _localHostname: http://localhost
   _localPort: 8000
-  _localModelsCDN: http://localhost:8081/worlds
+  _localWorldsCDN: http://localhost:8081/worlds
   _localCosmeticsCDN: http://localhost:8081/cosmetics
   _prodHostname: https://core.feedtherealm.world
   _prodPort: 443
