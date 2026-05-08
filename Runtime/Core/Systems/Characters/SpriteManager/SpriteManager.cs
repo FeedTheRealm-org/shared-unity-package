@@ -105,6 +105,9 @@ public class SpriteManager : MonoBehaviour
             case CharacterPartCategory.EquipmentR:
                 spriteLoader.ChangeEquipment(texture);
                 break;
+            case CharacterPartCategory.Consumable:
+                spriteLoader.ChangeConsumable(texture);
+                break;
             case CharacterPartCategory.WeaponRangedBow:
                 spriteLoader.ChangeRangedBow(texture);
                 break;

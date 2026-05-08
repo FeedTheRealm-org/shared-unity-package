@@ -93,9 +93,14 @@ public class SpriteLoader : MonoBehaviour
 
     public void ChangeEquipment(Texture2D texture)
     {
-        Debug.Log($"[SpriteLoader] Changing Equipment sprites");
         ChangeTexture(null, director.BuildRangedBowEquipmentSpriteConfig()); // Reset bow
         ChangeTexture(texture, director.BuildEquipmentSpriteConfig());
+    }
+
+    public void ChangeConsumable(Texture2D texture)
+    {
+        ChangeTexture(null, director.BuildRangedBowEquipmentSpriteConfig()); // Reset bow
+        ChangeTexture(texture, director.BuildConsumableSpriteConfig());
     }
 
     public void ChangeRangedHandheld(Texture2D texture)

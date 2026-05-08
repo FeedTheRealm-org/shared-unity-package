@@ -335,6 +335,18 @@ public class SpriteConfigDirector
     }
 
     /// <summary>
+    /// Builds the sprite configuration for consumable (right hand only, for now only primary equipment).
+    /// </summary>
+    public List<SpriteConfig> BuildConsumableSpriteConfig()
+    {
+        var tileY = 0;
+        return _builder
+            .Reset(256, 256, 0.5f, 0.3f)
+            .AddTileToAllDirections(CharacterPartCategory.EquipmentR, 0, tileY, 0, tileY, 0, tileY)
+            .Build();
+    }
+
+    /// <summary>
     /// Builds the sprite configuration for ranged equipment (right hand only, for now only primary equipment).
     /// </summary>
     public List<SpriteConfig> BuildRangedHandheldEquipmentSpriteConfig()

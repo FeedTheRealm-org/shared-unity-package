@@ -31,6 +31,7 @@ public enum CharacterPartCategory
 
     // Item Equipment
     EquipmentR,
+    Consumable,
 
     WeaponRangedHandheld,
 
