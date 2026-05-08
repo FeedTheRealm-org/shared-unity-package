@@ -1,5 +1,5 @@
 /// <summary>
-/// Enum representing the facing direction of a character sprite.
+/// Enum representing the type of texture used for a zone, such as ground or skybox textures.
 /// </summary>
 public enum ZoneTextureType
 {
