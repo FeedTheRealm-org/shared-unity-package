@@ -114,6 +114,9 @@ public class CharacterAnimator : MonoBehaviour
                     case SubWeaponType.Bow:
                         animator.SetInteger("WeaponType", 0);
                         break;
+                    default:
+                        animator.SetInteger("WeaponType", 0);
+                        break;
                 }
                 break;
             default:
