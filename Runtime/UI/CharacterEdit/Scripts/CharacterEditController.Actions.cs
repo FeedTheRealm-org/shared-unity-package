@@ -386,7 +386,7 @@ public partial class CharacterEditController
         if (response == null || response.category_list == null)
         {
             logger?.Log("Failed to fetch categories", this, Logging.LogType.Error);
-            ShowToastError("Failed to load categories.");
+            ShowToastError("Please Log in to load character customization options.");
             return;
         }
 
