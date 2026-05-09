@@ -411,7 +411,8 @@ namespace API
             string categoryId,
             string spriteId,
             string worldId,
-            int price = 1
+            int price = 1,
+            string spritePath = null
         )
         {
             var url = $"{GetBaseUrl()}/categories/{categoryId}/sprites/{spriteId}";
