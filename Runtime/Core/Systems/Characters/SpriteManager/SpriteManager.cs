@@ -105,6 +105,15 @@ public class SpriteManager : MonoBehaviour
             case CharacterPartCategory.EquipmentR:
                 spriteLoader.ChangeEquipment(texture);
                 break;
+            case CharacterPartCategory.Consumable:
+                spriteLoader.ChangeConsumable(texture);
+                break;
+            case CharacterPartCategory.WeaponRangedBow:
+                spriteLoader.ChangeRangedBow(texture);
+                break;
+            case CharacterPartCategory.WeaponRangedHandheld:
+                spriteLoader.ChangeRangedHandheld(texture);
+                break;
             default:
                 logger?.Log($"No handler for: {part}", this, Logging.LogType.Warning);
                 break;
