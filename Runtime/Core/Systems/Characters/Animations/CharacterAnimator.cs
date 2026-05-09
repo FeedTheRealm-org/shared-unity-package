@@ -60,6 +60,11 @@ public class CharacterAnimator : MonoBehaviour
         return animator.GetBool("IsRunning");
     }
 
+    public bool IsIdle()
+    {
+        return animator.GetInteger("State") == 0 || animator.GetInteger("State") == 1;
+    }
+
     /* --- Setters --- */
 
     public void SetFacing(FacingDirection facing)
@@ -73,6 +78,9 @@ public class CharacterAnimator : MonoBehaviour
         }
 
         CurrentFacing = facing;
+
+        if (IsIdle())
+            PlayIdle(); // To reset to correct idle
     }
 
     public void SetMoving(bool isMoving)
@@ -115,6 +123,8 @@ public class CharacterAnimator : MonoBehaviour
         this.currentWeaponType = weaponType;
         this.currentSubWeaponType = subWeaponType;
         this.hasEquipment = true;
+        if (IsIdle())
+            PlayIdle(); // To reset to correct idle
     }
 
     public void UnSetWeaponType()
@@ -123,12 +133,24 @@ public class CharacterAnimator : MonoBehaviour
         this.currentWeaponType = default;
         this.currentSubWeaponType = default;
         hasEquipment = false;
+        if (IsIdle())
+            PlayIdle(); // To reset to correct idle
     }
 
     /* --- Players --- */
     public void PlayIdle()
     {
-        animator.SetInteger("State", 0);
+        if (
+            this.currentWeaponType == WeaponType.Ranged
+            && this.currentSubWeaponType == SubWeaponType.HandHeld
+            && (
+                this.CurrentFacing == FacingDirection.Front
+                || this.CurrentFacing == FacingDirection.Back
+            )
+        )
+            animator.SetInteger("State", 1);
+        else
+            animator.SetInteger("State", 0);
     }
 
     public void PlayUse()
