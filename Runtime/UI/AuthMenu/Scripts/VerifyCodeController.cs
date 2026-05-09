@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -97,6 +98,10 @@ public class VerifyCodeController : MonoBehaviour, IAuthUIController
         {
             _messageError.text = loginErr;
         }
+
+        // This is a fucking shit, so the AuthFlowManager's creator must fix it
+        GameObject enemy = GameObject.Find("BackgroundPrefab(Clone)");
+        Destroy(enemy);
     }
 
     private async void OnRefreshCodeClicked()

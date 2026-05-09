@@ -16,46 +16,26 @@ namespace FTRShared.UI.AuthMenu
         private readonly GameObject loginPanel;
         private readonly GameObject signUpPanel;
         private readonly GameObject verifyCodePanel;
-        private readonly API.AuthService authService;
-
-        private readonly Session.Session session;
 
         public AuthFlowManager(
             GameObject loginPanel,
             GameObject signUpPanel,
-            GameObject verifyCodePanel,
-            API.AuthService authService = null,
-            Session.Session session = null
+            GameObject verifyCodePanel
         )
         {
             this.loginPanel = loginPanel;
             this.signUpPanel = signUpPanel;
             this.verifyCodePanel = verifyCodePanel;
-            this.authService = authService;
-            this.session = session;
         }
 
         /// <summary>
         /// Shows only the login panel and connects the navigation events between panels.
         /// </summary>
-        public async Task Initialize()
+        public void Initialize()
         {
             signUpPanel.SetActive(false);
             verifyCodePanel.SetActive(false);
-            await session.EnsureValidSession();
-
-            (bool isSuccess, string error) = await authService.IsLogged();
-
-            if (!isSuccess)
-            {
-                loginPanel.SetActive(true);
-            }
-            else
-            {
-                loginPanel.SetActive(false);
-                OnAuthComplete?.Invoke();
-                return;
-            }
+            loginPanel.SetActive(true);
 
             SetupLoginController();
             SetupSignUpController();
