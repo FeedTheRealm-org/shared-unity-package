@@ -171,7 +171,7 @@ namespace API
         {
             // Extract filename from the URL path
             string fileName = Path.GetFileName(modelInfo.url);
-            string downloadUrl = $"{apiConfig.ModelsCDN}{modelInfo.url}";
+            string downloadUrl = $"{apiConfig.WorldsCDN}{modelInfo.url}";
 
             string tempPath = Path.Combine(Application.temporaryCachePath, fileName);
 
