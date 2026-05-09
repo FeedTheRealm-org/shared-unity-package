@@ -415,7 +415,34 @@ namespace API
         )
         {
             var url = $"{GetBaseUrl()}/categories/{categoryId}/sprites/{spriteId}";
+
             var formData = new System.Collections.Generic.List<IMultipartFormSection>();
+
+            if (!string.IsNullOrEmpty(spritePath) && System.IO.File.Exists(spritePath))
+            {
+                byte[] fileData = System.IO.File.ReadAllBytes(spritePath);
+                formData.Add(
+                    new MultipartFormFileSection(
+                        "sprite",
+                        fileData,
+                        System.IO.Path.GetFileName(spritePath),
+                        "image/png"
+                    )
+                );
+            }
+            else
+            {
+                // Fallback dummy file to force multipart/form-data
+                formData.Add(
+                    new MultipartFormFileSection(
+                        "dummy_force_multipart",
+                        new byte[0],
+                        "dummy.bin",
+                        "application/octet-stream"
+                    )
+                );
+            }
+
             formData.Add(new MultipartFormDataSection("world_id", worldId ?? string.Empty));
             formData.Add(new MultipartFormDataSection("price", price.ToString()));
 
