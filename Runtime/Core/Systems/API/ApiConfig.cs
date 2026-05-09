@@ -20,10 +20,10 @@ public class ApiConfig : ScriptableObject
     private int _localPort = 8000;
 
     [SerializeField]
-    private string _localModelsCDN = "http://localhost:8001/worlds";
+    private string _localWorldsCDN = "http://localhost:8081/worlds";
 
     [SerializeField]
-    private string _localCosmeticsCDN = "http://localhost:8001/cosmetics";
+    private string _localCosmeticsCDN = "http://localhost:8081/cosmetics";
 
     [Header("Prod")]
     [SerializeField]
@@ -40,8 +40,8 @@ public class ApiConfig : ScriptableObject
 
     public string Hostname => _environment == ApiEnvironment.Local ? _localHostname : _prodHostname;
     public int Port => _environment == ApiEnvironment.Local ? _localPort : _prodPort;
-    public string ModelsCDN =>
-        _environment == ApiEnvironment.Local ? _localModelsCDN : _prodModelsCDN;
+    public string WorldsCDN =>
+        _environment == ApiEnvironment.Local ? _localWorldsCDN : _prodModelsCDN;
     public string CosmeticsCDN =>
         _environment == ApiEnvironment.Local ? _localCosmeticsCDN : _prodCosmeticsCDN;
 }

@@ -11,9 +11,7 @@ namespace FTRShared.Runtime.Models
         public string name = "";
         public string description = "";
         public int healthPoints = 0;
-        public int damage = 0;
-        public int speed = 0;
-        public int range = 0;
+        public string weaponId = "";
         public string lootTableId = "";
         public Dictionary<string, string> category_sprites = new();
 
@@ -25,9 +23,7 @@ namespace FTRShared.Runtime.Models
             string name,
             string description,
             int healthPoints,
-            int damage,
-            int speed,
-            int range,
+            string weaponId,
             string lootTableId,
             Dictionary<string, string> category_sprites
         )
@@ -36,9 +32,7 @@ namespace FTRShared.Runtime.Models
             this.name = name;
             this.description = description;
             this.healthPoints = healthPoints;
-            this.damage = damage;
-            this.speed = speed;
-            this.range = range;
+            this.weaponId = weaponId;
             this.lootTableId = lootTableId;
             this.category_sprites =
                 category_sprites != null

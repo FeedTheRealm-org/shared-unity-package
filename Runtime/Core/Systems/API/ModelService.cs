@@ -154,7 +154,8 @@ namespace API
             await session.EnsureValidSession();
 
             string fileName = Path.GetFileName(modelInfo.url);
-            string downloadUrl = $"{apiConfig.ModelsCDN}{modelInfo.url}";
+            string downloadUrl = $"{apiConfig.WorldsCDN}{modelInfo.url}";
+
             string tempPath = Path.Combine(Application.temporaryCachePath, fileName);
 
             logger.Log($"[ModelService] Downloading model: {fileName} from {downloadUrl}", this);

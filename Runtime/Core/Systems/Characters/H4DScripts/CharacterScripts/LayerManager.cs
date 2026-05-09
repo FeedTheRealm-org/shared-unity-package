@@ -19,6 +19,13 @@ namespace Assets.HeroEditor4D.Common.Scripts.CharacterScripts
         /// </summary>
         public SortingGroup SortingGroup;
 
+        [Header("Sorting group scope")]
+        public Transform SortingRoot;
+
+        public bool AssignSortingLayer = true;
+
+        public string CharacterSortingLayer = "Characters";
+
         [Header("Runtime depth sorting")]
         public int DepthSortingPrecision = 100;
 
@@ -43,38 +50,30 @@ namespace Assets.HeroEditor4D.Common.Scripts.CharacterScripts
 
         private void UpdateRuntimeDepthSorting()
         {
-            if (SortingGroup == null)
-            {
-                SortingGroup = GetComponent<SortingGroup>();
-
-                if (SortingGroup == null)
-                {
-                    SortingGroup = gameObject.AddComponent<SortingGroup>();
-                }
-            }
-
+            var sortingGroup = EnsureSortingGroup();
             var camera = DepthSortingCamera != null ? DepthSortingCamera : Camera.main;
 
-            if (camera == null || SortingGroup == null)
+            if (camera == null || sortingGroup == null)
                 return;
 
-            var precision = DepthSortingPrecision <= 0 ? 100 : DepthSortingPrecision;
-            var depth = Vector3.Dot(transform.position, camera.transform.forward);
+            if (AssignSortingLayer && !string.IsNullOrWhiteSpace(CharacterSortingLayer))
+            {
+                sortingGroup.sortingLayerName = CharacterSortingLayer;
+            }
 
-            SortingGroup.sortingOrder = Mathf.RoundToInt(-depth * precision) + DepthSortingOffset;
+            var precision = DepthSortingPrecision <= 0 ? 100 : DepthSortingPrecision;
+            var depth = Vector3.Dot(GetSortingRootTransform().position, camera.transform.forward);
+            sortingGroup.sortingOrder = Mathf.RoundToInt(-depth * precision) + DepthSortingOffset;
         }
 
         public void SetSortingGroupOrder(int index)
         {
-            if (SortingGroup == null)
-            {
-                SortingGroup = GetComponent<SortingGroup>();
-            }
+            var sortingGroup = EnsureSortingGroup();
 
-            if (SortingGroup == null)
+            if (sortingGroup == null)
                 return;
 
-            SortingGroup.sortingOrder = index;
+            sortingGroup.sortingOrder = index;
         }
 
         /// <summary>
@@ -82,7 +81,8 @@ namespace Assets.HeroEditor4D.Common.Scripts.CharacterScripts
         /// </summary>
         public void GetSpritesBySortingOrder()
         {
-            Sprites = GetComponentsInChildren<SpriteRenderer>(true)
+            Sprites = GetSortingRootTransform()
+                .GetComponentsInChildren<SpriteRenderer>(true)
                 .OrderBy(i => i.sortingOrder)
                 .ToList();
         }
@@ -120,6 +120,38 @@ namespace Assets.HeroEditor4D.Common.Scripts.CharacterScripts
             }
 
             Debug.Log("Copied!");
+        }
+
+        private SortingGroup EnsureSortingGroup()
+        {
+            var sortingRoot = GetSortingRootTransform();
+
+            if (SortingGroup != null && SortingGroup.transform != sortingRoot)
+            {
+                SortingGroup = null;
+            }
+
+            if (SortingGroup == null)
+            {
+                SortingGroup = sortingRoot.GetComponent<SortingGroup>();
+
+                if (SortingGroup == null)
+                {
+                    SortingGroup = sortingRoot.gameObject.AddComponent<SortingGroup>();
+                }
+            }
+
+            return SortingGroup;
+        }
+
+        private Transform GetSortingRootTransform()
+        {
+            if (SortingRoot != null)
+                return SortingRoot;
+
+            var character = GetComponentInChildren<Character4D>(true);
+
+            return character != null ? character.transform : transform;
         }
 
         private static string GetSpriteRendererPath(SpriteRenderer spriteRenderer)

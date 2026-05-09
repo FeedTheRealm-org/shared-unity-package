@@ -127,4 +127,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: FeedTheRealm_Shared::WorldControllerV2
   worldSize: 200
   worldHeight: 2
-  textureGranularity: 100
+  defaultMaterial: {fileID: 2100000, guid: f9a94780aa94b7c4985400ab0bedcdbb, type: 2}
+  defaultGranularity: 100
