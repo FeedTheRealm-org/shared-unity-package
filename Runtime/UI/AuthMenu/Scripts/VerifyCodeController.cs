@@ -30,6 +30,12 @@ public class VerifyCodeController : MonoBehaviour, IAuthUIController
     private EventCallback<ClickEvent> _refreshCodeCallback;
     private EventCallback<ClickEvent> _navigateBackCallback;
 
+    [SerializeField]
+    public bool showBackground = true;
+
+    [SerializeField]
+    private GameObject backgroundPrefab;
+
     public void SetBackground(GameObject bg) => _backgroundInstance = bg;
 
     private void Awake()
@@ -60,6 +66,11 @@ public class VerifyCodeController : MonoBehaviour, IAuthUIController
 
         _codeField = ui.Q<TextField>("CodeField");
         _messageError = ui.Q<Label>("MessageError");
+
+        if (showBackground && _backgroundInstance == null)
+        {
+            _backgroundInstance = Instantiate(backgroundPrefab);
+        }
     }
 
     private void OnDisable()
@@ -72,6 +83,12 @@ public class VerifyCodeController : MonoBehaviour, IAuthUIController
 
         if (_changeButton != null && _navigateBackCallback != null)
             _changeButton.UnregisterCallback(_navigateBackCallback);
+
+        if (showBackground && _backgroundInstance != null)
+        {
+            Destroy(_backgroundInstance);
+            _backgroundInstance = null;
+        }
     }
 
     private async void OnLoginClicked()
