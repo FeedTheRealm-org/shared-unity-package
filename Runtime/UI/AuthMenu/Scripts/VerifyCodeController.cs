@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -28,6 +29,12 @@ public class VerifyCodeController : MonoBehaviour, IAuthUIController
     private Label _refreshCodeButton;
     private EventCallback<ClickEvent> _refreshCodeCallback;
     private EventCallback<ClickEvent> _navigateBackCallback;
+
+    [SerializeField]
+    public bool showBackground = true;
+
+    [SerializeField]
+    private GameObject backgroundPrefab;
 
     public void SetBackground(GameObject bg) => _backgroundInstance = bg;
 
@@ -59,6 +66,11 @@ public class VerifyCodeController : MonoBehaviour, IAuthUIController
 
         _codeField = ui.Q<TextField>("CodeField");
         _messageError = ui.Q<Label>("MessageError");
+
+        if (showBackground && _backgroundInstance == null)
+        {
+            _backgroundInstance = Instantiate(backgroundPrefab);
+        }
     }
 
     private void OnDisable()
@@ -71,6 +83,12 @@ public class VerifyCodeController : MonoBehaviour, IAuthUIController
 
         if (_changeButton != null && _navigateBackCallback != null)
             _changeButton.UnregisterCallback(_navigateBackCallback);
+
+        if (showBackground && _backgroundInstance != null)
+        {
+            Destroy(_backgroundInstance);
+            _backgroundInstance = null;
+        }
     }
 
     private async void OnLoginClicked()
@@ -97,6 +115,10 @@ public class VerifyCodeController : MonoBehaviour, IAuthUIController
         {
             _messageError.text = loginErr;
         }
+
+        // This is a fucking shit, so the AuthFlowManager's creator must fix it
+        GameObject enemy = GameObject.Find("BackgroundPrefab(Clone)");
+        Destroy(enemy);
     }
 
     private async void OnRefreshCodeClicked()

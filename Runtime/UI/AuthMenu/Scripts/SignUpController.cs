@@ -26,6 +26,12 @@ public class SignUpController : MonoBehaviour, IAuthUIController
     private Label _messageError;
     private Button _changeButton;
 
+    [SerializeField]
+    public bool showBackground = true;
+
+    [SerializeField]
+    private GameObject backgroundPrefab;
+
     public void SetBackground(GameObject bg) => _backgroundInstance = bg;
 
     private void Awake()
@@ -49,6 +55,11 @@ public class SignUpController : MonoBehaviour, IAuthUIController
         _passwordField = ui.Q<TextField>("PasswordField");
         _repeatedPasswordField = ui.Q<TextField>("RepeatPasswordField");
         _messageError = ui.Q<Label>("MessageError");
+
+        if (showBackground && _backgroundInstance == null)
+        {
+            _backgroundInstance = Instantiate(backgroundPrefab);
+        }
     }
 
     private void OnDisable()
@@ -58,6 +69,12 @@ public class SignUpController : MonoBehaviour, IAuthUIController
 
         if (_changeButton != null)
             _changeButton.clicked -= NavigateToLogin;
+
+        if (showBackground && _backgroundInstance != null)
+        {
+            Destroy(_backgroundInstance);
+            _backgroundInstance = null;
+        }
     }
 
     private void NavigateToLogin()

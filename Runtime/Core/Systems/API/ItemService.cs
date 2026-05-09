@@ -13,6 +13,9 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
+        [SerializeField]
+        private Session.Session session;
+
         private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/assets/items";
 
         /// <summary>
@@ -22,10 +25,11 @@ namespace API
         public async Task<string> UploadItemsByCategory(
             List<(string, string)> sprites,
             string worldId,
-            string categoryId,
-            string accessToken
+            string categoryId
         )
         {
+            await session.EnsureValidSession();
+
             if (sprites == null || sprites.Count == 0)
             {
                 logger.Log("No assets to upload.", this, Logging.LogType.Warning);
@@ -34,7 +38,6 @@ namespace API
             logger.Log($"Uploading {sprites.Count} assets for world ID: {worldId}", this);
 
             var form = new WWWForm();
-
             var validSprites = new List<(string spriteId, string absolutePath)>();
 
             for (int i = 0; i < sprites.Count; i++)
@@ -42,18 +45,15 @@ namespace API
                 (string spriteId, string spriteFilePath) = sprites[i];
 
                 if (spriteFilePath == null)
-                {
                     continue;
-                }
 
                 string absolutePath = spriteFilePath;
                 if (!Path.IsPathRooted(spriteFilePath))
                     absolutePath = Path.Combine(Application.streamingAssetsPath, spriteFilePath);
 
                 if (!File.Exists(absolutePath))
-                {
                     continue;
-                }
+
                 if (string.IsNullOrEmpty(spriteId))
                 {
                     logger.Log(
@@ -70,7 +70,6 @@ namespace API
             for (int j = 0; j < validSprites.Count; j++)
             {
                 var (spriteId, absolutePath) = validSprites[j];
-
                 form.AddField($"id[{j + 1}]", spriteId);
                 byte[] spriteData = File.ReadAllBytes(absolutePath);
                 logger.Log($"Adding sprite to form: {spriteId} (index {j + 1})", this);
@@ -81,10 +80,11 @@ namespace API
                     "application/octet-stream"
                 );
             }
+
             var url = $"{GetBaseUrl()}/world/{worldId}/categories/{categoryId}";
             UnityWebRequest uwr = UnityWebRequest.Post(url, form);
             uwr.method = "PUT";
-            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
             await uwr.SendWebRequest();
 
             if (uwr.result == UnityWebRequest.Result.Success)

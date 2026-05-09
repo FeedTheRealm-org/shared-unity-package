@@ -38,8 +38,9 @@ namespace API
                 url += $"&world_id={worldId}";
 
             var uwr = new UnityWebRequest(url, "GET");
+            await session.EnsureValidSession();
             uwr.downloadHandler = new DownloadHandlerBuffer();
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
 
@@ -78,8 +79,9 @@ namespace API
 
             var url = $"{GetMaterialsUrl()}/{materialId}";
             var uwr = new UnityWebRequest(url, "GET");
+            await session.EnsureValidSession();
             uwr.downloadHandler = new DownloadHandlerBuffer();
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
 
@@ -155,8 +157,9 @@ namespace API
 
             var uwr = UnityWebRequest.Post(url, formData);
             uwr.method = "PUT";
+            await session.EnsureValidSession();
             uwr.downloadHandler = new DownloadHandlerBuffer();
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
 
@@ -198,7 +201,8 @@ namespace API
             );
 
             var uwr = UnityWebRequest.Get(downloadUrl);
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+            await session.EnsureValidSession();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
             uwr.downloadHandler = new DownloadHandlerFile(tempPath);
 
             await uwr.SendWebRequest();

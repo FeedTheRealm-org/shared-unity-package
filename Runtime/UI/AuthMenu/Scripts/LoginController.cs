@@ -80,6 +80,11 @@ public class LoginController : MonoBehaviour, IAuthUIController
     {
         if (_loginButton != null)
             _loginButton.clicked -= OnLoginClicked;
+        if (showBackground && _backgroundInstance != null && !_backgroundOwnershipTransferred)
+        {
+            Destroy(_backgroundInstance);
+            _backgroundInstance = null;
+        }
     }
 
     private async void OnLoginClicked()

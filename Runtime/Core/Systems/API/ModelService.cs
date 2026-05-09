@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -15,25 +14,22 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
+        [SerializeField]
+        private Session.Session session;
+
         private const string DefaultModelsWorldId = "00000000-0000-0000-0000-000000000000";
 
         private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}";
 
-        /// <summary>
-        /// Lists all asset models for a given world.
-        /// Returns dictionary of model info with model_id as key.
-        /// </summary>
-        public async Task<Dictionary<string, ModelInfo>> ListWorldModels(
-            string worldId,
-            string accessToken
-        )
+        public async Task<Dictionary<string, ModelInfo>> ListWorldModels(string worldId)
         {
+            await session.EnsureValidSession();
+
             string url = $"{GetBaseUrl()}/assets/models/world/{worldId}";
-            Debug.Log($"[ModelService] Sending GET request to {url}");
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "GET",
-                accessToken,
+                session.AccessToken,
                 null,
                 "ListWorldModels"
             );
@@ -51,15 +47,10 @@ namespace API
             }
             else if (result == UnityWebRequest.Result.ProtocolError)
             {
-                string errorMessage = responseText;
-                if (statusCode == 401)
-                {
-                    errorMessage = "Session expired. Please log in again.";
-                }
-                else if (statusCode >= 500)
-                {
-                    errorMessage = "Server error. Please try again later.";
-                }
+                string errorMessage =
+                    statusCode == 401 ? "Session expired. Please log in again."
+                    : statusCode >= 500 ? "Server error. Please try again later."
+                    : responseText;
                 logger.Log(
                     $"ListWorldModels error ({statusCode}): {errorMessage}",
                     this,
@@ -69,27 +60,21 @@ namespace API
             }
 
             var response = JsonUtility.FromJson<WorldModelsResponse>(responseText);
-
             Dictionary<string, ModelInfo> models = new();
             foreach (var model in response.data.models)
                 models[model.model_id] = model;
             return models;
         }
 
-        public async Task<Dictionary<string, ModelInfo>> ListDefaultModels(string accessToken)
+        public async Task<Dictionary<string, ModelInfo>> ListDefaultModels()
         {
-            return await ListWorldModels(DefaultModelsWorldId, accessToken);
+            return await ListWorldModels(DefaultModelsWorldId);
         }
 
-        /// <summary>
-        /// Uploads asset model & material files for a world.
-        /// </summary>
-        public async Task<string> UploadModels(
-            List<ModelRequest> structureModels,
-            string worldId,
-            string accessToken
-        )
+        public async Task<string> UploadModels(List<ModelRequest> structureModels, string worldId)
         {
+            await session.EnsureValidSession();
+
             if (structureModels == null || structureModels.Count == 0)
             {
                 logger.Log("No assets to upload.", this, Logging.LogType.Warning);
@@ -98,7 +83,7 @@ namespace API
 
             foreach (var structure in structureModels)
             {
-                string error = await UploadModel(structure, worldId, accessToken);
+                string error = await UploadModel(structure, worldId);
                 if (!string.IsNullOrEmpty(error))
                     return error;
             }
@@ -106,11 +91,7 @@ namespace API
             return string.Empty;
         }
 
-        private async Task<string> UploadModel(
-            ModelRequest structure,
-            string worldId,
-            string accessToken
-        )
+        private async Task<string> UploadModel(ModelRequest structure, string worldId)
         {
             var url = $"{GetBaseUrl()}/assets/models/world/{worldId}";
 
@@ -140,8 +121,9 @@ namespace API
 
             UnityWebRequest uwr = UnityWebRequest.Post(url, form);
             uwr.method = "PUT";
-            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
 
+            await session.EnsureValidSession();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
             await uwr.SendWebRequest();
 
             logger.Log(
@@ -167,9 +149,10 @@ namespace API
             return uwr.error;
         }
 
-        public async Task<string> DownloadModel(ModelInfo modelInfo, string accessToken)
+        public async Task<string> DownloadModel(ModelInfo modelInfo)
         {
-            // Extract filename from the URL path
+            await session.EnsureValidSession();
+
             string fileName = Path.GetFileName(modelInfo.url);
             string downloadUrl = $"{apiConfig.WorldsCDN}{modelInfo.url}";
 
@@ -178,9 +161,8 @@ namespace API
             logger.Log($"[ModelService] Downloading model: {fileName} from {downloadUrl}", this);
 
             UnityWebRequest uwr = UnityWebRequest.Get(downloadUrl);
-            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
             uwr.downloadHandler = new DownloadHandlerFile(tempPath);
-
             await uwr.SendWebRequest();
 
             if (uwr.result != UnityWebRequest.Result.Success)

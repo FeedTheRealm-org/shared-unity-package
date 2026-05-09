@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -74,8 +75,10 @@ namespace API
                     logger.Log($"Login successful UserID: {res.data.id}", this);
                     session.ClearSession();
                     session.SetUserId(res.data.id);
-                    session.APIToken = res.data.access_token;
+                    session.AccessToken = res.data.access_token;
+                    session.RefreshToken = res.data.refresh_token;
                     session.SetEmail(res.data.email);
+                    session.SaveSession();
                     return "";
                 }
             }
@@ -245,13 +248,70 @@ namespace API
             }
         }
 
+        public async Task<(bool success, string message)> RefreshToken(string email)
+        {
+            string url = $"{GetBaseUrl()}/refresh-token";
+            RefreshTokenRequest payload = new RefreshTokenRequest { email = email };
+            string json = JsonUtility.ToJson(payload);
+
+            Task<(string, UnityWebRequest.Result, long)> task = SendRequestAsync(
+                url,
+                "POST",
+                session.RefreshToken,
+                json,
+                "RefreshToken"
+            );
+            (string responseText, UnityWebRequest.Result result, long statusCode) = await task;
+
+            if (result == UnityWebRequest.Result.ConnectionError)
+            {
+                logger.Log(
+                    $"Refresh Token connection error: {responseText}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (
+                    false,
+                    "Unable to connect to server. Please check your internet connection."
+                );
+            }
+            else if (result == UnityWebRequest.Result.ProtocolError)
+            {
+                ErrorResponse res = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<ErrorResponse>(responseText);
+                string errorMessage = res?.detail ?? responseText;
+                if (statusCode >= 500)
+                {
+                    errorMessage = "Server error. Please try again later.";
+                }
+                logger.Log(
+                    $"Refresh Token error ({statusCode}): {(res != null ? $"{res.title}: {errorMessage}" : responseText)}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (false, errorMessage);
+            }
+            else
+            {
+                DataEnvelope<RefreshTokenResponse> res = JsonUtility.FromJson<
+                    DataEnvelope<RefreshTokenResponse>
+                >(responseText);
+                logger.Log($"Refresh Token response: {responseText}", this);
+                session.AccessToken = res.data.access_token;
+                session.RefreshToken = res.data.refresh_token;
+                session.SaveSession();
+                return (true, "");
+            }
+        }
+
         public async Task<(bool success, string message)> IsLogged()
         {
             string url = $"{GetBaseUrl()}/check-session";
             Task<(string, UnityWebRequest.Result, long)> task = SendRequestAsync(
                 url,
                 "GET",
-                session.APIToken,
+                session.AccessToken,
                 "",
                 "CheckSession"
             );

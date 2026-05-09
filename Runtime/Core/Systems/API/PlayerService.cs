@@ -49,7 +49,10 @@ namespace API
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
             uwr.SetRequestHeader("Content-Type", "application/json");
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            var ensureTask = session.EnsureValidSession();
+            yield return new WaitUntil(() => ensureTask.IsCompleted);
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             yield return uwr.SendWebRequest();
 
@@ -89,11 +92,13 @@ namespace API
             string UserID = null
         )
         {
-            var url = $"{GetBaseUrl()}/{(UserID ?? session.UserId)}";
+            var url = $"{GetBaseUrl()}/{(UserID ?? session.UserID)}";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+            var ensureTask = session.EnsureValidSession();
+            yield return new WaitUntil(() => ensureTask.IsCompleted);
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             yield return uwr.SendWebRequest();
 
@@ -130,11 +135,12 @@ namespace API
         /// </summary>
         public async Task<CharacterInfoResponse> GetCharacterInfoAsync(string UserID = null)
         {
-            var url = $"{GetBaseUrl()}/{(UserID ?? session.UserId)}";
+            var url = $"{GetBaseUrl()}/{(UserID ?? session.UserID)}";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+            await session.EnsureValidSession();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
 
@@ -181,7 +187,9 @@ namespace API
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
             uwr.SetRequestHeader("Content-Type", "application/json");
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            await session.EnsureValidSession();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
 
@@ -237,7 +245,9 @@ namespace API
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
             uwr.SetRequestHeader("Content-Type", "application/json");
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            await session.EnsureValidSession();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
 
@@ -296,9 +306,10 @@ namespace API
 
             uwr.SetRequestHeader("Content-Type", "application/json");
 
+            await session.EnsureValidSession();
             var bearerToken = !string.IsNullOrWhiteSpace(authorizationToken)
                 ? authorizationToken
-                : session?.APIToken;
+                : session?.AccessToken;
             uwr.SetRequestHeader("Authorization", $"Bearer {bearerToken}");
 
             await uwr.SendWebRequest();

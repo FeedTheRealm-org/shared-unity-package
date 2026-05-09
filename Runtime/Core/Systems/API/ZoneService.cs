@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FTRShared.Runtime.Models;
@@ -13,18 +12,19 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
+        [SerializeField]
+        private Session.Session session;
+
         private string BaseUrl(string worldId) =>
             $"{apiConfig.Hostname}:{apiConfig.Port}/world/{worldId}/zones";
 
-        /// <summary>
-        /// Publishes or Updates a zone on the server.
-        /// </summary>
         public async Task<(string id, string error, long statusCode)> PublishZone(
             string worldId,
-            ZoneData data,
-            string accessToken
+            ZoneData data
         )
         {
+            await session.EnsureValidSession();
+
             try
             {
                 string json = JsonUtility.ToJson(
@@ -35,11 +35,10 @@ namespace API
                         data = data,
                     }
                 );
-                string url = $"{BaseUrl(worldId)}/{data.zoneId}";
                 var (responseText, result, statusCode) = await SendRequestAsync(
-                    url,
+                    $"{BaseUrl(worldId)}/{data.zoneId}",
                     "PUT",
-                    accessToken,
+                    session.AccessToken,
                     json,
                     "PublishZone"
                 );
@@ -54,7 +53,7 @@ namespace API
             catch (System.Exception ex)
             {
                 logger.Log(
-                    $"Zone Cound not be Published: {ex.Message}",
+                    $"Zone Could not be Published: {ex.Message}",
                     this,
                     Logging.LogType.Error
                 );
@@ -62,18 +61,16 @@ namespace API
             }
         }
 
-        /// <summary>
-        /// Returns the list of zone ids for a given world.
-        /// </summary>
         public async Task<(List<int> zones, string error, long statusCode)> GetZonesList(
-            string worldId,
-            string accessToken
+            string worldId
         )
         {
+            await session.EnsureValidSession();
+
             var (responseText, result, statusCode) = await SendRequestAsync(
-                $"{BaseUrl(worldId)}",
+                BaseUrl(worldId),
                 "GET",
-                accessToken,
+                session.AccessToken,
                 null,
                 "GetZonesList"
             );
@@ -86,21 +83,19 @@ namespace API
             return (envelope?.data?.zones ?? new List<int>(), "", statusCode);
         }
 
-        /// <summary>
-        /// Returns the zone data for a specific zone in a world.
-        /// </summary>
         public async Task<(ZoneData zoneData, string error, long statusCode)> GetZoneData(
             string worldId,
-            int zoneId,
-            string accessToken
+            int zoneId
         )
         {
+            await session.EnsureValidSession();
+
             string url = $"{BaseUrl(worldId)}/{zoneId}";
             Debug.Log($"[ZoneService] Getting zone data from URL: {url}");
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "GET",
-                accessToken,
+                session.AccessToken,
                 null,
                 "GetZoneData"
             );
@@ -117,17 +112,13 @@ namespace API
             return (zoneData, "", statusCode);
         }
 
-        public async Task<(string error, long statusCode)> ActivateZone(
-            string worldId,
-            int zoneId,
-            string accessToken
-        )
+        public async Task<(string error, long statusCode)> ActivateZone(string worldId, int zoneId)
         {
-            string url = $"{BaseUrl(worldId)}/{zoneId}/activate";
+            await session.EnsureValidSession();
             var (responseText, result, statusCode) = await SendRequestAsync(
-                url,
+                $"{BaseUrl(worldId)}/{zoneId}/activate",
                 "GET",
-                accessToken,
+                session.AccessToken,
                 null,
                 "ActivateZone"
             );
@@ -138,15 +129,14 @@ namespace API
 
         public async Task<(string error, long statusCode)> DeactivateZone(
             string worldId,
-            int zoneId,
-            string accessToken
+            int zoneId
         )
         {
-            string url = $"{BaseUrl(worldId)}/{zoneId}/deactivate";
+            await session.EnsureValidSession();
             var (responseText, result, statusCode) = await SendRequestAsync(
-                url,
+                $"{BaseUrl(worldId)}/{zoneId}/deactivate",
                 "GET",
-                accessToken,
+                session.AccessToken,
                 null,
                 "DeactivateZone"
             );
