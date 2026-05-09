@@ -485,9 +485,9 @@ public partial class CharacterEditController : MonoBehaviour
             return activeCharacterId;
         }
 
-        if (session != null && !string.IsNullOrEmpty(session.UserId))
+        if (session != null && !string.IsNullOrEmpty(session.UserID))
         {
-            activeCharacterId = session.UserId;
+            activeCharacterId = session.UserID;
             return activeCharacterId;
         }
 

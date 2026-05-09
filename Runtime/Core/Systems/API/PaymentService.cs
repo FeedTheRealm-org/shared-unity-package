@@ -15,6 +15,9 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
+        [SerializeField]
+        private Session.Session session;
+
         private string GetPaymentBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/payments";
 
         private string GetGemsBaseUrl() => $"{GetPaymentBaseUrl()}/gems";
@@ -23,12 +26,12 @@ namespace API
             bool success,
             string message,
             List<GemPackResponse> packs
-        )> GetAllGemPacks(string accessToken)
+        )> GetAllGemPacks()
         {
+            await session.EnsureValidSession();
             string url = $"{GetGemsBaseUrl()}/packs";
-
             (string responseText, UnityWebRequest.Result result, long statusCode) =
-                await SendRequestAsync(url, "GET", accessToken, null, "GetAllGemPacks");
+                await SendRequestAsync(url, "GET", session.AccessToken, null, "GetAllGemPacks");
 
             try
             {
@@ -74,19 +77,21 @@ namespace API
             catch (System.Exception ex)
             {
                 logger.Log($"GetAllGemPacks exception: {ex.Message}", this, Logging.LogType.Error);
-                string userMessage = BuildUserMessage(result, statusCode);
-                return (false, userMessage, null);
+                return (false, BuildUserMessage(result, statusCode), null);
             }
         }
 
-        public async Task<(bool success, string message, GemBalanceResponse balance)> GetGemBalance(
-            string accessToken
-        )
+        public async Task<(
+            bool success,
+            string message,
+            GemBalanceResponse balance
+        )> GetGemBalance()
         {
-            string url = $"{GetGemsBaseUrl()}/balances";
+            await session.EnsureValidSession();
 
+            string url = $"{GetGemsBaseUrl()}/balances";
             (string responseText, UnityWebRequest.Result result, long statusCode) =
-                await SendRequestAsync(url, "GET", accessToken, null, "GetGemBalance");
+                await SendRequestAsync(url, "GET", session.AccessToken, null, "GetGemBalance");
 
             try
             {
@@ -132,8 +137,7 @@ namespace API
             catch (System.Exception ex)
             {
                 logger.Log($"GetGemBalance exception: {ex.Message}", this, Logging.LogType.Error);
-                string userMessage = BuildUserMessage(result, statusCode);
-                return (false, userMessage, null);
+                return (false, BuildUserMessage(result, statusCode), null);
             }
         }
 
@@ -141,24 +145,28 @@ namespace API
             bool success,
             string message,
             CheckoutResponse checkout
-        )> CreateCheckoutSession(
-            string gemPackId,
-            string successUrl,
-            string cancelUrl,
-            string accessToken
-        )
+        )> CreateCheckoutSession(string gemPackId, string successUrl, string cancelUrl)
         {
+            await session.EnsureValidSession();
+
             string url = $"{GetPaymentBaseUrl()}/checkout";
-            CheckoutRequest payload = new CheckoutRequest
-            {
-                gem_pack_id = gemPackId,
-                success_url = successUrl,
-                cancel_url = cancelUrl,
-            };
-            string json = JsonUtility.ToJson(payload);
+            string json = JsonUtility.ToJson(
+                new CheckoutRequest
+                {
+                    gem_pack_id = gemPackId,
+                    success_url = successUrl,
+                    cancel_url = cancelUrl,
+                }
+            );
 
             (string responseText, UnityWebRequest.Result result, long statusCode) =
-                await SendRequestAsync(url, "POST", accessToken, json, "CreateCheckoutSession");
+                await SendRequestAsync(
+                    url,
+                    "POST",
+                    session.AccessToken,
+                    json,
+                    "CreateCheckoutSession"
+                );
 
             try
             {
@@ -210,8 +218,7 @@ namespace API
                     this,
                     Logging.LogType.Error
                 );
-                string userMessage = BuildUserMessage(result, statusCode);
-                return (false, userMessage, null);
+                return (false, BuildUserMessage(result, statusCode), null);
             }
         }
 
@@ -219,11 +226,13 @@ namespace API
             bool success,
             string message,
             GemBalanceResponse updatedBalance
-        )> PurchaseWithGems(string productId, string accessToken)
+        )> PurchaseWithGems(string productId)
         {
+            await session.EnsureValidSession();
+
             string url = $"{GetGemsBaseUrl()}/balances/purchase/{productId}";
             (string responseText, UnityWebRequest.Result result, long statusCode) =
-                await SendRequestAsync(url, "POST", accessToken, null, "PurchaseWithGems");
+                await SendRequestAsync(url, "POST", session.AccessToken, null, "PurchaseWithGems");
 
             try
             {
@@ -246,7 +255,6 @@ namespace API
                         ? null
                         : JsonUtility.FromJson<ErrorResponse>(responseText);
                     string errorMessage = res?.detail ?? responseText;
-
                     if (statusCode == 400)
                         errorMessage = "You don't have enough gems.";
                     else if (statusCode == 404)
@@ -257,7 +265,6 @@ namespace API
                         errorMessage = "Unauthorized. Please log in again.";
                     else if (statusCode >= 500)
                         errorMessage = "Server error. Please try again later.";
-
                     logger.Log(
                         $"PurchaseWithGems error ({statusCode}): {errorMessage}",
                         this,
@@ -281,23 +288,20 @@ namespace API
                     this,
                     Logging.LogType.Error
                 );
-                string userMessage = BuildUserMessage(result, statusCode);
-                return (false, userMessage, null);
+                return (false, BuildUserMessage(result, statusCode), null);
             }
         }
 
-        /// <summary>
-        /// GET /payments/balances/creators
-        /// The creator id is resolved server-side from the Authorization header.
-        /// </summary>
         public async Task<(
             CreatorBalanceResponse data,
             string error,
             long statusCode
-        )> GetCreatorBalance(string apiToken)
+        )> GetCreatorBalance()
         {
+            await session.EnsureValidSession();
+
             using var request = UnityWebRequest.Get($"{GetPaymentBaseUrl()}/balances/creators");
-            request.SetRequestHeader("Authorization", $"Bearer {apiToken}");
+            request.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
             request.SetRequestHeader("Content-Type", "application/json");
 
             var op = request.SendWebRequest();

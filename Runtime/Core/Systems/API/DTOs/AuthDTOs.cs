@@ -20,6 +20,7 @@ namespace API
     public class LoginResponse
     {
         public string access_token;
+        public string refresh_token;
         public string id;
         public string email;
         public string createdAt;
@@ -49,6 +50,19 @@ namespace API
     public class RefreshVerificationResponse
     {
         public string email;
+    }
+
+    [System.Serializable]
+    public class RefreshTokenRequest
+    {
+        public string email;
+    }
+
+    [System.Serializable]
+    public class RefreshTokenResponse
+    {
+        public string access_token;
+        public string refresh_token;
     }
 
     [System.Serializable]

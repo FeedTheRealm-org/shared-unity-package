@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using FTRShared.Runtime.Models;
@@ -14,18 +12,16 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
+        [SerializeField]
+        private Session.Session session;
+
         private string BaseUrl => $"{apiConfig.Hostname}:{apiConfig.Port}/assets";
 
-        /// <summary>
-        /// Uploads sprite files for a world.
-        /// Assumes all sprite paths have been validated before calling.
-        /// </summary>
-        public async Task<string> UploadSprites(
-            SpritesRequest request,
-            string worldId,
-            string accessToken
-        )
+        public async Task<string> UploadSprites(SpritesRequest request, string worldId)
         {
+            await session.EnsureValidSession();
+            ;
+
             if (request.ids == null || request.ids.Count == 0)
                 return "No assets to upload.";
 
@@ -47,7 +43,7 @@ namespace API
             }
 
             var uwr = UnityWebRequest.Put($"{BaseUrl}/items/world/{worldId}", form.data);
-            uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
             uwr.SetRequestHeader(
                 "Content-Type",
                 $"multipart/form-data; boundary={form.headers["Content-Type"].Split('=')[1]}"
