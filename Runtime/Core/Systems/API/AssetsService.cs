@@ -99,7 +99,11 @@ namespace API
             var url = $"{GetBaseUrl()}/categories";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            var ensureTask = session.EnsureValidSession();
+            yield return new WaitUntil(() => ensureTask.IsCompleted);
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
+
             yield return uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
@@ -143,7 +147,11 @@ namespace API
                 $"{GetBaseUrl()}/categories/{categoryId}?offset={Mathf.Max(0, offset)}&limit={Mathf.Max(1, limit)}";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            var ensureTask = session.EnsureValidSession();
+            yield return new WaitUntil(() => ensureTask.IsCompleted);
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
+
             yield return uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
@@ -174,7 +182,10 @@ namespace API
             var url = $"{GetBaseUrl()}/categories";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            await session.EnsureValidSession();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
+            Debug.Log($"GetCategoriesAsync: Sending request to {url}");
             await uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
@@ -224,7 +235,10 @@ namespace API
 
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            await session.EnsureValidSession();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
+
             await uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
@@ -252,7 +266,10 @@ namespace API
             var url = $"{GetBaseUrl()}/{spriteId}";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            await session.EnsureValidSession();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
+
             await uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
@@ -300,7 +317,10 @@ namespace API
             var uwr = UnityWebRequest.Post(url, formData);
             uwr.method = "PUT";
             uwr.downloadHandler = new DownloadHandlerBuffer();
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            await session.EnsureValidSession();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
+
             await uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
@@ -361,7 +381,10 @@ namespace API
             var uwr = UnityWebRequest.Post(url, formData);
             uwr.method = "PUT";
             uwr.downloadHandler = new DownloadHandlerBuffer();
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.APIToken}");
+
+            await session.EnsureValidSession();
+            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
+
             await uwr.SendWebRequest();
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;

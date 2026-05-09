@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FTRShared.Runtime.Models;
 using UnityEngine;
@@ -14,16 +12,15 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
+        [SerializeField]
+        private Session.Session session;
+
         private string BaseUrl => $"{apiConfig.Hostname}:{apiConfig.Port}/world";
 
-        /// <summary>
-        /// Creates a new world on the server. Returns the server assigned world id.
-        /// </summary>
-        public async Task<(string id, string error, long statusCode)> PublishWorld(
-            WorldData data,
-            string accessToken
-        )
+        public async Task<(string id, string error, long statusCode)> PublishWorld(WorldData data)
         {
+            await session.EnsureValidSession();
+
             try
             {
                 string json = JsonUtility.ToJson(
@@ -37,7 +34,7 @@ namespace API
                 var (responseText, result, statusCode) = await SendRequestAsync(
                     BaseUrl,
                     "POST",
-                    accessToken,
+                    session.AccessToken,
                     json,
                     "CreateWorld"
                 );
@@ -52,7 +49,7 @@ namespace API
             catch (System.Exception ex)
             {
                 logger.Log(
-                    $"World Cound not be Published: {ex.Message}",
+                    $"World Could not be Published: {ex.Message}",
                     this,
                     Logging.LogType.Error
                 );
@@ -60,14 +57,10 @@ namespace API
             }
         }
 
-        /// <summary>
-        /// Updates an existing world on the server using its worldId.
-        /// </summary>
-        public async Task<(string id, string error, long statusCode)> UpdateWorld(
-            WorldData data,
-            string accessToken
-        )
+        public async Task<(string id, string error, long statusCode)> UpdateWorld(WorldData data)
         {
+            await session.EnsureValidSession();
+
             string json = JsonUtility.ToJson(
                 new WorldRequest
                 {
@@ -79,7 +72,7 @@ namespace API
             var (responseText, result, statusCode) = await SendRequestAsync(
                 $"{BaseUrl}/{data.worldId}",
                 "PUT",
-                accessToken,
+                session.AccessToken,
                 json,
                 "UpdateWorld"
             );
@@ -93,17 +86,18 @@ namespace API
 
         public async Task<(string error, long statusCode)> PublishCreatables(
             CreatablesData data,
-            string worldId,
-            string accessToken
+            string worldId
         )
         {
+            await session.EnsureValidSession();
+
             try
             {
                 string json = JsonUtility.ToJson(new CreatablesRequest { createable_data = data });
                 var (responseText, result, statusCode) = await SendRequestAsync(
                     $"{BaseUrl}/{worldId}/createable-data",
                     "PUT",
-                    accessToken,
+                    session.AccessToken,
                     json,
                     "PublishCreatables"
                 );
@@ -116,7 +110,7 @@ namespace API
             catch (System.Exception ex)
             {
                 logger.Log(
-                    $"Creatables Cound not be Published: {ex.Message}",
+                    $"Creatables Could not be Published: {ex.Message}",
                     this,
                     Logging.LogType.Error
                 );
@@ -124,19 +118,14 @@ namespace API
             }
         }
 
-        /// <summary>
-        /// Fetches a page of worlds from the server.
-        /// </summary>
-        /// <summary>
-        /// Fetches a page of worlds from the server.
-        /// </summary>
         public async Task<(int amount, List<WorldMetadata> worlds, string error)> GetWorldPage(
             int offset,
             int limit,
-            string filter,
-            string accessToken
+            string filter
         )
         {
+            await session.EnsureValidSession();
+
             var url = $"{BaseUrl}?limit={limit}&offset={offset}";
             if (!string.IsNullOrWhiteSpace(filter))
                 url += $"&filter={UnityWebRequest.EscapeURL(filter.Trim())}";
@@ -144,7 +133,7 @@ namespace API
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
                 "GET",
-                accessToken,
+                session.AccessToken,
                 null,
                 "GetWorldPage"
             );
@@ -160,21 +149,19 @@ namespace API
             return (envelope.data.amount, envelope.data.worlds, "");
         }
 
-        /// <summary>
-        /// Fetches a world and its creatables data by world id.
-        /// Returns the deserialized WorldData and CreatablesData.
-        /// </summary>
         public async Task<(
             WorldData worldData,
             CreatablesData creatablesData,
             string error,
             long statusCode
-        )> GetWorld(string worldId, string accessToken)
+        )> GetWorld(string worldId)
         {
+            await session.EnsureValidSession();
+
             var (responseText, result, statusCode) = await SendRequestAsync(
                 $"{BaseUrl}/{worldId}",
                 "GET",
-                accessToken,
+                session.AccessToken,
                 null,
                 "GetWorld"
             );
@@ -201,19 +188,16 @@ namespace API
             return (worldData, creatablesData, "", statusCode);
         }
 
-        /// <summary>
-        /// Fetches the server address (ip and port) for a specific zone in a world.
-        /// </summary>
         public async Task<(string ip, int port, string error, long statusCode)> GetZoneAddress(
             string worldId,
-            int zoneId,
-            string accessToken
+            int zoneId
         )
         {
+            await session.EnsureValidSession();
             var (responseText, result, statusCode) = await SendRequestAsync(
                 $"{BaseUrl}/orchestrator/{worldId}/zones/{zoneId}/address",
                 "GET",
-                accessToken,
+                session.AccessToken,
                 null,
                 "GetZoneAddress"
             );
@@ -229,18 +213,13 @@ namespace API
             return (envelope.data.ip, envelope.data.port, "", statusCode);
         }
 
-        /// <summary>
-        /// Fetches a page of worlds and filters to only those with an active zone address.
-        /// Returns world data paired with their active zone address.
-        /// </summary>
         public async Task<(List<ActiveWorldData> activeWorlds, string error)> GetActiveWorlds(
             int offset,
             int limit,
-            string filter,
-            string accessToken
+            string filter
         )
         {
-            var (amount, worlds, error) = await GetWorldPage(offset, limit, filter, accessToken);
+            var (amount, worlds, error) = await GetWorldPage(offset, limit, filter);
             if (!string.IsNullOrEmpty(error))
             {
                 logger.Log(
@@ -254,21 +233,15 @@ namespace API
                 return (new List<ActiveWorldData>(), "");
 
             var activeWorlds = new List<ActiveWorldData>();
-
             logger.Log(
                 $"[Active Worlds] Fetched {worlds.Count} worlds. Checking for active zones...",
                 this,
                 Logging.LogType.Info
             );
 
-            // fetch zones for each world then check for active address
             foreach (var world in worlds)
             {
-                var (ip, port, addressError, _) = await GetZoneAddress(
-                    world.id,
-                    1, // Assume 1 or first zone for starting request
-                    accessToken
-                );
+                var (ip, port, addressError, _) = await GetZoneAddress(world.id, 1);
                 if (!string.IsNullOrEmpty(addressError))
                 {
                     logger.Log(
@@ -291,24 +264,23 @@ namespace API
                     }
                 );
             }
+
             logger.Log(
                 $"[Active Worlds] Found {activeWorlds.Count} active worlds.",
                 this,
                 Logging.LogType.Info
             );
-
             return (activeWorlds, "");
         }
 
-        public async Task<(string error, long statusCode)> DeleteWorld(
-            string worldId,
-            string accessToken
-        )
+        public async Task<(string error, long statusCode)> DeleteWorld(string worldId)
         {
+            await session.EnsureValidSession();
+
             var (responseText, result, statusCode) = await SendRequestAsync(
                 $"{BaseUrl}/{worldId}",
                 "DELETE",
-                accessToken,
+                session.AccessToken,
                 null,
                 "DeleteWorld"
             );
