@@ -8,10 +8,8 @@ namespace FTRShared.Runtime.Models
     {
         Heal,
         Damage,
-        Buff,
+        Speed,
         Debuff,
-        RestoreMana,
-        DrainMana,
         None,
     }
 
