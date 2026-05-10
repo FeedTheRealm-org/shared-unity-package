@@ -86,7 +86,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7635826562936255635, guid: 6f06a0899edbde9feab5770d904ff8ac, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 5c00f53a4d64f0141b884dbe1a22065d, type: 2}
     - target: {fileID: 919132149155446097, guid: 6f06a0899edbde9feab5770d904ff8ac, type: 3}
       propertyPath: m_Name
@@ -126,7 +126,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8589238423526468862}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
