@@ -161,7 +161,6 @@ namespace API
             logger.Log($"[ModelService] Downloading model: {fileName} from {downloadUrl}", this);
 
             UnityWebRequest uwr = UnityWebRequest.Get(downloadUrl);
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
             uwr.downloadHandler = new DownloadHandlerFile(tempPath);
             await uwr.SendWebRequest();
 

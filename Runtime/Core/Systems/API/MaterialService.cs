@@ -202,7 +202,6 @@ namespace API
 
             var uwr = UnityWebRequest.Get(downloadUrl);
             await session.EnsureValidSession();
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
             uwr.downloadHandler = new DownloadHandlerFile(tempPath);
 
             await uwr.SendWebRequest();
