@@ -1,13 +1,13 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Packages/com.feed_the_realm.shared/Runtime/UI/AuthMenu/Themes/AuthForm.uss?fileID=7433441132597879392&amp;guid=c25ac5f0ef9fbfd46bdd96a557e53334&amp;type=3#AuthForm"/>
-    <ui:VisualElement name="VerifyCodeContainer" class="AuthContainer" style="transition-property: all; transition-duration: 0s; transition-timing-function: ease; transition-delay: 0s; background-image: none; background-color: rgba(81, 111, 144, 0); -unity-background-image-tint-color: rgba(255, 167, 166, 0);">
-        <ui:VisualElement name="FormVerifyCode" class="formBox" style="flex-direction: column;">
+    <ui:VisualElement name="VerifyCodeContainer" class="AuthContainer">
+        <ui:VisualElement name="FormVerifyCode" class="formBox">
+            <ui:Label text="Verify Code" name="FormTitle" class="AuthFormTitle"/>
             <ui:TextField label="Code" placeholder-text="Enter your code" name="CodeField" class="AuthPasswordField"/>
-            <ui:Label text="Verify code" name="FormTitle" class="AuthFormTitle"/>
-            <ui:Label name="MessageError" class="AuthChangeButton AuthMessageError"/>
-            <ui:Label text="Go back to Login" name="LoginBackButton" class="AuthChangeButton"/>
+            <ui:Label name="MessageError" class="AuthMessageError"/>
+            <ui:Button text="Verify Code" name="VerifyCodeButton" class="AuthFormButton"/>
             <ui:Label text="Refresh code" name="RefreshCodeButton" class="AuthChangeButton"/>
-            <ui:Button text="Verify code" name="VerifyCodeButton" class="AuthFormButton"/>
+            <ui:Label text="Go back to Login" name="LoginBackButton" class="AuthChangeButton"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
