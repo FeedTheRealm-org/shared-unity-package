@@ -121,7 +121,8 @@ namespace API
         public async Task<(int amount, List<WorldMetadata> worlds, string error)> GetWorldPage(
             int offset,
             int limit,
-            string filter
+            string filter,
+            bool getOwnWorlds = false
         )
         {
             await session.EnsureValidSession();
@@ -129,6 +130,9 @@ namespace API
             var url = $"{BaseUrl}?limit={limit}&offset={offset}";
             if (!string.IsNullOrWhiteSpace(filter))
                 url += $"&filter={UnityWebRequest.EscapeURL(filter.Trim())}";
+
+            if (getOwnWorlds)
+                url += $"&user_id={UnityWebRequest.EscapeURL(session.UserID)}";
 
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
