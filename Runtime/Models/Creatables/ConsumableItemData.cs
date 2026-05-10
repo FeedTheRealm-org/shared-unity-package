@@ -9,7 +9,6 @@ namespace FTRShared.Runtime.Models
         Heal,
         Damage,
         Speed,
-        Debuff,
         None,
     }
 

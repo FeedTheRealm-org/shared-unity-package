@@ -26,18 +26,12 @@ namespace Session
         [SerializeField]
         private API.AuthService authService;
 
-        [SerializeField]
-        public string AccessToken = "";
-
-        [SerializeField]
-        public string RefreshToken = "";
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
         public bool IsFirstLogin { get; set; } = false;
+        public string UserID { get; set; } = "";
 
-        [SerializeField]
-        public string UserID = "";
-
-        [SerializeField]
-        public string Email = "";
+        public string Email { get; set; } = "";
 
         public string Password { get; set; } = "";
         public string CharacterName { get; set; } = "";
