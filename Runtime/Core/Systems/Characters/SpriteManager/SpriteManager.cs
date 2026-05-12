@@ -52,12 +52,12 @@ public class SpriteManager : MonoBehaviour
         this.nameController = nameController;
         this.isLocalPlayer = isLocalPlayer;
 
+        isInitialized = true;
+
         if (characterIdSource != null && string.IsNullOrEmpty(characterIdSource.CharacterId))
             characterIdSource.OnCharacterIdChanged += InitForCharacterId;
         else
             InitForCharacterId(characterIdSource.CharacterId);
-
-        isInitialized = true;
     }
 
     public void ChangeSprite(CharacterPartCategory part, Texture2D texture)
@@ -118,6 +118,30 @@ public class SpriteManager : MonoBehaviour
                 logger?.Log($"No handler for: {part}", this, Logging.LogType.Warning);
                 break;
         }
+    }
+
+    public void ChangeSkinColor(Color color)
+    {
+        if (!isInitialized)
+            return;
+
+        spriteLoader.ChangeSkinColor(color);
+    }
+
+    public void ChangeHairColor(Color color)
+    {
+        if (!isInitialized)
+            return;
+
+        spriteLoader.ChangeHairColor(color);
+    }
+
+    public void ChangeEyesColor(Color color)
+    {
+        if (!isInitialized)
+            return;
+
+        spriteLoader.ChangeEyesColor(color);
     }
 
     public CharacterPartCategory GetPartCategoryFromCategoryName(string categoryName)
@@ -204,5 +228,20 @@ public class SpriteManager : MonoBehaviour
             var category = GetPartCategoryFromCategoryName(name);
             ChangeSprite(category, texture);
         }
+
+        if (characterInfo.skin_color != null)
+            ChangeSkinColor(ToColor(characterInfo.skin_color));
+        if (characterInfo.hair_color != null)
+            ChangeHairColor(ToColor(characterInfo.hair_color));
+        if (characterInfo.eye_color != null)
+            ChangeEyesColor(ToColor(characterInfo.eye_color));
+    }
+
+    private static Color ToColor(API.CharacterColorHsv hsv)
+    {
+        var h = Mathf.Repeat(hsv.h, 360f) / 360f;
+        var s = Mathf.Clamp01(hsv.s / 100f);
+        var v = Mathf.Clamp01(hsv.v / 100f);
+        return Color.HSVToRGB(h, s, v);
     }
 }

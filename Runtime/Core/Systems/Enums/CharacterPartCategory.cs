@@ -12,6 +12,16 @@ public enum CharacterPartCategory
     Eyes,
     Mouth,
 
+    // Skin
+    HeadSkin,
+    BodySkin,
+    ArmSkinR,
+    ArmSkinL,
+    HandSkinR,
+    HandSkinL,
+    LegSkinR,
+    LegSkinL,
+
     // Equipment
     ArmorBody,
     ArmorHelmet,
