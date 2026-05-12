@@ -96,6 +96,7 @@ public partial class CharacterEditController
 
         characterInfoRequest.character_name = nameValue;
         characterInfoRequest.character_bio = bioValue ?? string.Empty;
+        EnsureCharacterColorFields();
 
         if (characterInfoRepository != null)
         {
@@ -111,6 +112,14 @@ public partial class CharacterEditController
     /// </summary>
     private async void OnCategoryButtonClicked(Button btn)
     {
+        // Handle color category button (hardcoded in UXML, not from server)
+        if (btn.name == ColorCategoryName)
+        {
+            logger.Log($"Color category button clicked: {btn.name}", this);
+            await onCategoryClicked("COLOR_TAB", ColorCategoryName);
+            return;
+        }
+
         var cat = _categories.First(c => c.category_name == btn.name);
         await onCategoryClicked(cat.category_id, cat.category_name);
     }
@@ -124,6 +133,15 @@ public partial class CharacterEditController
         if (categoryId == _selectedCategoryId)
         {
             UpdateCategorySelectionVisual();
+            UpdateColorControlsVisibility();
+
+            if (IsColorCategorySelected())
+            {
+                ClearItems();
+                UpdatePaginationControls(0, 0);
+                return;
+            }
+
             if (_itemsList.contentContainer.childCount <= 1)
             {
                 await fetchSpritesByCategory(categoryId);
@@ -134,6 +152,15 @@ public partial class CharacterEditController
         _selectedCategoryId = categoryId;
         _selectedCategoryName = categoryName;
         UpdateCategorySelectionVisual();
+        UpdateColorControlsVisibility();
+
+        if (IsColorCategorySelected())
+        {
+            ClearItems();
+            UpdatePaginationControls(0, 0);
+            return;
+        }
+
         _currentCosmeticsOffset = 0;
         _currentCosmeticsTotalCount = 0;
         _hasNextCosmeticsPage = false;
@@ -197,6 +224,7 @@ public partial class CharacterEditController
                 );
             }
 
+            applyCharacterColorsFromResponse(characterInfo);
             CaptureInitialSpriteSnapshot();
 
             if (session != null)
@@ -263,6 +291,7 @@ public partial class CharacterEditController
                 );
             }
 
+            applyCharacterColorsFromResponse(characterInfo);
             CaptureInitialSpriteSnapshot();
         }
         else
@@ -280,7 +309,10 @@ public partial class CharacterEditController
         _previewSpriteByPart.Clear();
 
         if (characterInfoRequest?.category_sprites == null)
+        {
+            ApplyAllCharacterColors();
             return;
+        }
 
         foreach (var kvp in characterInfoRequest.category_sprites)
         {
@@ -339,6 +371,8 @@ public partial class CharacterEditController
                 TrackPreviewSelection(part, spriteId);
             }
         }
+
+        ApplyAllCharacterColors();
     }
 
     /// <summary>
@@ -418,6 +452,13 @@ public partial class CharacterEditController
             System.Action action = () => OnCategoryButtonClicked(btn);
             btn.clicked += action;
             categoryButtonActions[btn] = action;
+        }
+        var colorBtn = _categoriesList.Q<Button>(ColorCategoryName);
+        if (colorBtn != null)
+        {
+            System.Action colorAction = () => OnCategoryButtonClicked(colorBtn);
+            colorBtn.clicked += colorAction;
+            categoryButtonActions[colorBtn] = colorAction;
         }
         logger?.Log("Categories successfully populated", this);
         await onCategoryClicked(
@@ -726,6 +767,7 @@ public partial class CharacterEditController
                 );
             }
 
+            applyCharacterColorsFromResponse(characterInfo);
             CaptureInitialSpriteSnapshot();
 
             if (session != null)
@@ -760,6 +802,7 @@ public partial class CharacterEditController
                 ? new Dictionary<string, string>(data.category_sprites)
                 : new Dictionary<string, string>();
 
+        applyCharacterColorsFromResponse(data);
         CaptureInitialSpriteSnapshot();
     }
 
@@ -769,6 +812,7 @@ public partial class CharacterEditController
             characterInfoRequest.category_sprites != null
                 ? new Dictionary<string, string>(characterInfoRequest.category_sprites)
                 : new Dictionary<string, string>();
+        captureInitialColorSnapshot();
     }
 
     private static readonly CharacterPartCategory[] ResettableCharacterParts =
@@ -803,6 +847,7 @@ public partial class CharacterEditController
         characterInfoRequest.category_sprites = new Dictionary<string, string>(
             initialCategorySprites
         );
+        resetColorsToInitialState();
         _previewSpriteByPart.Clear();
         await ApplyCurrentCharacterSprites();
 

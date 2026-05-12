@@ -115,6 +115,30 @@ public class SpriteLoader : MonoBehaviour
         ChangeTexture(texture, director.BuildRangedBowEquipmentSpriteConfig());
     }
 
+    public void ChangeSkinColor(Color color)
+    {
+        SetPartColor(CharacterPartCategory.HeadSkin, color);
+        SetPartColor(CharacterPartCategory.BodySkin, color);
+        SetPartColor(CharacterPartCategory.ArmSkinR, color);
+        SetPartColor(CharacterPartCategory.ArmSkinL, color);
+        SetPartColor(CharacterPartCategory.HandSkinR, color);
+        SetPartColor(CharacterPartCategory.HandSkinL, color);
+        SetPartColor(CharacterPartCategory.LegSkinR, color);
+        SetPartColor(CharacterPartCategory.LegSkinL, color);
+    }
+
+    public void ChangeHairColor(Color color)
+    {
+        SetPartColor(CharacterPartCategory.Hair, color);
+        SetPartColor(CharacterPartCategory.Beard, color);
+        SetPartColor(CharacterPartCategory.EyeBrows, color);
+    }
+
+    public void ChangeEyesColor(Color color)
+    {
+        SetPartColor(CharacterPartCategory.Eyes, color);
+    }
+
     /* --- CORE SPRITE CHANGE LOGIC --- */
 
     /// <summary>
@@ -179,6 +203,21 @@ public class SpriteLoader : MonoBehaviour
         spriteRenderer.enabled = (newSprite != null);
     }
 
+    private void SetPartColor(CharacterPartCategory part, Color color)
+    {
+        foreach (var partsByDirection in _cachedPartsPerDirections.Values)
+        {
+            if (!partsByDirection.TryGetValue(part, out var partTransform) || partTransform == null)
+                continue;
+
+            var renderer = partTransform.GetComponent<SpriteRenderer>();
+            if (renderer != null)
+            {
+                renderer.color = color;
+            }
+        }
+    }
+
     /* --- INITIALIZATION UTILS --- */
 
     private void CachePartTransforms()
@@ -204,6 +243,15 @@ public class SpriteLoader : MonoBehaviour
         cachedParts[CharacterPartCategory.EyeBrows] = f(dirTransform, "Eyesbrows");
         cachedParts[CharacterPartCategory.Eyes] = f(dirTransform, "Eyes");
         cachedParts[CharacterPartCategory.Mouth] = f(dirTransform, "Mouth");
+
+        cachedParts[CharacterPartCategory.HeadSkin] = f(dirTransform, "Head");
+        cachedParts[CharacterPartCategory.BodySkin] = f(dirTransform, "Body");
+        cachedParts[CharacterPartCategory.ArmSkinR] = f(dirTransform, "ArmR");
+        cachedParts[CharacterPartCategory.ArmSkinL] = f(dirTransform, "ArmL");
+        cachedParts[CharacterPartCategory.HandSkinR] = f(dirTransform, "HandR");
+        cachedParts[CharacterPartCategory.HandSkinL] = f(dirTransform, "HandL");
+        cachedParts[CharacterPartCategory.LegSkinR] = f(dirTransform, "LegR");
+        cachedParts[CharacterPartCategory.LegSkinL] = f(dirTransform, "LegL");
 
         cachedParts[CharacterPartCategory.ArmorBody] = dirTransform
             .Find("UpperBody")

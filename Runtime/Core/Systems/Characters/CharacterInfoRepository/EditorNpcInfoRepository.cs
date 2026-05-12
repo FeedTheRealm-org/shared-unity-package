@@ -33,6 +33,9 @@ public class EditorNpcInfoRepository : CharacterInfoRepository
         {
             character_name = data.character_name,
             character_bio = data.character_bio,
+            skin_color = data.skin_color,
+            hair_color = data.hair_color,
+            eye_color = data.eye_color,
             category_sprites = new Dictionary<string, string>(data.category_sprites),
         };
     }

@@ -191,6 +191,7 @@ public partial class CharacterEditController : MonoBehaviour
         _nextPageButton = _cosmeticsContainer.Q<Button>("NextPage");
         _pageInfoLabel = _cosmeticsContainer.Q<Label>("PageInfo");
 
+        initializeColorControls();
         _errorMessage.style.display = DisplayStyle.None;
 
         _emptyItemButton = _itemsList.Q<Button>("Empty");
@@ -249,6 +250,7 @@ public partial class CharacterEditController : MonoBehaviour
 
         if (characterInfoRequest.category_sprites == null)
             characterInfoRequest.category_sprites = new Dictionary<string, string>();
+        EnsureCharacterColorFields();
 
         _currentCosmeticsOffset = 0;
         _currentCosmeticsTotalCount = 0;
@@ -293,6 +295,9 @@ public partial class CharacterEditController : MonoBehaviour
 
         characterInfoRequest.character_name = safeCharacterInfo.character_name ?? string.Empty;
         characterInfoRequest.character_bio = safeCharacterInfo.character_bio ?? string.Empty;
+        characterInfoRequest.skin_color = CloneColorOrDefault(safeCharacterInfo.skin_color);
+        characterInfoRequest.hair_color = CloneColorOrDefault(safeCharacterInfo.hair_color);
+        characterInfoRequest.eye_color = CloneColorOrDefault(safeCharacterInfo.eye_color);
         characterInfoRequest.category_sprites =
             safeCharacterInfo.category_sprites != null
                 ? new Dictionary<string, string>(safeCharacterInfo.category_sprites)
@@ -300,6 +305,7 @@ public partial class CharacterEditController : MonoBehaviour
         initialCategorySprites = new Dictionary<string, string>(
             characterInfoRequest.category_sprites
         );
+        captureInitialColorSnapshot();
 
         if (_nameInput != null)
         {
@@ -312,8 +318,10 @@ public partial class CharacterEditController : MonoBehaviour
         }
 
         applyEditorModePresentation();
+        RefreshColorControlsFromRequest();
 
         spriteManager.Initialize(spriteLoader, characterInfoRepository, activeCharacterIdSource);
+        ApplyAllCharacterColors();
         _ = ApplyCurrentCharacterSprites();
     }
 
@@ -430,6 +438,7 @@ public partial class CharacterEditController : MonoBehaviour
             _saveButton.clicked += _onSaveClickedAction;
             _prevPageButton.clicked += _onPrevPageClickedAction;
             _nextPageButton.clicked += _onNextPageClickedAction;
+            registerColorControlCallbacks(true);
             _root.RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
         }
         else
@@ -441,6 +450,7 @@ public partial class CharacterEditController : MonoBehaviour
             _saveButton.clicked -= _onSaveClickedAction;
             _prevPageButton.clicked -= _onPrevPageClickedAction;
             _nextPageButton.clicked -= _onNextPageClickedAction;
+            registerColorControlCallbacks(false);
             _root.UnregisterCallback<GeometryChangedEvent>(OnGeometryChanged);
         }
     }
