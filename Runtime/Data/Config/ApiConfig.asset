@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0152e4cd065109215ae7d245d975f24d, type: 3}
   m_Name: ApiConfig
   m_EditorClassIdentifier: FeedTheRealm_Shared::ApiConfig
-  _environment: 1
+  _environment: 0
   _localHostname: http://localhost
   _localPort: 8000
   _localWorldsCDN: http://localhost:8081/worlds
