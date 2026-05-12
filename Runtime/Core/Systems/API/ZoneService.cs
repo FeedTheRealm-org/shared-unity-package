@@ -12,9 +12,6 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        [SerializeField]
-        private Session.Session session;
-
         private string BaseUrl(string worldId) =>
             $"{apiConfig.Hostname}:{apiConfig.Port}/world/{worldId}/zones";
 
@@ -23,8 +20,6 @@ namespace API
             ZoneData data
         )
         {
-            await session.EnsureValidSession();
-
             try
             {
                 string json = JsonUtility.ToJson(
@@ -65,8 +60,6 @@ namespace API
             string worldId
         )
         {
-            await session.EnsureValidSession();
-
             var (responseText, result, statusCode) = await SendRequestAsync(
                 BaseUrl(worldId),
                 "GET",
@@ -88,8 +81,6 @@ namespace API
             int zoneId
         )
         {
-            await session.EnsureValidSession();
-
             string url = $"{BaseUrl(worldId)}/{zoneId}";
             Debug.Log($"[ZoneService] Getting zone data from URL: {url}");
             var (responseText, result, statusCode) = await SendRequestAsync(
@@ -114,7 +105,6 @@ namespace API
 
         public async Task<(string error, long statusCode)> ActivateZone(string worldId, int zoneId)
         {
-            await session.EnsureValidSession();
             var (responseText, result, statusCode) = await SendRequestAsync(
                 $"{BaseUrl(worldId)}/{zoneId}/activate",
                 "GET",
@@ -132,7 +122,6 @@ namespace API
             int zoneId
         )
         {
-            await session.EnsureValidSession();
             var (responseText, result, statusCode) = await SendRequestAsync(
                 $"{BaseUrl(worldId)}/{zoneId}/deactivate",
                 "GET",

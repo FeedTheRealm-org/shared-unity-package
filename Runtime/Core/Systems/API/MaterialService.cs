@@ -17,17 +17,14 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        [Header("Session settings")]
-        [SerializeField]
-        private Session.Session session;
-
         private string GetMaterialsUrl() =>
             $"{apiConfig.Hostname}:{apiConfig.Port}/assets/materials";
 
         public async Task<MaterialResponse[]> GetMaterialsListAsync(
             string worldId = null,
             int offset = 0,
-            int limit = 200
+            int limit = 200,
+            bool isRetry = false
         )
         {
             var safeOffset = Mathf.Max(0, offset);
@@ -38,11 +35,18 @@ namespace API
                 url += $"&world_id={worldId}";
 
             var uwr = new UnityWebRequest(url, "GET");
-            await session.EnsureValidSession();
             uwr.downloadHandler = new DownloadHandlerBuffer();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await GetMaterialsListAsync(worldId, offset, limit, isRetry: true);
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
@@ -65,7 +69,10 @@ namespace API
             return response?.data ?? Array.Empty<MaterialResponse>();
         }
 
-        public async Task<MaterialResponse> GetMaterialByIdAsync(string materialId)
+        public async Task<MaterialResponse> GetMaterialByIdAsync(
+            string materialId,
+            bool isRetry = false
+        )
         {
             if (string.IsNullOrWhiteSpace(materialId))
             {
@@ -79,11 +86,18 @@ namespace API
 
             var url = $"{GetMaterialsUrl()}/{materialId}";
             var uwr = new UnityWebRequest(url, "GET");
-            await session.EnsureValidSession();
             uwr.downloadHandler = new DownloadHandlerBuffer();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await GetMaterialByIdAsync(materialId, isRetry: true);
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
@@ -111,7 +125,8 @@ namespace API
             string worldId,
             string[] ids,
             string[] names,
-            string[] filePaths
+            string[] filePaths,
+            bool isRetry = false
         )
         {
             if (string.IsNullOrWhiteSpace(worldId))
@@ -157,11 +172,18 @@ namespace API
 
             var uwr = UnityWebRequest.Post(url, formData);
             uwr.method = "PUT";
-            await session.EnsureValidSession();
             uwr.downloadHandler = new DownloadHandlerBuffer();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await UploadMaterialsAsync(worldId, ids, names, filePaths, isRetry: true);
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
             logger.Log(
@@ -188,7 +210,8 @@ namespace API
 
         public async Task<string> DownloadMaterialAsync(
             MaterialResponse material,
-            string displayName = null
+            string displayName = null,
+            bool isRetry = false
         )
         {
             string fileName = Path.GetFileName(material.url);
@@ -201,10 +224,17 @@ namespace API
             );
 
             var uwr = UnityWebRequest.Get(downloadUrl);
-            await session.EnsureValidSession();
             uwr.downloadHandler = new DownloadHandlerFile(tempPath);
 
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await DownloadMaterialAsync(material, displayName, isRetry: true);
+            }
 
             if (uwr.result != UnityWebRequest.Result.Success)
             {

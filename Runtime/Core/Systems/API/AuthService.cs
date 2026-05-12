@@ -10,9 +10,6 @@ namespace API
     [CreateAssetMenu(fileName = "AuthService", menuName = "Scriptable Objects/API/AuthService")]
     public class AuthService : BaseApiService
     {
-        [SerializeField]
-        private Session.Session session;
-
         [Header("API Config")]
         [SerializeField]
         private ApiConfig apiConfig;

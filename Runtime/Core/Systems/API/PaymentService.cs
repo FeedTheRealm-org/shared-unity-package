@@ -15,9 +15,6 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        [SerializeField]
-        private Session.Session session;
-
         private string GetPaymentBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/payments";
 
         private string GetGemsBaseUrl() => $"{GetPaymentBaseUrl()}/gems";
@@ -28,7 +25,6 @@ namespace API
             List<GemPackResponse> packs
         )> GetAllGemPacks()
         {
-            await session.EnsureValidSession();
             string url = $"{GetGemsBaseUrl()}/packs";
             (string responseText, UnityWebRequest.Result result, long statusCode) =
                 await SendRequestAsync(url, "GET", session.AccessToken, null, "GetAllGemPacks");
@@ -87,8 +83,6 @@ namespace API
             GemBalanceResponse balance
         )> GetGemBalance()
         {
-            await session.EnsureValidSession();
-
             string url = $"{GetGemsBaseUrl()}/balances";
             (string responseText, UnityWebRequest.Result result, long statusCode) =
                 await SendRequestAsync(url, "GET", session.AccessToken, null, "GetGemBalance");
@@ -147,8 +141,6 @@ namespace API
             CheckoutResponse checkout
         )> CreateCheckoutSession(string gemPackId, string successUrl, string cancelUrl)
         {
-            await session.EnsureValidSession();
-
             string url = $"{GetPaymentBaseUrl()}/checkout";
             string json = JsonUtility.ToJson(
                 new CheckoutRequest
@@ -228,8 +220,6 @@ namespace API
             GemBalanceResponse updatedBalance
         )> PurchaseWithGems(string productId)
         {
-            await session.EnsureValidSession();
-
             string url = $"{GetGemsBaseUrl()}/balances/purchase/{productId}";
             (string responseText, UnityWebRequest.Result result, long statusCode) =
                 await SendRequestAsync(url, "POST", session.AccessToken, null, "PurchaseWithGems");
@@ -298,8 +288,6 @@ namespace API
             long statusCode
         )> GetCreatorBalance()
         {
-            await session.EnsureValidSession();
-
             using var request = UnityWebRequest.Get($"{GetPaymentBaseUrl()}/balances/creators");
             request.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
             request.SetRequestHeader("Content-Type", "application/json");

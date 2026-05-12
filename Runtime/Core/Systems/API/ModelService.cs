@@ -14,17 +14,12 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        [SerializeField]
-        private Session.Session session;
-
         private const string DefaultModelsWorldId = "00000000-0000-0000-0000-000000000000";
 
         private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}";
 
         public async Task<Dictionary<string, ModelInfo>> ListWorldModels(string worldId)
         {
-            await session.EnsureValidSession();
-
             string url = $"{GetBaseUrl()}/assets/models/world/{worldId}";
             var (responseText, result, statusCode) = await SendRequestAsync(
                 url,
@@ -73,8 +68,6 @@ namespace API
 
         public async Task<string> UploadModels(List<ModelRequest> structureModels, string worldId)
         {
-            await session.EnsureValidSession();
-
             if (structureModels == null || structureModels.Count == 0)
             {
                 logger.Log("No assets to upload.", this, Logging.LogType.Warning);
@@ -91,7 +84,11 @@ namespace API
             return string.Empty;
         }
 
-        private async Task<string> UploadModel(ModelRequest structure, string worldId)
+        private async Task<string> UploadModel(
+            ModelRequest structure,
+            string worldId,
+            bool isRetry = false
+        )
         {
             var url = $"{GetBaseUrl()}/assets/models/world/{worldId}";
 
@@ -122,9 +119,16 @@ namespace API
             UnityWebRequest uwr = UnityWebRequest.Post(url, form);
             uwr.method = "PUT";
 
-            await session.EnsureValidSession();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                bool result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await UploadModel(structure, worldId, isRetry: true);
+            }
 
             logger.Log(
                 $"[ModelService] Response code: {uwr.responseCode} | id={structure.id}",
@@ -149,10 +153,8 @@ namespace API
             return uwr.error;
         }
 
-        public async Task<string> DownloadModel(ModelInfo modelInfo)
+        public async Task<string> DownloadModel(ModelInfo modelInfo, bool isRetry = false)
         {
-            await session.EnsureValidSession();
-
             string fileName = Path.GetFileName(modelInfo.url);
             string downloadUrl = $"{apiConfig.WorldsCDN}{modelInfo.url}";
 
@@ -163,6 +165,14 @@ namespace API
             UnityWebRequest uwr = UnityWebRequest.Get(downloadUrl);
             uwr.downloadHandler = new DownloadHandlerFile(tempPath);
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                bool result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await DownloadModel(modelInfo, isRetry: true);
+            }
 
             if (uwr.result != UnityWebRequest.Result.Success)
             {

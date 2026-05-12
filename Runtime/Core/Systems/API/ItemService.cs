@@ -13,9 +13,6 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        [SerializeField]
-        private Session.Session session;
-
         private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/assets/items";
 
         /// <summary>
@@ -25,11 +22,10 @@ namespace API
         public async Task<string> UploadItemsByCategory(
             List<(string, string)> sprites,
             string worldId,
-            string categoryId
+            string categoryId,
+            bool isRetry = false
         )
         {
-            await session.EnsureValidSession();
-
             if (sprites == null || sprites.Count == 0)
             {
                 logger.Log("No assets to upload.", this, Logging.LogType.Warning);
@@ -86,6 +82,14 @@ namespace API
             uwr.method = "PUT";
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await UploadItemsByCategory(sprites, worldId, categoryId, isRetry: true);
+            }
 
             if (uwr.result == UnityWebRequest.Result.Success)
             {

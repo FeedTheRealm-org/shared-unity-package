@@ -10,19 +10,11 @@ namespace API
     /// Service to manage player character information.
     /// </summary>
     [CreateAssetMenu(fileName = "PlayerService", menuName = "Scriptable Objects/API/PlayerService")]
-    public class PlayerService : ScriptableObject
+    public class PlayerService : BaseApiService
     {
         [Header("API Config")]
         [SerializeField]
         private ApiConfig apiConfig;
-
-        [Header("Session settings")]
-        [SerializeField]
-        private Session.Session session;
-
-        [Header("General settings")]
-        [SerializeField]
-        private Logging.Logger logger;
 
         private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/player/character";
 
@@ -37,7 +29,8 @@ namespace API
         /// </summary>
         public IEnumerator PatchCharacterInfo(
             PatchCharacterInfoRequest payload,
-            System.Action<CharacterInfoResponse, string> handler
+            System.Action<CharacterInfoResponse, string> handler,
+            bool isRetry = false
         )
         {
             var url = GetBaseUrl();
@@ -49,12 +42,17 @@ namespace API
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
             uwr.SetRequestHeader("Content-Type", "application/json");
-
-            var ensureTask = session.EnsureValidSession();
-            yield return new WaitUntil(() => ensureTask.IsCompleted);
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             yield return uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                yield return session.EnsureValidSession();
+                if (string.IsNullOrWhiteSpace(session.AccessToken))
+                    handler?.Invoke(null, "Unauthorized and failed to refresh session.");
+                yield return PatchCharacterInfo(payload, handler, isRetry: true);
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
@@ -89,18 +87,24 @@ namespace API
         /// </summary>
         public IEnumerator GetCharacterInfo(
             System.Action<CharacterInfoResponse, string> handler,
-            string UserID = null
+            string UserID = null,
+            bool isRetry = false
         )
         {
             var url = $"{GetBaseUrl()}/{(UserID ?? session.UserID)}";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
-
-            var ensureTask = session.EnsureValidSession();
-            yield return new WaitUntil(() => ensureTask.IsCompleted);
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             yield return uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                yield return session.EnsureValidSession();
+                if (string.IsNullOrWhiteSpace(session.AccessToken))
+                    handler?.Invoke(null, "Unauthorized and failed to refresh session.");
+                yield return GetCharacterInfo(handler, UserID, isRetry: true);
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
@@ -133,16 +137,25 @@ namespace API
         /// Retrieve the character information such as name and bio for a given user asynchronously.
         /// If no userID is provided it retrieves the currently logged in userID.
         /// </summary>
-        public async Task<CharacterInfoResponse> GetCharacterInfoAsync(string UserID = null)
+        public async Task<CharacterInfoResponse> GetCharacterInfoAsync(
+            string UserID = null,
+            bool isRetry = false
+        )
         {
             var url = $"{GetBaseUrl()}/{(UserID ?? session.UserID)}";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
-
-            await session.EnsureValidSession();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await GetCharacterInfoAsync(UserID, isRetry: true);
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
@@ -175,7 +188,8 @@ namespace API
         /// Update the character information such as name and bio asynchronously.
         /// </summary>
         public async Task<CharacterInfoResponse> PatchCharacterInfoAsync(
-            PatchCharacterInfoRequest payload
+            PatchCharacterInfoRequest payload,
+            bool isRetry = false
         )
         {
             var url = GetBaseUrl();
@@ -187,11 +201,17 @@ namespace API
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
             uwr.SetRequestHeader("Content-Type", "application/json");
-
-            await session.EnsureValidSession();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await PatchCharacterInfoAsync(payload, isRetry: true);
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
@@ -223,7 +243,10 @@ namespace API
         /// <summary>
         /// Issues a short-lived one-time token used by the game server to resolve and set the real user ID.
         /// </summary>
-        public async Task<WorldJoinTokenResponse> IssueWorldJoinTokenAsync(string worldId)
+        public async Task<WorldJoinTokenResponse> IssueWorldJoinTokenAsync(
+            string worldId,
+            bool isRetry = false
+        )
         {
             if (string.IsNullOrWhiteSpace(worldId))
             {
@@ -245,11 +268,17 @@ namespace API
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
             uwr.SetRequestHeader("Content-Type", "application/json");
-
-            await session.EnsureValidSession();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await IssueWorldJoinTokenAsync(worldId, isRetry: true);
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
 
@@ -282,7 +311,8 @@ namespace API
         /// </summary>
         public async Task<ConsumeWorldJoinTokenResponse> ConsumeWorldJoinTokenAsync(
             string tokenId,
-            string authorizationToken = null
+            string authorizationToken = null,
+            bool isRetry = false
         )
         {
             if (string.IsNullOrWhiteSpace(tokenId))
@@ -306,7 +336,14 @@ namespace API
 
             uwr.SetRequestHeader("Content-Type", "application/json");
 
-            await session.EnsureValidSession();
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await ConsumeWorldJoinTokenAsync(tokenId, authorizationToken, isRetry: true);
+            }
+
             var bearerToken = !string.IsNullOrWhiteSpace(authorizationToken)
                 ? authorizationToken
                 : session?.AccessToken;
