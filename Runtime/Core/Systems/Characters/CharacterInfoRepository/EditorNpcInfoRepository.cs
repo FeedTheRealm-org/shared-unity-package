@@ -7,11 +7,11 @@ using VContainer;
 public class EditorNpcInfoRepository : CharacterInfoRepository
 {
     private API.CharacterInfoResponse defaultData;
-    private Action<Dictionary<string, string>> onDataChanged;
+    private Action<API.CharacterInfoResponse> onDataChanged;
 
     public EditorNpcInfoRepository(
         API.CharacterInfoResponse defaultData,
-        Action<Dictionary<string, string>> onDataChanged
+        Action<API.CharacterInfoResponse> onDataChanged
     )
     {
         this.defaultData = defaultData;
@@ -28,8 +28,7 @@ public class EditorNpcInfoRepository : CharacterInfoRepository
         API.PatchCharacterInfoRequest data
     )
     {
-        onDataChanged?.Invoke(data.category_sprites);
-        return new API.CharacterInfoResponse
+        var res = new API.CharacterInfoResponse
         {
             character_name = data.character_name,
             character_bio = data.character_bio,
@@ -38,5 +37,8 @@ public class EditorNpcInfoRepository : CharacterInfoRepository
             eye_color = data.eye_color,
             category_sprites = new Dictionary<string, string>(data.category_sprites),
         };
+
+        onDataChanged?.Invoke(res);
+        return res;
     }
 }

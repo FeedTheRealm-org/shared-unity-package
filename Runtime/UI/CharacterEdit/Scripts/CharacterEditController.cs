@@ -275,7 +275,7 @@ public partial class CharacterEditController : MonoBehaviour
 
     public void SetupWithCharacterInfo(
         API.CharacterInfoResponse characterInfo,
-        Action<Dictionary<string, string>> onSaveCallback
+        Action<API.CharacterInfoResponse> onSaveCallback
     )
     {
         var safeCharacterInfo = characterInfo ?? new API.CharacterInfoResponse();
