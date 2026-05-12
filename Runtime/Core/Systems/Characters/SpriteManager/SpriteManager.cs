@@ -230,19 +230,11 @@ public class SpriteManager : MonoBehaviour
         }
 
         if (characterInfo.skin_color != null)
-        {
             ChangeSkinColor(ToColor(characterInfo.skin_color));
-        }
-
         if (characterInfo.hair_color != null)
-        {
             ChangeHairColor(ToColor(characterInfo.hair_color));
-        }
-
         if (characterInfo.eye_color != null)
-        {
             ChangeEyesColor(ToColor(characterInfo.eye_color));
-        }
     }
 
     private static Color ToColor(API.CharacterColorHsv hsv)
