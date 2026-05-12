@@ -222,7 +222,7 @@ public class SpriteLoader : MonoBehaviour
     private void CacheDirection(FacingDirection dir)
     {
         var f = FindChildRecursive;
-        var g = (Transform transform) => transform.GetComponent<SpriteRenderer>();
+        var g = (Transform transform) => transform?.GetComponent<SpriteRenderer>();
 
         var dirTransform = f(transform, dir.ToString());
         if (dirTransform == null)
