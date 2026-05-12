@@ -169,9 +169,68 @@ public partial class CharacterEditController
 
     private void EnsureCharacterColorFields()
     {
-        characterInfoRequest.skin_color = CloneColorOrDefault(characterInfoRequest.skin_color);
-        characterInfoRequest.hair_color = CloneColorOrDefault(characterInfoRequest.hair_color);
-        characterInfoRequest.eye_color = CloneColorOrDefault(characterInfoRequest.eye_color);
+        if (characterInfoRequest.skin_color == null)
+            characterInfoRequest.skin_color = CreateDefaultColor();
+        else
+        {
+            characterInfoRequest.skin_color.h = Mathf.Clamp(
+                characterInfoRequest.skin_color.h,
+                0f,
+                360f
+            );
+            characterInfoRequest.skin_color.s = Mathf.Clamp(
+                characterInfoRequest.skin_color.s,
+                0f,
+                100f
+            );
+            characterInfoRequest.skin_color.v = Mathf.Clamp(
+                characterInfoRequest.skin_color.v,
+                0f,
+                100f
+            );
+        }
+
+        if (characterInfoRequest.hair_color == null)
+            characterInfoRequest.hair_color = CreateDefaultColor();
+        else
+        {
+            characterInfoRequest.hair_color.h = Mathf.Clamp(
+                characterInfoRequest.hair_color.h,
+                0f,
+                360f
+            );
+            characterInfoRequest.hair_color.s = Mathf.Clamp(
+                characterInfoRequest.hair_color.s,
+                0f,
+                100f
+            );
+            characterInfoRequest.hair_color.v = Mathf.Clamp(
+                characterInfoRequest.hair_color.v,
+                0f,
+                100f
+            );
+        }
+
+        if (characterInfoRequest.eye_color == null)
+            characterInfoRequest.eye_color = CreateDefaultColor();
+        else
+        {
+            characterInfoRequest.eye_color.h = Mathf.Clamp(
+                characterInfoRequest.eye_color.h,
+                0f,
+                360f
+            );
+            characterInfoRequest.eye_color.s = Mathf.Clamp(
+                characterInfoRequest.eye_color.s,
+                0f,
+                100f
+            );
+            characterInfoRequest.eye_color.v = Mathf.Clamp(
+                characterInfoRequest.eye_color.v,
+                0f,
+                100f
+            );
+        }
     }
 
     private static Color ToUnityColor(API.CharacterColorHsv color)
