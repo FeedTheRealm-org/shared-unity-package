@@ -9,9 +9,9 @@ public class SpriteLoader : MonoBehaviour
 
     private Dictionary<
         FacingDirection,
-        Dictionary<CharacterPartCategory, Transform>
+        Dictionary<CharacterPartCategory, SpriteRenderer>
     > _cachedPartsPerDirections =
-        new Dictionary<FacingDirection, Dictionary<CharacterPartCategory, Transform>>();
+        new Dictionary<FacingDirection, Dictionary<CharacterPartCategory, SpriteRenderer>>();
 
     private SpriteConfigBuilder builder;
     private SpriteConfigDirector director;
@@ -20,7 +20,7 @@ public class SpriteLoader : MonoBehaviour
     {
         builder = new SpriteConfigBuilder();
         director = new SpriteConfigDirector(builder);
-        CachePartTransforms();
+        CachePartSpriteRenderers();
     }
 
     /* --- PART CHANGE HANDLERS --- */
@@ -184,43 +184,36 @@ public class SpriteLoader : MonoBehaviour
         if (
             !_cachedPartsPerDirections.TryGetValue(
                 direction,
-                out Dictionary<CharacterPartCategory, Transform> partsDict
+                out Dictionary<CharacterPartCategory, SpriteRenderer> partsDict
             )
         )
             return;
 
         if (
-            !partsDict.TryGetValue(pathSegments[0], out Transform currentTransform)
-            || currentTransform == null
+            !partsDict.TryGetValue(pathSegments[0], out SpriteRenderer currentSprite)
+            || currentSprite == null
         )
             return;
 
-        SpriteRenderer spriteRenderer = currentTransform.GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
-            return;
-
-        spriteRenderer.sprite = newSprite;
-        spriteRenderer.enabled = (newSprite != null);
+        currentSprite.sprite = newSprite;
+        currentSprite.enabled = (newSprite != null);
     }
 
     private void SetPartColor(CharacterPartCategory part, Color color)
     {
         foreach (var partsByDirection in _cachedPartsPerDirections.Values)
         {
-            if (!partsByDirection.TryGetValue(part, out var partTransform) || partTransform == null)
+            if (!partsByDirection.TryGetValue(part, out var currentSprite) || currentSprite == null)
                 continue;
 
-            var renderer = partTransform.GetComponent<SpriteRenderer>();
-            if (renderer != null)
-            {
-                renderer.color = color;
-            }
+            if (currentSprite != null)
+                currentSprite.color = color;
         }
     }
 
     /* --- INITIALIZATION UTILS --- */
 
-    private void CachePartTransforms()
+    private void CachePartSpriteRenderers()
     {
         foreach (FacingDirection direction in Enum.GetValues(typeof(FacingDirection)))
             CacheDirection(direction);
@@ -229,6 +222,7 @@ public class SpriteLoader : MonoBehaviour
     private void CacheDirection(FacingDirection dir)
     {
         var f = FindChildRecursive;
+        var g = (Transform transform) => transform.GetComponent<SpriteRenderer>();
 
         var dirTransform = f(transform, dir.ToString());
         if (dirTransform == null)
@@ -237,46 +231,50 @@ public class SpriteLoader : MonoBehaviour
             return;
         }
 
-        var cachedParts = new Dictionary<CharacterPartCategory, Transform>();
-        cachedParts[CharacterPartCategory.Hair] = f(dirTransform, "Hair");
-        cachedParts[CharacterPartCategory.Beard] = f(dirTransform, "Beard");
-        cachedParts[CharacterPartCategory.EyeBrows] = f(dirTransform, "Eyesbrows");
-        cachedParts[CharacterPartCategory.Eyes] = f(dirTransform, "Eyes");
-        cachedParts[CharacterPartCategory.Mouth] = f(dirTransform, "Mouth");
+        var cachedParts = new Dictionary<CharacterPartCategory, SpriteRenderer>();
+        cachedParts[CharacterPartCategory.Hair] = g(f(dirTransform, "Hair"));
+        cachedParts[CharacterPartCategory.Beard] = g(f(dirTransform, "Beard"));
+        cachedParts[CharacterPartCategory.EyeBrows] = g(f(dirTransform, "Eyesbrows"));
+        cachedParts[CharacterPartCategory.Eyes] = g(f(dirTransform, "Eyes"));
+        cachedParts[CharacterPartCategory.Mouth] = g(f(dirTransform, "Mouth"));
 
-        cachedParts[CharacterPartCategory.HeadSkin] = f(dirTransform, "Head");
-        cachedParts[CharacterPartCategory.BodySkin] = f(dirTransform, "Body");
-        cachedParts[CharacterPartCategory.ArmSkinR] = f(dirTransform, "ArmR");
-        cachedParts[CharacterPartCategory.ArmSkinL] = f(dirTransform, "ArmL");
-        cachedParts[CharacterPartCategory.HandSkinR] = f(dirTransform, "HandR");
-        cachedParts[CharacterPartCategory.HandSkinL] = f(dirTransform, "HandL");
-        cachedParts[CharacterPartCategory.LegSkinR] = f(dirTransform, "LegR");
-        cachedParts[CharacterPartCategory.LegSkinL] = f(dirTransform, "LegL");
+        cachedParts[CharacterPartCategory.HeadSkin] = g(f(dirTransform, "Head"));
+        cachedParts[CharacterPartCategory.BodySkin] = g(f(dirTransform, "Body"));
+        cachedParts[CharacterPartCategory.ArmSkinR] = g(f(dirTransform, "ArmR"));
+        cachedParts[CharacterPartCategory.ArmSkinL] = g(f(dirTransform, "ArmL"));
+        cachedParts[CharacterPartCategory.HandSkinR] = g(f(dirTransform, "HandR"));
+        cachedParts[CharacterPartCategory.HandSkinL] = g(f(dirTransform, "HandL"));
+        cachedParts[CharacterPartCategory.LegSkinR] = g(f(dirTransform, "LegR"));
+        cachedParts[CharacterPartCategory.LegSkinL] = g(f(dirTransform, "LegL"));
 
-        cachedParts[CharacterPartCategory.ArmorBody] = dirTransform
-            .Find("UpperBody")
-            ?.Find("Armor");
-        cachedParts[CharacterPartCategory.ArmorHelmet] = f(dirTransform, "Helmet");
+        cachedParts[CharacterPartCategory.ArmorBody] = g(
+            dirTransform.Find("UpperBody")?.Find("Armor")
+        );
+        cachedParts[CharacterPartCategory.ArmorHelmet] = g(f(dirTransform, "Helmet"));
 
-        cachedParts[CharacterPartCategory.ArmorArmR] = f(dirTransform, "ArmR")?.Find("Armor");
-        cachedParts[CharacterPartCategory.ArmorArmL] = f(dirTransform, "ArmL")?.Find("Armor");
-        cachedParts[CharacterPartCategory.ArmorSleeveR] = f(dirTransform, "ArmR")?.Find("Sleeve");
-        cachedParts[CharacterPartCategory.ArmorSleeveL] = f(dirTransform, "ArmL")?.Find("Sleeve");
-        cachedParts[CharacterPartCategory.ArmorHandR] = f(dirTransform, "HandR")?.Find("Armor");
-        cachedParts[CharacterPartCategory.ArmorHandL] = f(dirTransform, "HandL")?.Find("Armor");
-        cachedParts[CharacterPartCategory.ArmorLegR] = f(dirTransform, "LegR")?.Find("Armor");
-        cachedParts[CharacterPartCategory.ArmorLegL] = f(dirTransform, "LegL")?.Find("Armor");
+        cachedParts[CharacterPartCategory.ArmorArmR] = g(f(dirTransform, "ArmR")?.Find("Armor"));
+        cachedParts[CharacterPartCategory.ArmorArmL] = g(f(dirTransform, "ArmL")?.Find("Armor"));
+        cachedParts[CharacterPartCategory.ArmorSleeveR] = g(
+            f(dirTransform, "ArmR")?.Find("Sleeve")
+        );
+        cachedParts[CharacterPartCategory.ArmorSleeveL] = g(
+            f(dirTransform, "ArmL")?.Find("Sleeve")
+        );
+        cachedParts[CharacterPartCategory.ArmorHandR] = g(f(dirTransform, "HandR")?.Find("Armor"));
+        cachedParts[CharacterPartCategory.ArmorHandL] = g(f(dirTransform, "HandL")?.Find("Armor"));
+        cachedParts[CharacterPartCategory.ArmorLegR] = g(f(dirTransform, "LegR")?.Find("Armor"));
+        cachedParts[CharacterPartCategory.ArmorLegL] = g(f(dirTransform, "LegL")?.Find("Armor"));
 
-        cachedParts[CharacterPartCategory.EarringR] = f(dirTransform, "EarringR");
-        cachedParts[CharacterPartCategory.EarringL] = f(dirTransform, "EarringL");
-        cachedParts[CharacterPartCategory.Back] = f(dirTransform, "Back");
-        cachedParts[CharacterPartCategory.Mask] = f(dirTransform, "Mask");
-        cachedParts[CharacterPartCategory.EquipmentR] = f(dirTransform, "PrimaryWeapon");
+        cachedParts[CharacterPartCategory.EarringR] = g(f(dirTransform, "EarringR"));
+        cachedParts[CharacterPartCategory.EarringL] = g(f(dirTransform, "EarringL"));
+        cachedParts[CharacterPartCategory.Back] = g(f(dirTransform, "Back"));
+        cachedParts[CharacterPartCategory.Mask] = g(f(dirTransform, "Mask"));
+        cachedParts[CharacterPartCategory.EquipmentR] = g(f(dirTransform, "PrimaryWeapon"));
 
-        cachedParts[CharacterPartCategory.BowLimbL] = f(dirTransform, "LimbL");
-        cachedParts[CharacterPartCategory.BowLimbU] = f(dirTransform, "LimbU");
-        cachedParts[CharacterPartCategory.BowHandle] = f(dirTransform, "Handle");
-        cachedParts[CharacterPartCategory.BowQuiver] = f(dirTransform, "Quiver");
+        cachedParts[CharacterPartCategory.BowLimbL] = g(f(dirTransform, "LimbL"));
+        cachedParts[CharacterPartCategory.BowLimbU] = g(f(dirTransform, "LimbU"));
+        cachedParts[CharacterPartCategory.BowHandle] = g(f(dirTransform, "Handle"));
+        cachedParts[CharacterPartCategory.BowQuiver] = g(f(dirTransform, "Quiver"));
 
         _cachedPartsPerDirections[dir] = cachedParts;
     }

@@ -52,12 +52,12 @@ public class SpriteManager : MonoBehaviour
         this.nameController = nameController;
         this.isLocalPlayer = isLocalPlayer;
 
+        isInitialized = true;
+
         if (characterIdSource != null && string.IsNullOrEmpty(characterIdSource.CharacterId))
             characterIdSource.OnCharacterIdChanged += InitForCharacterId;
         else
             InitForCharacterId(characterIdSource.CharacterId);
-
-        isInitialized = true;
     }
 
     public void ChangeSprite(CharacterPartCategory part, Texture2D texture)
