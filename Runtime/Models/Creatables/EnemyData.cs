@@ -16,9 +16,24 @@ namespace FTRShared.Runtime.Models
         public Dictionary<string, string> category_sprites = new();
 
         // Character color fields (HSV)
-        public API.CharacterColorHsv skin_color = new API.CharacterColorHsv { h = 0f, s = 0f, v = 100f };
-        public API.CharacterColorHsv hair_color = new API.CharacterColorHsv { h = 0f, s = 0f, v = 100f };
-        public API.CharacterColorHsv eye_color = new API.CharacterColorHsv { h = 0f, s = 0f, v = 100f };
+        public API.CharacterColorHsv skin_color = new API.CharacterColorHsv
+        {
+            h = 0f,
+            s = 0f,
+            v = 100f,
+        };
+        public API.CharacterColorHsv hair_color = new API.CharacterColorHsv
+        {
+            h = 0f,
+            s = 0f,
+            v = 100f,
+        };
+        public API.CharacterColorHsv eye_color = new API.CharacterColorHsv
+        {
+            h = 0f,
+            s = 0f,
+            v = 100f,
+        };
 
         [SerializeField]
         private List<StringDictionaryEntry> category_sprites_serialized = new();
