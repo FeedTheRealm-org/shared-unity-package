@@ -63,7 +63,7 @@ namespace API
             return response;
         }
 
-        private async Task<(
+        protected async Task<(
             string responseText,
             UnityWebRequest.Result result,
             long responseCode

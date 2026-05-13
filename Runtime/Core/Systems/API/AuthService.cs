@@ -251,7 +251,7 @@ namespace API
             RefreshTokenRequest payload = new RefreshTokenRequest { email = email };
             string json = JsonUtility.ToJson(payload);
 
-            Task<(string, UnityWebRequest.Result, long)> task = SendRequestAsync(
+            Task<(string, UnityWebRequest.Result, long)> task = ExecuteRequestAsync(
                 url,
                 "POST",
                 session.RefreshToken,
@@ -305,7 +305,7 @@ namespace API
         public async Task<(bool success, string message)> IsLogged()
         {
             string url = $"{GetBaseUrl()}/check-session";
-            Task<(string, UnityWebRequest.Result, long)> task = SendRequestAsync(
+            Task<(string, UnityWebRequest.Result, long)> task = ExecuteRequestAsync(
                 url,
                 "GET",
                 session.AccessToken,
