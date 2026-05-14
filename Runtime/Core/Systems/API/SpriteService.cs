@@ -12,16 +12,14 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        [SerializeField]
-        private Session.Session session;
-
         private string BaseUrl => $"{apiConfig.Hostname}:{apiConfig.Port}/assets";
 
-        public async Task<string> UploadSprites(SpritesRequest request, string worldId)
+        public async Task<string> UploadSprites(
+            SpritesRequest request,
+            string worldId,
+            bool isRetry = false
+        )
         {
-            await session.EnsureValidSession();
-            ;
-
             if (request.ids == null || request.ids.Count == 0)
                 return "No assets to upload.";
 
@@ -49,6 +47,14 @@ namespace API
                 $"multipart/form-data; boundary={form.headers["Content-Type"].Split('=')[1]}"
             );
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await UploadSprites(request, worldId, isRetry: true);
+            }
 
             if (uwr.result == UnityWebRequest.Result.Success)
             {

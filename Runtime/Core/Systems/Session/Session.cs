@@ -101,15 +101,14 @@ namespace Session
             _repository.Delete();
         }
 
-        public async Task EnsureValidSession()
+        public async Task<bool> EnsureValidSession()
         {
             var (isLogged, _) = await authService.IsLogged();
             if (isLogged)
-                return;
+                return true;
 
             var (refreshed, _) = await authService.RefreshToken(Email);
-            if (!refreshed)
-                return;
+            return refreshed;
         }
     }
 }

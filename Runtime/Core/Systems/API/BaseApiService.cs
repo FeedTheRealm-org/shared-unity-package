@@ -11,6 +11,10 @@ namespace API
     )]
     public abstract class BaseApiService : ScriptableObject
     {
+        [Header("Session settings")]
+        [SerializeField]
+        protected Session.Session session;
+
         [Header("General settings")]
         [SerializeField]
         protected Logging.Logger logger;
@@ -23,6 +27,47 @@ namespace API
             UnityWebRequest.Result result,
             long responseCode
         )> SendRequestAsync(
+            string url,
+            string method,
+            string accessToken,
+            string jsonBody = null,
+            string logPrefix = null
+        )
+        {
+            var response = await ExecuteRequestAsync(url, method, accessToken, jsonBody, logPrefix);
+
+            if (response.responseCode == 401 && session != null)
+            {
+                logger.Log(
+                    $"[{logPrefix}] 401 Unauthorized. Attempting to refresh session...",
+                    this,
+                    Logging.LogType.Warning
+                );
+                bool valid = await session.EnsureValidSession();
+                if (valid)
+                {
+                    logger.Log(
+                        $"[{logPrefix}] Session refreshed successfully. Retrying request...",
+                        this
+                    );
+                    response = await ExecuteRequestAsync(
+                        url,
+                        method,
+                        session.AccessToken,
+                        jsonBody,
+                        logPrefix
+                    );
+                }
+            }
+
+            return response;
+        }
+
+        protected async Task<(
+            string responseText,
+            UnityWebRequest.Result result,
+            long responseCode
+        )> ExecuteRequestAsync(
             string url,
             string method,
             string accessToken,

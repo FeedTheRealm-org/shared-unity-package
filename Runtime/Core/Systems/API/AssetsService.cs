@@ -7,19 +7,11 @@ using UnityEngine.Networking;
 namespace API
 {
     [CreateAssetMenu(fileName = "AssetsService", menuName = "Scriptable Objects/API/AssetsService")]
-    public class AssetsService : ScriptableObject
+    public class AssetsService : BaseApiService
     {
         [Header("API Config")]
         [SerializeField]
         private ApiConfig apiConfig;
-
-        [Header("Session settings")]
-        [SerializeField]
-        private Session.Session session;
-
-        [Header("General settings")]
-        [SerializeField]
-        private Logging.Logger logger;
 
         private string GetBaseUrl() => $"{apiConfig.Hostname}:{apiConfig.Port}/assets/cosmetics";
 
@@ -94,17 +86,25 @@ namespace API
             return sprites;
         }
 
-        public IEnumerator GetCategories(System.Action<SpriteCategoryListResponse, string> handler)
+        public IEnumerator GetCategories(
+            System.Action<SpriteCategoryListResponse, string> handler,
+            bool isRetry = false
+        )
         {
             var url = $"{GetBaseUrl()}/categories";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
-
-            var ensureTask = session.EnsureValidSession();
-            yield return new WaitUntil(() => ensureTask.IsCompleted);
-            uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
+            uwr.SetRequestHeader("Authorization", $"Bearer {base.session.AccessToken}");
 
             yield return uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                yield return session.EnsureValidSession();
+                if (string.IsNullOrEmpty(session.AccessToken))
+                    handler?.Invoke(null, "Unauthorized and failed to refresh session.");
+                yield return GetCategories(handler, isRetry: true);
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
             if (
@@ -140,19 +140,31 @@ namespace API
             string categoryId,
             int offset,
             int limit,
-            System.Action<SpritesListResponse, string> handler
+            System.Action<SpritesListResponse, string> handler,
+            bool isRetry = false
         )
         {
             var url =
                 $"{GetBaseUrl()}/categories/{categoryId}?offset={Mathf.Max(0, offset)}&limit={Mathf.Max(1, limit)}";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
-
-            var ensureTask = session.EnsureValidSession();
-            yield return new WaitUntil(() => ensureTask.IsCompleted);
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             yield return uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                yield return session.EnsureValidSession();
+                if (string.IsNullOrEmpty(session.AccessToken))
+                    handler?.Invoke(null, "Unauthorized and failed to refresh session.");
+                yield return GetSpritesByCategory(
+                    categoryId,
+                    offset,
+                    limit,
+                    handler,
+                    isRetry: true
+                );
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
             if (
@@ -177,16 +189,23 @@ namespace API
             }
         }
 
-        public async Task<SpriteCategoryListResponse> GetCategoriesAsync()
+        public async Task<SpriteCategoryListResponse> GetCategoriesAsync(bool isRetry = false)
         {
             var url = $"{GetBaseUrl()}/categories";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
-            await session.EnsureValidSession();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
             Debug.Log($"GetCategoriesAsync: Sending request to {url}");
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await GetCategoriesAsync(isRetry: true);
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
             if (
@@ -215,7 +234,8 @@ namespace API
             int offset = 0,
             int limit = 24,
             string worldId = null,
-            string playerId = null
+            string playerId = null,
+            bool isRetry = false
         )
         {
             if (string.IsNullOrWhiteSpace(worldId))
@@ -236,10 +256,24 @@ namespace API
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
-            await session.EnsureValidSession();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await GetSpritesByCategoryAsync(
+                    categoryId,
+                    offset,
+                    limit,
+                    worldId,
+                    playerId,
+                    isRetry: true
+                );
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
             if (
@@ -261,16 +295,23 @@ namespace API
             return MapToSpritesListResponse(envelope.data);
         }
 
-        public async Task<SpriteResponse> GetSpriteByIdAsync(string spriteId)
+        public async Task<SpriteResponse> GetSpriteByIdAsync(string spriteId, bool isRetry = false)
         {
             var url = $"{GetBaseUrl()}/{spriteId}";
             var uwr = new UnityWebRequest(url, "GET");
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
-            await session.EnsureValidSession();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await GetSpriteByIdAsync(spriteId, isRetry: true);
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
             if (
@@ -296,7 +337,8 @@ namespace API
             string categoryId,
             string spritePath,
             string worldId,
-            int price = 1
+            int price = 1,
+            bool isRetry = false
         )
         {
             var url = $"{GetBaseUrl()}/categories/{categoryId}";
@@ -318,10 +360,23 @@ namespace API
             uwr.method = "PUT";
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
-            await session.EnsureValidSession();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return null;
+                return await UploadSpriteAsync(
+                    categoryId,
+                    spritePath,
+                    worldId,
+                    price,
+                    isRetry: true
+                );
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
             if (
@@ -345,7 +400,8 @@ namespace API
             string spriteId,
             string worldId,
             int price = 1,
-            string spritePath = null
+            string spritePath = null,
+            bool isRetry = false
         )
         {
             var url = $"{GetBaseUrl()}/categories/{categoryId}/sprites/{spriteId}";
@@ -382,10 +438,24 @@ namespace API
             uwr.method = "PUT";
             uwr.downloadHandler = new DownloadHandlerBuffer();
 
-            await session.EnsureValidSession();
             uwr.SetRequestHeader("Authorization", $"Bearer {session.AccessToken}");
 
             await uwr.SendWebRequest();
+
+            if (uwr.responseCode == 401 && !isRetry)
+            {
+                var result = await session.EnsureValidSession();
+                if (!result)
+                    return (null, uwr.responseCode);
+                return await LinkSpriteByIdAsync(
+                    categoryId,
+                    spriteId,
+                    worldId,
+                    price,
+                    spritePath,
+                    isRetry: true
+                );
+            }
 
             var responseText = uwr.downloadHandler?.text ?? uwr.error ?? string.Empty;
             if (

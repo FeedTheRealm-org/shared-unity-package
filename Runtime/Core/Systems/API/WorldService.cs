@@ -12,15 +12,10 @@ namespace API
         [SerializeField]
         private ApiConfig apiConfig;
 
-        [SerializeField]
-        private Session.Session session;
-
         private string BaseUrl => $"{apiConfig.Hostname}:{apiConfig.Port}/world";
 
         public async Task<(string id, string error, long statusCode)> PublishWorld(WorldData data)
         {
-            await session.EnsureValidSession();
-
             try
             {
                 string json = JsonUtility.ToJson(
@@ -59,8 +54,6 @@ namespace API
 
         public async Task<(string id, string error, long statusCode)> UpdateWorld(WorldData data)
         {
-            await session.EnsureValidSession();
-
             string json = JsonUtility.ToJson(
                 new WorldRequest
                 {
@@ -89,8 +82,6 @@ namespace API
             string worldId
         )
         {
-            await session.EnsureValidSession();
-
             try
             {
                 string json = JsonUtility.ToJson(new CreatablesRequest { createable_data = data });
@@ -125,8 +116,6 @@ namespace API
             bool getOwnWorlds = false
         )
         {
-            await session.EnsureValidSession();
-
             var url = $"{BaseUrl}?limit={limit}&offset={offset}";
             if (!string.IsNullOrWhiteSpace(filter))
                 url += $"&filter={UnityWebRequest.EscapeURL(filter.Trim())}";
@@ -160,8 +149,6 @@ namespace API
             long statusCode
         )> GetWorld(string worldId)
         {
-            await session.EnsureValidSession();
-
             var (responseText, result, statusCode) = await SendRequestAsync(
                 $"{BaseUrl}/{worldId}",
                 "GET",
@@ -197,7 +184,6 @@ namespace API
             int zoneId
         )
         {
-            await session.EnsureValidSession();
             var (responseText, result, statusCode) = await SendRequestAsync(
                 $"{BaseUrl}/orchestrator/{worldId}/zones/{zoneId}/address",
                 "GET",
@@ -279,8 +265,6 @@ namespace API
 
         public async Task<(string error, long statusCode)> DeleteWorld(string worldId)
         {
-            await session.EnsureValidSession();
-
             var (responseText, result, statusCode) = await SendRequestAsync(
                 $"{BaseUrl}/{worldId}",
                 "DELETE",
