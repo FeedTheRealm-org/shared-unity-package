@@ -20,6 +20,9 @@ public partial class CharacterEditController : MonoBehaviour
     private Session.Session session;
 
     [SerializeField]
+    private GameObject confirmDialogPrefab;
+
+    [SerializeField]
     private bool loadFromSession = true;
 
     [SerializeField]
@@ -202,7 +205,7 @@ public partial class CharacterEditController : MonoBehaviour
         }
 
         _onEmptyItemClickedAction ??= () => onItemClicked(null, "");
-        _onSaveClickedAction ??= () => _ = onSaveClicked();
+        _onSaveClickedAction ??= () => _ = onSaveClicked(confirmDialogPrefab);
         _onPrevPageClickedAction ??= () => onPrevPageClicked();
         _onNextPageClickedAction ??= () => onNextPageClicked();
 

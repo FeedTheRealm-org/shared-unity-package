@@ -76,35 +76,60 @@ public partial class CharacterEditController
     /// <summary>
     /// Handles save button click event to save character info.
     /// </summary>
-    private async Task onSaveClicked()
+    private async Task onSaveClicked(GameObject confirmDialogPrefab)
     {
-        logger.Log("Save Button Clicked", this);
-        var nameValue = _nameInput?.value ?? characterInfoRequest.character_name;
-        var bioValue = _bioInput?.value ?? characterInfoRequest.character_bio;
-        logger.Log($"Name: {nameValue}, Bio {bioValue}", this);
-
-        if (!spritesOnlyEditorMode && string.IsNullOrWhiteSpace(nameValue))
+        if (confirmDialogPrefab == null)
         {
-            ShowToastError("Name cannot be empty.");
+            logger?.Log("Confirm dialog prefab reference is missing.", this, Logging.LogType.Error);
             return;
         }
-
-        if (string.IsNullOrWhiteSpace(nameValue))
+        var confirmDialog = Instantiate(confirmDialogPrefab);
+        var dialogController = confirmDialog.GetComponent<IConfirmUI>();
+        if (dialogController == null)
         {
-            nameValue = "EditorCharacter";
-        }
-
-        characterInfoRequest.character_name = nameValue;
-        characterInfoRequest.character_bio = bioValue ?? string.Empty;
-        EnsureCharacterColorFields();
-
-        if (characterInfoRepository != null)
-        {
-            await saveCharacterWithPersistenceStrategy();
+            logger?.Log(
+                "Confirm dialog prefab does not contain an IConfirmUI implementation.",
+                this,
+                Logging.LogType.Error
+            );
+            Destroy(confirmDialog);
             return;
         }
+        logger?.Log("Save Button Clicked, showing confirmation dialog.", this);
+        dialogController.Show(
+            title: "Select World",
+            question: $"Are you sure you want to enter this world?",
+            onConfirm: async () =>
+            {
+                var nameValue = _nameInput?.value ?? characterInfoRequest.character_name;
+                var bioValue = _bioInput?.value ?? characterInfoRequest.character_bio;
+                logger.Log($"Name: {nameValue}, Bio {bioValue}", this);
 
-        await updateCharacterInfo();
+                if (!spritesOnlyEditorMode && string.IsNullOrWhiteSpace(nameValue))
+                {
+                    ShowToastError("Name cannot be empty.");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(nameValue))
+                {
+                    nameValue = "EditorCharacter";
+                }
+
+                characterInfoRequest.character_name = nameValue;
+                characterInfoRequest.character_bio = bioValue ?? string.Empty;
+                EnsureCharacterColorFields();
+
+                if (characterInfoRepository != null)
+                {
+                    await saveCharacterWithPersistenceStrategy();
+                    return;
+                }
+
+                await updateCharacterInfo();
+            },
+            onCancel: () => { }
+        );
     }
 
     /// <summary>
