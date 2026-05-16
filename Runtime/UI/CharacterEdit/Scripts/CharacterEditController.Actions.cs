@@ -95,10 +95,9 @@ public partial class CharacterEditController
             Destroy(confirmDialog);
             return;
         }
-        logger?.Log("Save Button Clicked, showing confirmation dialog.", this);
         dialogController.Show(
-            title: "Select World",
-            question: $"Are you sure you want to enter this world?",
+            title: "Save Changes",
+            question: $"Are you sure you want to save these changes?",
             onConfirm: async () =>
             {
                 var nameValue = _nameInput?.value ?? characterInfoRequest.character_name;
