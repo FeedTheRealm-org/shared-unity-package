@@ -76,15 +76,15 @@ public partial class CharacterEditController
     /// <summary>
     /// Handles save button click event to save character info.
     /// </summary>
-    private async Task onSaveClicked(GameObject confirmDialogPrefab)
+    private async Task onSaveClicked(GameObject confirmPopupPrefab)
     {
-        if (confirmDialogPrefab == null)
+        if (confirmPopupPrefab == null)
         {
             logger?.Log("Confirm dialog prefab reference is missing.", this, Logging.LogType.Error);
             return;
         }
-        var confirmDialog = Instantiate(confirmDialogPrefab);
-        var dialogController = confirmDialog.GetComponent<IConfirmUI>();
+        var confirmPopup = Instantiate(confirmPopupPrefab);
+        var dialogController = confirmPopup.GetComponent<IConfirmUI>();
         if (dialogController == null)
         {
             logger?.Log(
@@ -92,7 +92,7 @@ public partial class CharacterEditController
                 this,
                 Logging.LogType.Error
             );
-            Destroy(confirmDialog);
+            Destroy(confirmPopup);
             return;
         }
         dialogController.Show(
