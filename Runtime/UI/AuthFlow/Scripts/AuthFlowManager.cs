@@ -10,8 +10,6 @@ namespace FTRShared.UI.AuthMenu
         SignUp,
         VerifyNewAccount,
         AccountRecovery,
-        VerifyResetCode,
-        NewPassword,
     }
 
     public class AuthFlowManager : MonoBehaviour
