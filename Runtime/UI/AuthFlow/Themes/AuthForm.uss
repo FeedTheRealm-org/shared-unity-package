@@ -1,0 +1,242 @@
+:root {
+}
+
+.AuthContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    padding-top: 14px;
+    padding-right: 14px;
+    padding-bottom: 14px;
+    padding-left: 14px;
+}
+
+.formBox {
+    width: 35%;
+    min-width: 30%;
+    max-width: 80%;
+    height: 90%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    padding-left: 2%;
+    padding-right: 2%;
+    background-color: rgba(26, 40, 44, 0.85);
+    border-color: rgb(255, 210, 80);
+    border-width: 2px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.AuthFormTitle {
+    -unity-text-align: middle-center;
+    font-size: 150%;
+    color: rgb(255, 255, 255);
+    align-self: center;
+    white-space: normal;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+    -unity-font-style: bold;
+}
+
+.AuthFormTitleUnderline {
+    width: 55%;
+    height: 1px;
+    background-color: rgb(255, 255, 255);
+    align-self: center;
+    flex-shrink: 0;
+    margin-bottom: 16px;
+}
+
+.AuthCloseButton {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background-color: rgba(0, 0, 0, 0);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    color: rgb(255, 255, 255);
+    font-size: 150%;
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    -unity-text-align: middle-center;
+}
+
+.AuthFieldsGroup {
+    width: 85%;
+    align-self: center;
+    flex-direction: column;
+    align-items: stretch;
+    flex-shrink: 0;
+    margin-bottom: 12px;
+}
+
+.AuthFieldLabel {
+    color: rgb(255, 255, 255);
+    font-size: 100%;
+    margin-bottom: 4px;
+    margin-left: 2px;
+}
+
+.AuthEmailInput,
+.AuthPasswordField {
+    width: 100%;
+    align-self: stretch;
+    flex-direction: column;
+    align-items: stretch;
+    flex-shrink: 0;
+    margin-bottom: 12px;
+}
+
+.AuthEmailInput > .unity-base-field__label,
+.AuthPasswordField > .unity-base-field__label {
+    display: none;
+}
+
+.AuthEmailInput > .unity-text-field__input,
+.AuthPasswordField > .unity-text-field__input {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-color: rgb(255, 255, 255);
+    border-width: 1px;
+    border-top-left-radius: 19px;
+    border-top-right-radius: 19px;
+    border-bottom-right-radius: 19px;
+    border-bottom-left-radius: 19px;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-left;
+    padding-left: 16px;
+    padding-right: 16px;
+    height: 38px;
+    min-height: 32px;
+}
+
+.AuthEmailInput:focus > .unity-text-field__input,
+.AuthPasswordField:focus > .unity-text-field__input {
+    border-color: rgb(15, 197, 229);
+}
+
+.AuthMessageError {
+    color: rgb(241, 28, 28);
+    display: none;
+    font-size: 100%;
+    align-self: center;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    width: 85%;
+    flex-shrink: 0;
+    margin-bottom: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.AuthSubmitButton {
+    width: 15%;
+    min-width: 48px;
+    max-width: 72px;
+    height: 0;
+    min-height: 48px;
+    max-height: 72px;
+    align-self: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-color: rgb(255, 255, 255);
+    border-width: 1px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    color: rgb(255, 255, 255);
+    font-size: 200%;
+    -unity-text-align: middle-center;
+    flex-shrink: 0;
+    margin-bottom: 5%;
+}
+
+.AuthChangeRow {
+    flex-direction: row;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    flex-shrink: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    max-width: 100%;
+    min-width: 20%;
+}
+
+.AuthChangeLabel {
+    font-size: 100%;
+    color: rgb(255, 255, 255);
+    white-space: normal;
+    flex-shrink: 1;
+}
+
+.AuthChangeLinkButton {
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(15, 197, 229);
+    padding-left: 0;
+    padding-right: 0;
+    font-size: 100%;
+    flex-shrink: 1;
+    white-space: normal;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.AuthHelperText {
+    color: rgb(255, 255, 255);
+    font-size: 3%;
+    white-space: normal;
+    align-self: flex-start;
+    margin-left: 7.5%;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+}
+
+.formContainer {
+    border-left-color: rgb(255, 210, 80);
+    border-right-color: rgb(255, 210, 80);
+    border-top-color: rgb(255, 210, 80);
+    border-bottom-color: rgb(255, 210, 80);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    padding-top: 10%;
+    padding-bottom: 10%;
+    padding-right: 5%;
+    padding-left: 5%;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    min-height: 0%;
+    height: 100%;
+}
