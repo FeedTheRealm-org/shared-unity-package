@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Packages/com.feed_the_realm.shared/Runtime/UI/AuthFlow/Themes/AuthForm.uss?fileID=7433441132597879392&amp;guid=c25ac5f0ef9fbfd46bdd96a557e53334&amp;type=3#AuthForm"/>
+    <Style src="project://database/Packages/com.feed_the_realm.shared/Runtime/UI/AuthFlow/Themes/AuthStyles.uss?fileID=7433441132597879392&amp;guid=c25ac5f0ef9fbfd46bdd96a557e53334&amp;type=3#AuthStyles"/>
     <ui:VisualElement name="LoginContainer" class="AuthContainer">
         <ui:VisualElement name="FormLogin" class="formBox">
             <ui:VisualElement name="FormContainer" class="formContainer">

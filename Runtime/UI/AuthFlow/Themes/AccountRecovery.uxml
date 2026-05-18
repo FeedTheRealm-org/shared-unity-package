@@ -1,13 +1,11 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Packages/com.feed_the_realm.shared/Runtime/UI/AuthFlow/Themes/AuthForm.uss?fileID=7433441132597879392&amp;guid=c25ac5f0ef9fbfd46bdd96a557e53334&amp;type=3#AuthForm"/>
+    <Style src="project://database/Packages/com.feed_the_realm.shared/Runtime/UI/AuthFlow/Themes/AuthStyles.uss?fileID=7433441132597879392&amp;guid=c25ac5f0ef9fbfd46bdd96a557e53334&amp;type=3#AuthStyles"/>
     <ui:VisualElement name="ResetPasswordContainer" class="AuthContainer">
         <ui:VisualElement name="ResetPasswordForm" class="formBox">
             <ui:VisualElement name="FormContainer" class="formContainer">
                 <ui:Button text="✕" name="Close" class="AuthCloseButton"/>
                 <ui:Label text="Account Recovery" name="FormTitle" class="AuthFormTitle"/>
                 <ui:VisualElement name="TitleUnderline" class="AuthFormTitleUnderline"/>
-
-                <!-- Step 1: Email -->
                 <ui:VisualElement name="StepEmail">
                     <ui:VisualElement name="FieldsGroup" class="AuthFieldsGroup">
                         <ui:Label text="enter your email here" class="AuthFieldLabel"/>
@@ -20,8 +18,6 @@
                         <ui:Button text="login" name="BackToLoginButton" class="AuthChangeLinkButton"/>
                     </ui:VisualElement>
                 </ui:VisualElement>
-
-                <!-- Step 2: Verify Code -->
                 <ui:VisualElement name="StepVerifyCode" style="display: none;">
                     <ui:VisualElement name="FieldsGroup" class="AuthFieldsGroup">
                         <ui:Label text="add your recovery code here" class="AuthFieldLabel"/>
@@ -39,8 +35,6 @@
                         <ui:Button text="login" name="BackToLoginButton" class="AuthChangeLinkButton"/>
                     </ui:VisualElement>
                 </ui:VisualElement>
-
-                <!-- Step 3: New Password -->
                 <ui:VisualElement name="StepNewPassword" style="display: none;">
                     <ui:VisualElement name="FieldsGroup" class="AuthFieldsGroup">
                         <ui:Label text="set your new password" class="AuthFieldLabel"/>
@@ -55,7 +49,6 @@
                         <ui:Button text="login" name="BackToLoginButton" class="AuthChangeLinkButton"/>
                     </ui:VisualElement>
                 </ui:VisualElement>
-
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
