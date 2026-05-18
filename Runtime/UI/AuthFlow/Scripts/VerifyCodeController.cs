@@ -97,7 +97,7 @@ public class VerifyCodeController : MonoBehaviour, IAuth
         if (string.IsNullOrEmpty(loginErr))
         {
             logger.Log("Verification and login successful.", this);
-            flowManager.CompleteAuth();
+            flowManager.AuthCompletion("Verification successful.");
         }
         else
         {

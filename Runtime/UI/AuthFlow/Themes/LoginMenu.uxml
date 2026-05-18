@@ -7,9 +7,9 @@
                 <ui:Label text="Account Login" name="FormTitle" class="AuthFormTitle"/>
                 <ui:VisualElement name="TitleUnderline" class="AuthFormTitleUnderline"/>
                 <ui:VisualElement name="FieldsGroup" class="AuthFieldsGroup">
-                    <ui:Label text="email" class="AuthFieldLabel"/>
+                    <ui:Label text="Email" class="AuthFieldLabel"/>
                     <ui:TextField name="EmailField" value="" class="AuthEmailInput"/>
-                    <ui:Label text="password" class="AuthFieldLabel"/>
+                    <ui:Label text="Password" class="AuthFieldLabel"/>
                     <ui:TextField name="PasswordField" password="true" value="" class="AuthPasswordField"/>
                 </ui:VisualElement>
                 <ui:Label name="MessageError" class="AuthMessageError"/>

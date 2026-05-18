@@ -9,7 +9,7 @@ namespace FTRShared.UI.AuthMenu
         Login,
         SignUp,
         VerifyNewAccount,
-        ResetPassword,
+        AccountRecovery,
         VerifyResetCode,
         NewPassword,
     }
@@ -37,15 +37,10 @@ namespace FTRShared.UI.AuthMenu
         private GameObject verifyNewAccountPanel;
 
         [SerializeField]
-        private GameObject resetPasswordPanel;
+        private GameObject accountRecoveryPanel;
 
-        [SerializeField]
-        private GameObject verifyResetCodePanel;
-
-        [SerializeField]
-        private GameObject newPasswordPanel;
-
-        public event Action OnAuthComplete;
+        public event Action<string> OnAuthComplete;
+        public event Action<string> OnPasswordResetComplete;
         public event Action OnAuthCancelled;
         private readonly Dictionary<AuthPanel, GameObject> states = new();
 
@@ -81,10 +76,15 @@ namespace FTRShared.UI.AuthMenu
             }
         }
 
-        public void CompleteAuth()
+        public void AuthCompletion(string successMessage)
         {
             DisableAllPanels();
-            OnAuthComplete?.Invoke();
+            OnAuthComplete?.Invoke(successMessage);
+        }
+
+        public void PasswordResetCompletion(string successMessage)
+        {
+            OnPasswordResetComplete?.Invoke(successMessage);
         }
 
         public void CancelAuth()
@@ -98,9 +98,12 @@ namespace FTRShared.UI.AuthMenu
             InitializeAuthComponent(loginPanel.GetComponent<IAuth>());
             InitializeAuthComponent(signUpPanel.GetComponent<IAuth>());
             InitializeAuthComponent(verifyNewAccountPanel.GetComponent<IAuth>());
+            InitializeAuthComponent(accountRecoveryPanel.GetComponent<IAuth>());
+
             states[AuthPanel.Login] = loginPanel;
             states[AuthPanel.SignUp] = signUpPanel;
             states[AuthPanel.VerifyNewAccount] = verifyNewAccountPanel;
+            states[AuthPanel.AccountRecovery] = accountRecoveryPanel;
         }
 
         private void DisableAllPanels()
@@ -108,9 +111,7 @@ namespace FTRShared.UI.AuthMenu
             loginPanel?.SetActive(false);
             signUpPanel?.SetActive(false);
             verifyNewAccountPanel?.SetActive(false);
-            // resetPasswordPanel?.SetActive(false);
-            // verifyResetCodePanel?.SetActive(false);
-            // newPasswordPanel?.SetActive(false);
+            accountRecoveryPanel?.SetActive(false);
             currentPanel = null;
         }
 

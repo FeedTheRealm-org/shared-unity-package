@@ -74,7 +74,7 @@ public class LoginController : MonoBehaviour, IAuth
     private void OnNavigateToRecover()
     {
         logger.Log("Navigating to Reset Password.", this);
-        flowManager.ShowPanel(AuthPanel.ResetPassword);
+        flowManager.ShowPanel(AuthPanel.AccountRecovery);
     }
 
     private void OnClose()
@@ -106,7 +106,7 @@ public class LoginController : MonoBehaviour, IAuth
             return;
         }
 
-        flowManager.CompleteAuth();
+        flowManager.AuthCompletion("Login successful.");
     }
 
     private void ShowErrorMessage(string err)
