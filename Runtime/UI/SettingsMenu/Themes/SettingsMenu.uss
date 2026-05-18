@@ -1,3 +1,5 @@
+/* ── SettingsMenu.uss ── */
+
 :root {
     --teal: rgb(110, 255, 251);
     --teal-dim: rgba(110, 255, 251, 0.18);
@@ -207,7 +209,7 @@
     font-size: 15px;
 }
 
-.setting-dropdown > .unity-base-field__label {
+.setting-dropdown .unity-base-field__label {
     color: var(--white-soft);
     font-size: 15px;
     min-width: 160px;
@@ -231,7 +233,7 @@
     -unity-font-style: bold;
 }
 
-.setting-toggle > .unity-base-field__label {
+.setting-toggle .unity-base-field__label {
     color: var(--white-soft);
     font-size: 15px;
     min-width: 160px;
