@@ -126,7 +126,7 @@
 
 .nav-button--danger {
     color: var(--gold);
-    font-size: 18px;
+    font-size: 100%;
 }
 
 .nav-button--danger:hover {
