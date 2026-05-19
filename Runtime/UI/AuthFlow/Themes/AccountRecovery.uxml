@@ -18,27 +18,26 @@
                         <ui:Button text="login" name="BackToLoginButton" class="AuthChangeLinkButton"/>
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:VisualElement name="StepVerifyCode" style="display: none;">
-                    <ui:VisualElement name="FieldsGroup" class="AuthFieldsGroup">
-                        <ui:Label text="add your recovery code here" class="AuthFieldLabel"/>
-                        <ui:TextField name="CodeField" class="AuthPasswordField"/>
-                    </ui:VisualElement>
-                    <ui:Label name="MessageError" class="AuthMessageError"/>
-                            <ui:VisualElement name="ResendRow" class="AuthChangeRow" style="flex-direction: column; align-items: center; margin-bottom: 12px;">
-                                <ui:Label text="Didn't get a code?" class="AuthChangeLabel" style="-unity-text-align: middle-center;"/>
-                                <ui:VisualElement style="flex-direction: row; align-items: center; justify-content: center; flex-wrap: wrap; max-width: 200px;">
-                                    <ui:Label text="Press" class="AuthChangeLabel" style="-unity-text-align: middle-center;"/>
-                                    <ui:Button text="here" name="ResendCodeButton" class="AuthChangeLinkButton" style="margin-left: 4px; margin-right: 4px;"/>
-                                    <ui:Label text="to get a new one" class="AuthChangeLabel" style="-unity-text-align: middle-center;"/>
-                                </ui:VisualElement>
+                    <ui:VisualElement name="StepVerifyCode" style="display: none;">
+                        <ui:VisualElement name="FieldsGroup" class="AuthFieldsGroup">
+                            <ui:Label text="add your recovery code here" class="AuthFieldLabel"/>
+                            <ui:TextField name="CodeField" class="AuthPasswordField"/>
+                        </ui:VisualElement>
+                        <ui:Label name="MessageError" class="AuthMessageError"/>
+                        <ui:VisualElement name="ResendRow" class="AuthChangeRow" style="flex-direction: column; align-items: center; margin-bottom: 12px;">
+                            <ui:Label text="Didn't get a code?" class="AuthChangeLabel" style="-unity-text-align: middle-center;"/>
+                            <ui:VisualElement style="flex-direction: row; align-items: center; justify-content: center; flex-wrap: wrap; max-width: 200px;">
+                                <ui:Label text="Press" class="AuthChangeLabel" style="-unity-text-align: middle-center;"/>
+                                <ui:Button text="here" name="ResendCodeButton" class="AuthChangeLinkButton" style="margin-left: 4px; margin-right: 4px;"/>
+                                <ui:Label text="to get a new one" class="AuthChangeLabel" style="-unity-text-align: middle-center;"/>
                             </ui:VisualElement>
                         </ui:VisualElement>
-                    <ui:Button text="→" name="VerifyCodeButton" class="AuthSubmitButton"/>
-                    <ui:VisualElement name="BackRow" class="AuthChangeRow">
-                        <ui:Label text="Back to" class="AuthChangeLabel"/>
-                        <ui:Button text="login" name="BackToLoginButton" class="AuthChangeLinkButton"/>
+                        <ui:Button text="→" name="VerifyCodeButton" class="AuthSubmitButton"/>
+                        <ui:VisualElement name="BackRow" class="AuthChangeRow">
+                            <ui:Label text="Back to" class="AuthChangeLabel"/>
+                            <ui:Button text="login" name="BackToLoginButton" class="AuthChangeLinkButton"/>
+                        </ui:VisualElement>
                     </ui:VisualElement>
-                </ui:VisualElement>
                 <ui:VisualElement name="StepNewPassword" style="display: none;">
                     <ui:VisualElement name="FieldsGroup" class="AuthFieldsGroup">
                         <ui:Label text="set your new password" class="AuthFieldLabel"/>

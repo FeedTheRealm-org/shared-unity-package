@@ -66,11 +66,12 @@ public class SignUpController : AuthController
             ShowErrorMessage("Passwords do not match.");
             return;
         }
-
+        LockButton(true, _signUpButton);
         (bool success, string err) = await authService.SignUp(
             _emailField.value,
             _passwordField.value
         );
+        LockButton(false, _signUpButton);
 
         if (success)
         {

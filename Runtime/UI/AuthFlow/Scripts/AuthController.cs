@@ -31,5 +31,11 @@ namespace FTRShared.UI.AuthMenu
             if (_closeButton != null)
                 _closeButton.style.display = DisplayStyle.None;
         }
+
+        protected void LockButton(bool isLoading, Button button)
+        {
+            button.SetEnabled(!isLoading);
+            button.style.opacity = isLoading ? 0.4f : 1f;
+        }
     }
 }

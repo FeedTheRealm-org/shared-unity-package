@@ -67,8 +67,11 @@ public class LoginController : AuthController
     {
         logger.Log("Login Button Clicked", this);
         HideErrorMessage();
+        LockButton(true, _loginButton);
 
         string err = await authService.Login(_emailField.value, _passwordField.value);
+
+        LockButton(false, _loginButton);
 
         if (!string.IsNullOrEmpty(err))
         {

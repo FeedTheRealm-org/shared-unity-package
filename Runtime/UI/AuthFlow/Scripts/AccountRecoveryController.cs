@@ -102,8 +102,10 @@ public class AccountRecoveryController : AuthController
     {
         logger.Log($"Sending recovery code to: {_emailField.value}", this);
         HideError();
+        LockButton(true, _sendCodeButton);
 
         var (success, message) = await authService.ForgotPassword(_emailField.value);
+        LockButton(false, _sendCodeButton);
 
         if (!success)
         {
@@ -120,11 +122,13 @@ public class AccountRecoveryController : AuthController
     {
         logger.Log($"Verifying reset code for: {session.Email}", this);
         HideError();
+        LockButton(true, _verifyCodeButton);
 
         var (success, resetToken, message) = await authService.VerifyResetCode(
             session.Email,
             _codeField.value
         );
+        LockButton(false, _verifyCodeButton);
 
         if (!success)
         {
@@ -140,11 +144,12 @@ public class AccountRecoveryController : AuthController
     private async void OnResendCodeClicked()
     {
         logger.Log($"Resending recovery code to: {session.Email}", this);
+        LockButton(true, _resendCodeButton);
 
         var (success, message) = await authService.ForgotPassword(session.Email);
 
         ShowError(success ? "A new code has been sent to your email." : message);
-        StartCoroutine(ClearErrorAfterSeconds(3f));
+        StartCoroutine(UnlockAfterSeconds(3f, _resendCodeButton));
     }
 
     private async void OnResetPasswordClicked()
@@ -158,10 +163,12 @@ public class AccountRecoveryController : AuthController
             return;
         }
 
+        LockButton(true, _resetPasswordButton);
         var (success, message) = await authService.ResetPassword(
             _resetToken,
             _newPasswordField.value
         );
+        LockButton(false, _resetPasswordButton);
 
         if (!success)
         {
@@ -174,6 +181,13 @@ public class AccountRecoveryController : AuthController
             "Password reset successful. Please log in with your new password."
         );
         flowManager.ShowPanel(AuthPanel.Login);
+    }
+
+    private IEnumerator UnlockAfterSeconds(float seconds, Button button)
+    {
+        yield return new WaitForSeconds(seconds);
+        LockButton(false, button);
+        HideError();
     }
 
     private void ShowError(string message)

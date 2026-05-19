@@ -66,7 +66,9 @@ public class VerifyCodeController : AuthController
         );
         HideErrorMessage();
 
+        LockButton(true, _verifyCodeButton);
         var (success, err) = await authService.VerifyCode(session.Email, _codeField.value);
+        LockButton(false, _verifyCodeButton);
 
         if (!success)
         {
@@ -90,10 +92,18 @@ public class VerifyCodeController : AuthController
     {
         logger.Log($"Refresh code Button Clicked - Email: {session.Email}", this);
 
+        LockButton(true, _refreshCodeButton);
         var (success, err) = await authService.RefreshVerification(session.Email);
 
         ShowErrorMessage(success ? "Sending you a new verification code." : err);
-        StartCoroutine(ClearMessageAfterSeconds(3f));
+        StartCoroutine(UnlockAfterSeconds(3f, _refreshCodeButton));
+    }
+
+    private IEnumerator UnlockAfterSeconds(float seconds, Button button)
+    {
+        yield return new WaitForSeconds(seconds);
+        LockButton(false, button);
+        HideErrorMessage();
     }
 
     private IEnumerator ClearMessageAfterSeconds(float seconds)
