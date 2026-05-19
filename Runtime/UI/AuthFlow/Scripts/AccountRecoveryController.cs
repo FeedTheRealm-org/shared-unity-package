@@ -3,14 +3,8 @@ using FTRShared.UI.AuthMenu;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-[RequireComponent(typeof(UIDocument))]
-public class AccountRecoveryController : MonoBehaviour, IAuth
+public class AccountRecoveryController : AuthController
 {
-    private API.AuthService authService;
-    private Session.Session session;
-    private Logging.Logger logger;
-    private AuthFlowManager flowManager;
-
     // Steps
     private VisualElement _stepEmail;
     private VisualElement _stepVerifyCode;
@@ -33,19 +27,6 @@ public class AccountRecoveryController : MonoBehaviour, IAuth
     // Shared per-step (each step has its own MessageError and BackToLoginButton)
     private Label _activeMessageError;
     private string _resetToken;
-
-    public void Initialize(
-        API.AuthService authService,
-        Session.Session session,
-        Logging.Logger logger,
-        AuthFlowManager flowManager
-    )
-    {
-        this.authService = authService;
-        this.session = session;
-        this.logger = logger;
-        this.flowManager = flowManager;
-    }
 
     private void OnEnable()
     {

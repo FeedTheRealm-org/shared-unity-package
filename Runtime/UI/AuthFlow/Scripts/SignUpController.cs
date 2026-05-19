@@ -2,14 +2,8 @@ using FTRShared.UI.AuthMenu;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-[RequireComponent(typeof(UIDocument))]
-public class SignUpController : MonoBehaviour, IAuth
+public class SignUpController : AuthController
 {
-    private API.AuthService authService;
-    private Session.Session session;
-    private Logging.Logger logger;
-    private AuthFlowManager flowManager;
-
     private VisualElement ui;
     private Button _signUpButton;
     private Button _loginChangeButton;
@@ -18,19 +12,6 @@ public class SignUpController : MonoBehaviour, IAuth
     private TextField _passwordField;
     private TextField _repeatedPasswordField;
     private Label _messageError;
-
-    public void Initialize(
-        API.AuthService authService,
-        Session.Session session,
-        Logging.Logger logger,
-        AuthFlowManager flowManager
-    )
-    {
-        this.authService = authService;
-        this.session = session;
-        this.logger = logger;
-        this.flowManager = flowManager;
-    }
 
     private void OnEnable()
     {

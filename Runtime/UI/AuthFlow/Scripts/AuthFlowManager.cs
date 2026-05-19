@@ -41,6 +41,9 @@ namespace FTRShared.UI.AuthMenu
         public event Action<string> OnPasswordResetComplete;
         public event Action OnAuthCancelled;
         private readonly Dictionary<AuthPanel, GameObject> states = new();
+        private bool hideCloseButton = false;
+
+        public void HideCloseButton() => hideCloseButton = true;
 
         private GameObject currentPanel;
 
@@ -62,6 +65,8 @@ namespace FTRShared.UI.AuthMenu
             if (states.TryGetValue(panel, out var panelObj))
             {
                 panelObj.SetActive(true);
+                if (hideCloseButton)
+                    panelObj.GetComponent<AuthController>().DisableCloseButton();
                 currentPanel = panelObj;
             }
             else
@@ -93,10 +98,10 @@ namespace FTRShared.UI.AuthMenu
 
         private void InitializeAuthFlow()
         {
-            InitializeAuthComponent(loginPanel.GetComponent<IAuth>());
-            InitializeAuthComponent(signUpPanel.GetComponent<IAuth>());
-            InitializeAuthComponent(verifyNewAccountPanel.GetComponent<IAuth>());
-            InitializeAuthComponent(accountRecoveryPanel.GetComponent<IAuth>());
+            InitializeAuthComponent(loginPanel.GetComponent<AuthController>());
+            InitializeAuthComponent(signUpPanel.GetComponent<AuthController>());
+            InitializeAuthComponent(verifyNewAccountPanel.GetComponent<AuthController>());
+            InitializeAuthComponent(accountRecoveryPanel.GetComponent<AuthController>());
 
             states[AuthPanel.Login] = loginPanel;
             states[AuthPanel.SignUp] = signUpPanel;
@@ -113,11 +118,15 @@ namespace FTRShared.UI.AuthMenu
             currentPanel = null;
         }
 
-        private void InitializeAuthComponent(IAuth authComponent)
+        private void InitializeAuthComponent(AuthController authComponent)
         {
             if (authComponent == null)
             {
-                logger.Log("IAuth component not found on panel.", this, Logging.LogType.Error);
+                logger.Log(
+                    "AuthController component not found on panel.",
+                    this,
+                    Logging.LogType.Error
+                );
                 return;
             }
             authComponent.Initialize(authService, session, logger, this);
