@@ -34,13 +34,13 @@ public class PlayerInfoRepository : CharacterInfoRepository
                     : new Dictionary<string, string>(),
         };
 
-        var characterInfo = await playerService.PatchCharacterInfoAsync(payload);
-        if (characterInfo != null && session != null)
+        var response = await playerService.PatchCharacterInfoAsync(payload);
+        if (response?.data != null && session != null)
         {
             session.IsFirstLogin = false;
-            session.CharacterName = characterInfo.character_name;
+            session.CharacterName = response.data.character_name;
         }
 
-        return characterInfo;
+        return response?.data;
     }
 }

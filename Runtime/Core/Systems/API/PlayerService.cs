@@ -187,7 +187,7 @@ namespace API
         /// <summary>
         /// Update the character information such as name and bio asynchronously.
         /// </summary>
-        public async Task<CharacterInfoResponse> PatchCharacterInfoAsync(
+        public async Task<API.ApiResponse<CharacterInfoResponse>> PatchCharacterInfoAsync(
             PatchCharacterInfoRequest payload,
             bool isRetry = false
         )
@@ -209,7 +209,17 @@ namespace API
             {
                 var result = await session.EnsureValidSession();
                 if (!result)
-                    return null;
+                {
+                    return new API.ApiResponse<CharacterInfoResponse>
+                    {
+                        status = 401,
+                        error = new ErrorResponse
+                        {
+                            title = "Unauthorized",
+                            detail = "Unauthorized and failed to refresh session.",
+                        },
+                    };
+                }
                 return await PatchCharacterInfoAsync(payload, isRetry: true);
             }
 
@@ -228,7 +238,11 @@ namespace API
                     this,
                     Logging.LogType.Error
                 );
-                return null;
+                return new API.ApiResponse<CharacterInfoResponse>
+                {
+                    status = (int)uwr.responseCode,
+                    error = res ?? new ErrorResponse { detail = responseText },
+                };
             }
             else
             {
@@ -236,7 +250,11 @@ namespace API
                     responseText
                 );
                 logger.Log($"PatchCharacterInfo response: {responseText}", this);
-                return res.data;
+                return new API.ApiResponse<CharacterInfoResponse>
+                {
+                    data = res?.data,
+                    status = (int)uwr.responseCode,
+                };
             }
         }
 
