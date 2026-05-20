@@ -1,73 +1,30 @@
-using System;
-using UnityEngine;
+using FTRShared.UI.AuthMenu;
 using UnityEngine.UIElements;
 
-public class LoginController : MonoBehaviour, IAuthUIController
+public class LoginController : AuthController
 {
-    [SerializeField]
-    private API.AuthService authService;
-
-    [SerializeField]
-    private Session.Session session;
-
-    [SerializeField]
-    private GameObject loginBackgroundPrefab;
-
-    public bool showBackground = true;
-    private GameObject _backgroundInstance;
-    private bool _backgroundOwnershipTransferred = false;
-
-    [SerializeField]
-    private Logging.Logger logger;
-
-    public event Action OnNavigateToSignUp;
-    public event Action OnNavigateToVerifyCode;
-    public event Action OnLoginSuccess;
-
     private VisualElement ui;
-
     private Button _loginButton;
+    private Button _signUpChangeButton;
+    private Button _recoverButton;
+    private Button _closeButton;
     private TextField _emailField;
     private TextField _passwordField;
-    private Label _changeButton;
     private Label _messageError;
-
-    private void Awake()
-    {
-        ui = GetComponent<UIDocument>().rootVisualElement;
-    }
-
-    private void Start()
-    {
-        if (
-            !_backgroundOwnershipTransferred
-            && showBackground
-            && loginBackgroundPrefab != null
-            && _backgroundInstance == null
-        )
-            _backgroundInstance = Instantiate(loginBackgroundPrefab);
-    }
-
-    public void SetBackground(GameObject bg)
-    {
-        _backgroundInstance = bg;
-        _backgroundOwnershipTransferred = true;
-    }
 
     private void OnEnable()
     {
-        logger.Log("LoginController enabled.", this);
         ui = GetComponent<UIDocument>().rootVisualElement;
 
         _loginButton = ui.Q<Button>("LoginButton");
-        _loginButton.clicked += OnLoginClicked;
+        _signUpChangeButton = ui.Q<Button>("SignUpChangeButton");
+        _recoverButton = ui.Q<Button>("RecoverButton");
+        _closeButton = ui.Q<Button>("Close");
 
-        _changeButton = ui.Q<Label>("SignUpChangeButton");
-        _changeButton.RegisterCallback<ClickEvent>(evt =>
-        {
-            logger.Log("Navigating to Sign Up.", this);
-            OnNavigateToSignUp?.Invoke();
-        });
+        _loginButton.clicked += OnLoginClicked;
+        _signUpChangeButton.clicked += OnNavigateToSignUp;
+        _recoverButton.clicked += OnNavigateToRecover;
+        _closeButton.clicked += OnClose;
 
         _emailField = ui.Q<TextField>("EmailField");
         _passwordField = ui.Q<TextField>("PasswordField");
@@ -80,43 +37,59 @@ public class LoginController : MonoBehaviour, IAuthUIController
     {
         if (_loginButton != null)
             _loginButton.clicked -= OnLoginClicked;
-        if (showBackground && _backgroundInstance != null && !_backgroundOwnershipTransferred)
-        {
-            Destroy(_backgroundInstance);
-            _backgroundInstance = null;
-        }
+        if (_signUpChangeButton != null)
+            _signUpChangeButton.clicked -= OnNavigateToSignUp;
+        if (_recoverButton != null)
+            _recoverButton.clicked -= OnNavigateToRecover;
+        if (_closeButton != null)
+            _closeButton.clicked -= OnClose;
+    }
+
+    private void OnNavigateToSignUp()
+    {
+        logger.Log("Navigating to Sign Up.", this);
+        flowManager.ShowPanel(AuthPanel.SignUp);
+    }
+
+    private void OnNavigateToRecover()
+    {
+        logger.Log("Navigating to Reset Password.", this);
+        flowManager.ShowPanel(AuthPanel.AccountRecovery);
+    }
+
+    private void OnClose()
+    {
+        logger.Log("Auth cancelled.", this);
+        flowManager.CancelAuth();
     }
 
     private async void OnLoginClicked()
     {
         logger.Log("Login Button Clicked", this);
-        logger.Log("Email: " + _emailField.value, this);
-        logger.Log("Password: " + _passwordField.value, this);
-
         HideErrorMessage();
+        LockButton(true, _loginButton);
 
         string err = await authService.Login(_emailField.value, _passwordField.value);
+
+        LockButton(false, _loginButton);
 
         if (!string.IsNullOrEmpty(err))
         {
             logger.Log("Login failed", this, Logging.LogType.Warning);
+
             if (err == "You must verify your email address before you can log in.")
             {
                 session.SetEmail(_emailField.value);
                 session.SetPassword(_passwordField.value);
                 logger.Log("Navigating to Verify Code for verification.", this);
-                OnNavigateToVerifyCode?.Invoke();
+                flowManager.ShowPanel(AuthPanel.VerifyNewAccount);
             }
+
             ShowErrorMessage(err);
             return;
         }
-        OnLoginSuccess?.Invoke();
 
-        if (_backgroundInstance != null && !_backgroundOwnershipTransferred)
-        {
-            Destroy(_backgroundInstance);
-            _backgroundInstance = null;
-        }
+        flowManager.AuthCompletion("Login successful.");
     }
 
     private void ShowErrorMessage(string err)
@@ -133,7 +106,7 @@ public class LoginController : MonoBehaviour, IAuthUIController
             var e
                 when e.ToLower().Contains("credentials")
                     || e.ToLower().Contains("password")
-                    || e.ToLower().Contains("email") => "Wrong credentials.",
+                    || e.ToLower().Contains("email") => "Email or password is incorrect.",
             _ => err,
         };
 

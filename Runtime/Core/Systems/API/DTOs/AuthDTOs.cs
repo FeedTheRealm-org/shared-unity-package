@@ -70,4 +70,44 @@ namespace API
     {
         public string message;
     }
+
+    // --- Password Reset Requests ---
+    [System.Serializable]
+    public class ForgotPasswordRequest
+    {
+        public string email;
+    }
+
+    [System.Serializable]
+    public class VerifyResetCodeRequest
+    {
+        public string email;
+        public string code;
+    }
+
+    [System.Serializable]
+    public class ResetPasswordRequest
+    {
+        public string reset_token;
+        public string new_password;
+    }
+
+    // --- Password Reset Responses ---
+    [System.Serializable]
+    public class ForgotPasswordResponse
+    {
+        public bool success;
+    }
+
+    [System.Serializable]
+    public class VerifyResetCodeResponse
+    {
+        public string reset_token;
+    }
+
+    [System.Serializable]
+    public class ResetPasswordResponse
+    {
+        public bool success;
+    }
 }

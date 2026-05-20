@@ -1,0 +1,26 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Packages/com.feed_the_realm.shared/Runtime/UI/AuthFlow/Themes/AuthStyles.uss?fileID=7433441132597879392&amp;guid=c25ac5f0ef9fbfd46bdd96a557e53334&amp;type=3#AuthStyles"/>
+    <ui:VisualElement name="SignUpContainer" class="AuthContainer">
+        <ui:VisualElement name="SignUpForm" class="formBox">
+            <ui:VisualElement name="FormContainer" class="formContainer">
+                <ui:Button text="✕" name="Close" class="AuthCloseButton"/>
+                <ui:Label text="Create an Account" name="TitleForm" class="AuthFormTitle"/>
+                <ui:VisualElement name="TitleUnderline" class="AuthFormTitleUnderline"/>
+                <ui:VisualElement name="FieldsGroup" class="AuthFieldsGroup">
+                    <ui:Label text="Email" class="AuthFieldLabel"/>
+                    <ui:TextField name="EmailField" class="AuthEmailInput"/>
+                    <ui:Label text="Password" class="AuthFieldLabel"/>
+                    <ui:TextField name="PasswordField" password="true" class="AuthPasswordField"/>
+                    <ui:Label text="Repeat Password" class="AuthFieldLabel"/>
+                    <ui:TextField name="RepeatPasswordField" password="true" class="AuthPasswordField"/>
+                </ui:VisualElement>
+                <ui:Label name="MessageError" class="AuthMessageError"/>
+                <ui:Button text="→" name="SignUpButton" class="AuthSubmitButton"/>
+                <ui:VisualElement name="BackRow" class="AuthChangeRow">
+                    <ui:Label text="Back to" class="AuthChangeLabel"/>
+                    <ui:Button text="login" name="LoginChangeButton" class="AuthChangeLinkButton"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

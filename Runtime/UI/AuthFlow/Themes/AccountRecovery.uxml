@@ -1,0 +1,58 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Packages/com.feed_the_realm.shared/Runtime/UI/AuthFlow/Themes/AuthStyles.uss?fileID=7433441132597879392&amp;guid=c25ac5f0ef9fbfd46bdd96a557e53334&amp;type=3#AuthStyles"/>
+    <ui:VisualElement name="ResetPasswordContainer" class="AuthContainer">
+        <ui:VisualElement name="ResetPasswordForm" class="formBox">
+            <ui:VisualElement name="FormContainer" class="formContainer">
+                <ui:Button text="✕" name="Close" class="AuthCloseButton"/>
+                <ui:Label text="Account Recovery" name="FormTitle" class="AuthFormTitle"/>
+                <ui:VisualElement name="TitleUnderline" class="AuthFormTitleUnderline"/>
+                <ui:VisualElement name="StepEmail">
+                    <ui:VisualElement name="FieldsGroup" class="AuthFieldsGroup">
+                        <ui:Label text="enter your email here" class="AuthFieldLabel"/>
+                        <ui:TextField name="EmailField" class="AuthEmailInput"/>
+                    </ui:VisualElement>
+                    <ui:Label name="MessageError" class="AuthMessageError"/>
+                    <ui:Button text="→" name="SendCodeButton" class="AuthSubmitButton"/>
+                    <ui:VisualElement name="BackRow" class="AuthChangeRow">
+                        <ui:Label text="Back to" class="AuthChangeLabel"/>
+                        <ui:Button text="login" name="BackToLoginButton" class="AuthChangeLinkButton"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                    <ui:VisualElement name="StepVerifyCode" style="display: none;">
+                        <ui:VisualElement name="FieldsGroup" class="AuthFieldsGroup">
+                            <ui:Label text="add your recovery code here" class="AuthFieldLabel"/>
+                            <ui:TextField name="CodeField" class="AuthPasswordField"/>
+                        </ui:VisualElement>
+                        <ui:Label name="MessageError" class="AuthMessageError"/>
+                        <ui:VisualElement name="ResendRow" class="AuthChangeRow" style="flex-direction: column; align-items: center; margin-bottom: 12px;">
+                            <ui:Label text="Didn't get a code?" class="AuthChangeLabel" style="-unity-text-align: middle-center;"/>
+                            <ui:VisualElement style="flex-direction: row; align-items: center; justify-content: center; flex-wrap: wrap; max-width: 200px;">
+                                <ui:Label text="Press" class="AuthChangeLabel" style="-unity-text-align: middle-center;"/>
+                                <ui:Button text="here" name="ResendCodeButton" class="AuthChangeLinkButton" style="margin-left: 4px; margin-right: 4px;"/>
+                                <ui:Label text="to get a new one" class="AuthChangeLabel" style="-unity-text-align: middle-center;"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:Button text="→" name="VerifyCodeButton" class="AuthSubmitButton"/>
+                        <ui:VisualElement name="BackRow" class="AuthChangeRow">
+                            <ui:Label text="Back to" class="AuthChangeLabel"/>
+                            <ui:Button text="login" name="BackToLoginButton" class="AuthChangeLinkButton"/>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                <ui:VisualElement name="StepNewPassword" style="display: none;">
+                    <ui:VisualElement name="FieldsGroup" class="AuthFieldsGroup">
+                        <ui:Label text="set your new password" class="AuthFieldLabel"/>
+                        <ui:TextField name="NewPasswordField" password="true" class="AuthPasswordField"/>
+                        <ui:Label text="write your password again" class="AuthFieldLabel"/>
+                        <ui:TextField name="RepeatPasswordField" password="true" class="AuthPasswordField"/>
+                    </ui:VisualElement>
+                    <ui:Label name="MessageError" class="AuthMessageError"/>
+                    <ui:Button text="→" name="ResetPasswordButton" class="AuthSubmitButton"/>
+                    <ui:VisualElement name="BackRow" class="AuthChangeRow">
+                        <ui:Label text="Back to" class="AuthChangeLabel"/>
+                        <ui:Button text="login" name="BackToLoginButton" class="AuthChangeLinkButton"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
