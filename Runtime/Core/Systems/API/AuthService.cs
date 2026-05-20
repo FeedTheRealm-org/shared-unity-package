@@ -352,5 +352,158 @@ namespace API
                 return (true, res.data.message);
             }
         }
+
+        public async Task<(bool success, string message)> ForgotPassword(string email)
+        {
+            string url = $"{GetBaseUrl()}/password/forgot";
+            ForgotPasswordRequest payload = new ForgotPasswordRequest { email = email };
+            string json = JsonUtility.ToJson(payload);
+
+            (string responseText, UnityWebRequest.Result result, long statusCode) =
+                await SendRequestAsync(url, "POST", null, json, "ForgotPassword");
+
+            if (result == UnityWebRequest.Result.ConnectionError)
+            {
+                logger.Log(
+                    $"ForgotPassword connection error: {responseText}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (
+                    false,
+                    "Unable to connect to server. Please check your internet connection."
+                );
+            }
+            else if (result == UnityWebRequest.Result.ProtocolError)
+            {
+                ErrorResponse res = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<ErrorResponse>(responseText);
+                string errorMessage = res?.detail ?? responseText;
+                if (statusCode >= 500)
+                    errorMessage = "Server error. Please try again later.";
+                logger.Log(
+                    $"ForgotPassword error ({statusCode}): {errorMessage}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (false, errorMessage);
+            }
+            else
+            {
+                DataEnvelope<ForgotPasswordResponse> res = JsonUtility.FromJson<
+                    DataEnvelope<ForgotPasswordResponse>
+                >(responseText);
+                logger.Log($"ForgotPassword response: {responseText}", this);
+                return (res.data.success, "");
+            }
+        }
+
+        public async Task<(bool success, string resetToken, string message)> VerifyResetCode(
+            string email,
+            string code
+        )
+        {
+            string url = $"{GetBaseUrl()}/password/verify-code";
+            VerifyResetCodeRequest payload = new VerifyResetCodeRequest
+            {
+                email = email,
+                code = code,
+            };
+            string json = JsonUtility.ToJson(payload);
+
+            (string responseText, UnityWebRequest.Result result, long statusCode) =
+                await SendRequestAsync(url, "POST", null, json, "VerifyResetCode");
+
+            if (result == UnityWebRequest.Result.ConnectionError)
+            {
+                logger.Log(
+                    $"VerifyResetCode connection error: {responseText}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (
+                    false,
+                    null,
+                    "Unable to connect to server. Please check your internet connection."
+                );
+            }
+            else if (result == UnityWebRequest.Result.ProtocolError)
+            {
+                ErrorResponse res = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<ErrorResponse>(responseText);
+                string errorMessage = res?.detail ?? responseText;
+                if (statusCode >= 500)
+                    errorMessage = "Server error. Please try again later.";
+                logger.Log(
+                    $"VerifyResetCode error ({statusCode}): {errorMessage}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (false, null, errorMessage);
+            }
+            else
+            {
+                DataEnvelope<VerifyResetCodeResponse> res = JsonUtility.FromJson<
+                    DataEnvelope<VerifyResetCodeResponse>
+                >(responseText);
+                logger.Log($"VerifyResetCode response: {responseText}", this);
+                return (true, res.data.reset_token, "");
+            }
+        }
+
+        public async Task<(bool success, string message)> ResetPassword(
+            string resetToken,
+            string newPassword
+        )
+        {
+            string url = $"{GetBaseUrl()}/password/reset";
+            ResetPasswordRequest payload = new ResetPasswordRequest
+            {
+                reset_token = resetToken,
+                new_password = newPassword,
+            };
+            string json = JsonUtility.ToJson(payload);
+
+            (string responseText, UnityWebRequest.Result result, long statusCode) =
+                await SendRequestAsync(url, "POST", null, json, "ResetPassword");
+
+            if (result == UnityWebRequest.Result.ConnectionError)
+            {
+                logger.Log(
+                    $"ResetPassword connection error: {responseText}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (
+                    false,
+                    "Unable to connect to server. Please check your internet connection."
+                );
+            }
+            else if (result == UnityWebRequest.Result.ProtocolError)
+            {
+                ErrorResponse res = string.IsNullOrEmpty(responseText)
+                    ? null
+                    : JsonUtility.FromJson<ErrorResponse>(responseText);
+                string errorMessage = res?.detail ?? responseText;
+                if (statusCode >= 500)
+                    errorMessage = "Server error. Please try again later.";
+                logger.Log(
+                    $"ResetPassword error ({statusCode}): {errorMessage}",
+                    this,
+                    Logging.LogType.Error
+                );
+                return (false, errorMessage);
+            }
+            else
+            {
+                DataEnvelope<ResetPasswordResponse> res = JsonUtility.FromJson<
+                    DataEnvelope<ResetPasswordResponse>
+                >(responseText);
+                logger.Log($"ResetPassword response: {responseText}", this);
+                return (res.data.success, "");
+            }
+        }
     }
 }

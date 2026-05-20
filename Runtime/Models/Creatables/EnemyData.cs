@@ -10,7 +10,7 @@ namespace FTRShared.Runtime.Models
         public string id = "";
         public string name = "";
         public string description = "";
-        public int healthPoints = 0;
+        public int healthPoints = 100;
         public string weaponId = "";
         public string lootTableId = "";
         public Dictionary<string, string> category_sprites = new();
