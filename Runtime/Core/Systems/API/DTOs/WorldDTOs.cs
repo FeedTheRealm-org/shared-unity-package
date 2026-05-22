@@ -115,4 +115,11 @@ namespace API
         public WorldData worldData;
         public ZoneAddressResponse zoneAddress;
     }
+
+    [Serializable]
+    public class ActivePlayersResponse
+    {
+        public int active_players;
+        public int average_player_time;
+    }
 }

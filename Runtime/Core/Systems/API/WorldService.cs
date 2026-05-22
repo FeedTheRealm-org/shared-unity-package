@@ -181,6 +181,27 @@ namespace API
             return (worldData, creatablesData, "", statusCode);
         }
 
+        public async Task<(int activePlayers, long statusCode)> GetActivePlayers(string worldId)
+        {
+            var (responseText, result, statusCode) = await SendRequestAsync(
+                $"{BaseUrl}/worlds/orchestrator/{worldId}/players",
+                "GET",
+                session.AccessToken,
+                null,
+                "GetActivePlayers"
+            );
+
+            var error = ParseError(result, responseText, statusCode, "GetActivePlayers");
+            if (error != null)
+                return (0, statusCode);
+
+            var envelope = JsonUtility.FromJson<DataEnvelope<ActivePlayersResponse>>(responseText);
+            if (envelope?.data == null)
+                return (0, statusCode);
+
+            return (envelope.data.active_players, statusCode);
+        }
+
         public async Task<(string ip, int port, string error, long statusCode)> GetZoneAddress(
             string worldId,
             int zoneId
