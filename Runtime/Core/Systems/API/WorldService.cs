@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using FTRShared.Runtime.Models;
 using UnityEngine;
@@ -249,6 +251,8 @@ namespace API
                             worldId = world.id,
                             worldName = world.name,
                             description = world.description ?? "",
+                            created_at = ParseUtcTimestamp(world.created_at),
+                            created_by = world.user_id ?? "",
                         },
                         zoneAddress = new ZoneAddressResponse { ip = ip, port = port },
                     }
@@ -261,6 +265,26 @@ namespace API
                 Logging.LogType.Info
             );
             return (activeWorlds, "");
+        }
+
+        private static DateTime ParseUtcTimestamp(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return DateTime.MinValue;
+
+            if (
+                DateTimeOffset.TryParse(
+                    value,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+                    out var timestamp
+                )
+            )
+            {
+                return timestamp.UtcDateTime;
+            }
+
+            return DateTime.MinValue;
         }
 
         public async Task<(string error, long statusCode)> DeleteWorld(string worldId)
