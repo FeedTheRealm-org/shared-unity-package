@@ -33,4 +33,11 @@ namespace API
         public string ip;
         public int port;
     }
+
+    [Serializable]
+    public class UpdatePlayerCountRequest
+    {
+        public int active_players;
+        public int average_player_time;
+    }
 }

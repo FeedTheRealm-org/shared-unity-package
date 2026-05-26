@@ -15,6 +15,9 @@ namespace API
         private string BaseUrl(string worldId) =>
             $"{apiConfig.Hostname}:{apiConfig.Port}/world/{worldId}/zones";
 
+        private string BaseOrchestratorUrl(string worldId) =>
+            $"{apiConfig.Hostname}:{apiConfig.Port}/world/orchestrator/{worldId}/zones";
+
         public async Task<(string id, string error, long statusCode)> PublishZone(
             string worldId,
             ZoneData data
@@ -132,6 +135,46 @@ namespace API
 
             var error = ParseError(result, responseText, statusCode, "DeactivateZone");
             return (error, statusCode);
+        }
+
+        /// <summary>
+        /// UpdatePlayerCount sends to the worlds service the current active player count of the
+        /// zone and the current avg player time.
+        /// </summary>
+        public async Task UpdatePlayerCount(
+            string worldId,
+            int zoneId,
+            int playerCount,
+            int playerTime
+        )
+        {
+            string json = JsonUtility.ToJson(
+                new UpdatePlayerCountRequest
+                {
+                    active_players = playerCount,
+                    average_player_time = playerTime,
+                }
+            );
+
+            try
+            {
+                await SendRequestAsync(
+                    $"{BaseOrchestratorUrl(worldId)}/{zoneId}/players",
+                    "POST",
+                    session.AccessToken,
+                    json,
+                    "UpdatePlayerCount"
+                );
+                logger.Log($"Sent player count {playerCount} and time avg {playerTime}");
+            }
+            catch (System.Exception ex)
+            {
+                logger.Log(
+                    $"Failed to Update zone player count: {ex.Message}",
+                    this,
+                    Logging.LogType.Error
+                );
+            }
         }
     }
 }
