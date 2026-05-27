@@ -184,7 +184,7 @@ namespace API
         public async Task<(int activePlayers, long statusCode)> GetActivePlayers(string worldId)
         {
             var (responseText, result, statusCode) = await SendRequestAsync(
-                $"{BaseUrl}/worlds/orchestrator/{worldId}/players",
+                $"{BaseUrl}/orchestrator/{worldId}/players",
                 "GET",
                 session.AccessToken,
                 null,
