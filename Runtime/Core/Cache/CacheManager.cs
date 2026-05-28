@@ -21,7 +21,7 @@ public class CacheState
     public List<CacheEntry> entries = new List<CacheEntry>();
 }
 
-public class CacheManager
+public class CacheManager : IDisposable
 {
     private readonly AssetsService assetsService;
     private readonly ModelService modelService;
@@ -30,6 +30,13 @@ public class CacheManager
 
     private readonly Dictionary<string, CacheEntry> cacheEntries =
         new Dictionary<string, CacheEntry>();
+    private readonly Dictionary<string, int> cacheEntryIndex = new Dictionary<string, int>();
+
+    private CacheState cacheState = new CacheState();
+    private int pendingStateWrites = 0;
+    private DateTime lastStateSaveUtc = DateTime.MinValue;
+    private const int StateSaveWriteThreshold = 10;
+    private static readonly TimeSpan StateSaveInterval = TimeSpan.FromSeconds(2);
 
     private const string cacheFolder = "cache/";
     private const string cacheStateFile = "cache/cache_state.json";
@@ -49,6 +56,11 @@ public class CacheManager
         this.disk = disk;
 
         LoadCacheState();
+    }
+
+    public void Dispose()
+    {
+        SaveCacheState();
     }
 
     // Examples:
@@ -72,8 +84,8 @@ public class CacheManager
             if (newTexture != null)
             {
                 disk.Write(cachePath, newTexture.EncodeToPNG());
-                cacheEntries[uri] = new CacheEntry { uri = uri, updatedAt = updatedAt };
-                SaveCacheState();
+                RegisterCacheEntry(new CacheEntry { uri = uri, updatedAt = updatedAt });
+                TrySaveCacheState();
             }
             return newTexture;
         }
@@ -125,8 +137,8 @@ public class CacheManager
                 return null;
             else
             {
-                cacheEntries[uri] = new CacheEntry { uri = uri, updatedAt = updatedAt };
-                SaveCacheState();
+                RegisterCacheEntry(new CacheEntry { uri = uri, updatedAt = updatedAt });
+                TrySaveCacheState();
             }
         }
 
@@ -149,6 +161,7 @@ public class CacheManager
 
     private bool ShouldInvalidateCache(string uri, DateTime updatedAt)
     {
+        return false;
         if (cacheEntries.TryGetValue(uri, out var entry))
             return updatedAt > entry.updatedAt; // TODO: consider deleting file instead of just overwriting it
         return true;
@@ -156,12 +169,36 @@ public class CacheManager
 
     private void SaveCacheState()
     {
-        var cacheState = new CacheState();
-        foreach (var entry in cacheEntries.Values)
-            cacheState.entries.Add(entry);
-
         var cacheStateJson = JsonUtility.ToJson(cacheState);
         disk.Write(cacheStateFile, System.Text.Encoding.UTF8.GetBytes(cacheStateJson));
+        pendingStateWrites = 0;
+        lastStateSaveUtc = DateTime.UtcNow;
+    }
+
+    private void TrySaveCacheState()
+    {
+        pendingStateWrites++;
+        if (
+            pendingStateWrites >= StateSaveWriteThreshold
+            || DateTime.UtcNow - lastStateSaveUtc >= StateSaveInterval
+        )
+            SaveCacheState();
+    }
+
+    private void RegisterCacheEntry(CacheEntry entry)
+    {
+        cacheEntries[entry.uri] = entry;
+        if (!cacheEntryIndex.TryGetValue(entry.uri, out var index))
+        {
+            cacheEntryIndex[entry.uri] = cacheState.entries.Count;
+            cacheState.entries.Add(entry);
+            return;
+        }
+
+        if (index >= 0 && index < cacheState.entries.Count)
+            cacheState.entries[index] = entry;
+        else
+            cacheEntryIndex.Remove(entry.uri);
     }
 
     private void LoadCacheState()
@@ -175,10 +212,13 @@ public class CacheManager
         if (loadedState?.entries == null)
             return;
 
-        foreach (var entry in loadedState.entries)
+        cacheState = loadedState;
+        cacheEntryIndex.Clear();
+        for (int i = 0; i < loadedState.entries.Count; i++)
         {
-            if (!string.IsNullOrEmpty(entry?.uri))
-                cacheEntries[entry.uri] = entry;
+            var entry = loadedState.entries[i];
+            cacheEntries[entry.uri] = entry;
+            cacheEntryIndex[entry.uri] = i;
         }
     }
 
@@ -195,6 +235,8 @@ public class CacheManager
             }
         }
         cacheEntries.Clear();
+        cacheEntryIndex.Clear();
+        cacheState.entries.Clear();
         if (disk.Exists(cacheStateFile))
         {
             disk.Delete(cacheStateFile);
