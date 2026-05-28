@@ -15,6 +15,12 @@ public class CacheEntry
     public DateTime updatedAt;
 }
 
+[Serializable]
+public class CacheState
+{
+    public List<CacheEntry> entries = new List<CacheEntry>();
+}
+
 public class CacheManager
 {
     private readonly AssetsService assetsService;
@@ -143,7 +149,6 @@ public class CacheManager
 
     private bool ShouldInvalidateCache(string uri, DateTime updatedAt)
     {
-        return false;
         if (cacheEntries.TryGetValue(uri, out var entry))
             return updatedAt > entry.updatedAt; // TODO: consider deleting file instead of just overwriting it
         return true;
@@ -151,8 +156,12 @@ public class CacheManager
 
     private void SaveCacheState()
     {
-        var cacheState = JsonUtility.ToJson(cacheEntries);
-        disk.Write(cacheStateFile, System.Text.Encoding.UTF8.GetBytes(cacheState));
+        var cacheState = new CacheState();
+        foreach (var entry in cacheEntries.Values)
+            cacheState.entries.Add(entry);
+
+        var cacheStateJson = JsonUtility.ToJson(cacheState);
+        disk.Write(cacheStateFile, System.Text.Encoding.UTF8.GetBytes(cacheStateJson));
     }
 
     private void LoadCacheState()
@@ -162,10 +171,14 @@ public class CacheManager
             return;
 
         var cacheStateJson = System.Text.Encoding.UTF8.GetString(data);
-        var loadedEntries = JsonUtility.FromJson<Dictionary<string, CacheEntry>>(cacheStateJson);
-        foreach (var entry in loadedEntries)
+        var loadedState = JsonUtility.FromJson<CacheState>(cacheStateJson);
+        if (loadedState?.entries == null)
+            return;
+
+        foreach (var entry in loadedState.entries)
         {
-            cacheEntries[entry.Key] = entry.Value;
+            if (!string.IsNullOrEmpty(entry?.uri))
+                cacheEntries[entry.uri] = entry;
         }
     }
 
