@@ -47,6 +47,7 @@ public class CacheManager
     // FULL URL: https://d3ry8oaxnx8r71.cloudfront.net/ArmorBody/f51a1c0e-07ad-4f3d-a647-82e61547aa4d.png
     // URI (unique and same for defaults): /ArmorBody/f51a1c0e-07ad-4f3d-a647-82e61547aa4d.png
     // URI(item - unique): /worlds/8ff4168b-137f-47f4-8887-f42fd3adc520/items/946a5ef4-c259-4dfa-a7b5-4493d07fa96f.png
+    // URI(material - unique): /worlds/00000000-0000-0000-0000-000000000000/materials/c172b8c5-050f-4a83-bad7-0239ea48de25.jpg
     // BASE URL (remote): https://example.cloudfront.net
     // BASE URL (local): file://~/.config/unity3d/AtusGames/Feed the realm
     public async Task<Texture2D> GetSprite(string uri, DateTime updatedAt)
@@ -144,7 +145,7 @@ public class CacheManager
         }
     }
 
-    private void ClearCache()
+    public void ClearAllCache()
     {
         foreach (var entry in cacheEntries.Values)
         {
