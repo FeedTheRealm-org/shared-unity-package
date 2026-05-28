@@ -43,7 +43,7 @@ namespace API
             return apiConfig.CosmeticsCDN.Trim().TrimEnd('/');
         }
 
-        private string BuildCosmeticsCdnUrl(string spriteUrl)
+        private string BuildSpriteDownloadUrl(string spriteUrl)
         {
             if (string.IsNullOrWhiteSpace(spriteUrl))
                 return string.Empty;
@@ -54,7 +54,9 @@ namespace API
             if (!path.StartsWith('/'))
                 path = $"/{path}";
 
-            var baseUrl = GetCosmeticsCdnBaseUrl();
+            var baseUrl = path.StartsWith("/worlds/")
+                ? apiConfig.WorldsCDN.Trim().TrimEnd('/')
+                : GetCosmeticsCdnBaseUrl();
             return string.IsNullOrEmpty(baseUrl) ? string.Empty : $"{baseUrl}{path}";
         }
 
@@ -502,7 +504,7 @@ namespace API
                 spriteUrl = sprite.sprite_url;
             }
 
-            var url = BuildCosmeticsCdnUrl(spriteUrl);
+            var url = BuildSpriteDownloadUrl(spriteUrl);
             if (string.IsNullOrEmpty(url))
             {
                 logger.Log(
