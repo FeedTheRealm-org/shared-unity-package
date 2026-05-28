@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FTRShared.Runtime.Core.Cache;
 using UnityEngine;
 using VContainer;
 
@@ -14,6 +15,9 @@ public class SpriteManager : MonoBehaviour
 
     [Inject]
     private Logging.Logger logger;
+
+    [Inject]
+    private CacheManager cacheManager;
 
     private string characterId;
     private SpriteLoader spriteLoader;
@@ -216,7 +220,7 @@ public class SpriteManager : MonoBehaviour
 
             if (!cachedCategoryTexturesByUrl.TryGetValue(spriteUrl, out Texture2D texture))
             {
-                texture = await assetsService.DownloadTexture2D(spriteUrl);
+                texture = await cacheManager.GetSprite(spriteUrl, DateTime.UtcNow);
                 if (texture == null)
                     continue;
                 cachedCategoryTexturesByUrl[spriteUrl] = texture;
