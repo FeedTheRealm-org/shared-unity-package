@@ -12,5 +12,7 @@ namespace FTRShared.Runtime.Models.Settings
         public int resolutionHeight = 0;
         public RefreshRateData refreshRate = new RefreshRateData(0, 0);
         public bool isFullscreen = true;
+
+        public bool enableCaching = true;
     }
 }

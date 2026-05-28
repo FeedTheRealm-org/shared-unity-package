@@ -26,7 +26,9 @@ public class CacheManager
         new Dictionary<string, CacheEntry>();
 
     private const string cacheFolder = "cache/";
-    private const string cacheStateFile = "cache_state.json";
+    private const string cacheStateFile = "cache/cache_state.json";
+
+    public bool IsCachingEnabled { get; private set; } = true;
 
     public CacheManager(
         DiskService disk,
@@ -52,6 +54,9 @@ public class CacheManager
     // BASE URL (local): file://~/.config/unity3d/AtusGames/Feed the realm
     public async Task<Texture2D> GetSprite(string uri, DateTime updatedAt)
     {
+        if (!IsCachingEnabled)
+            return await assetsService.DownloadTexture2D(uri);
+
         var cachePath = Path.Combine(cacheFolder, uri.TrimStart('/'));
         Debug.Log($"Getting sprite for URI: {uri}, cache path: {cachePath}");
         byte[] data = disk.Read(cachePath);
@@ -78,6 +83,24 @@ public class CacheManager
     // BASE URL (local): file://~/.config/unity3d/AtusGames/Feed the realm
     public async Task<GameObject> GetModel(string uri, DateTime updatedAt)
     {
+        if (!IsCachingEnabled)
+        {
+            var modelInfo = new ModelInfo { url = uri };
+            var tempPath = await modelService.DownloadModel(
+                modelInfo,
+                savePath: null,
+                isTemp: true
+            );
+            if (string.IsNullOrEmpty(tempPath))
+                return null;
+
+            byte[] tempData = File.ReadAllBytes(tempPath);
+            if (File.Exists(tempPath))
+                File.Delete(tempPath);
+
+            return await gltfLoaderService.LoadModel(tempData);
+        }
+
         var cachePath = Path.Combine(cacheFolder, uri.TrimStart('/'));
         Debug.Log($"Getting model for URI: {uri}, cache path: {cachePath}");
         byte[] data = disk.Read(cachePath);
@@ -120,6 +143,7 @@ public class CacheManager
 
     private bool ShouldInvalidateCache(string uri, DateTime updatedAt)
     {
+        return false;
         if (cacheEntries.TryGetValue(uri, out var entry))
             return updatedAt > entry.updatedAt; // TODO: consider deleting file instead of just overwriting it
         return true;
@@ -145,13 +169,30 @@ public class CacheManager
         }
     }
 
-    public void ClearAllCache()
+    public int ClearAllCache()
     {
+        int deletedCount = 0;
         foreach (var entry in cacheEntries.Values)
         {
-            disk.Delete(Path.Combine(cacheFolder, entry.uri));
+            var cachePath = Path.Combine(cacheFolder, entry.uri.TrimStart('/'));
+            if (disk.Exists(cachePath))
+            {
+                disk.Delete(cachePath);
+                deletedCount++;
+            }
         }
         cacheEntries.Clear();
-        disk.Delete(cacheStateFile);
+        if (disk.Exists(cacheStateFile))
+        {
+            disk.Delete(cacheStateFile);
+            deletedCount++;
+        }
+
+        return deletedCount;
+    }
+
+    public void SetCachingEnabled(bool enabled)
+    {
+        IsCachingEnabled = enabled;
     }
 }
