@@ -28,6 +28,7 @@ namespace API
     {
         public string model_id;
         public string url;
+        public string updated_at;
     }
 
     [Serializable]

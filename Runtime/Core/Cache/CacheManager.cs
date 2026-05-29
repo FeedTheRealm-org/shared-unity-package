@@ -184,7 +184,7 @@ public class CacheManager : IDisposable
         if (cacheEntries.TryGetValue(uri, out var entry))
         {
             Debug.Log(
-                $"updatedAt {updatedAt} > {entry.updatedAt} for URI: {uri}, cache miss or stale entry."
+                $"updatedAt {updatedAt} > {entry.updatedAt} for URI: {uri}, should invalidate: {updatedAt > entry.updatedAt}."
             );
             return updatedAt > entry.updatedAt; // TODO: consider deleting file instead of just overwriting it
         }
