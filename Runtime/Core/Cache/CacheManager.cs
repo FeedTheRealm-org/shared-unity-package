@@ -12,7 +12,27 @@ namespace FTRShared.Runtime.Core.Cache;
 public class CacheEntry
 {
     public string uri;
-    public DateTime updatedAt;
+    public string updatedAtIso;
+
+    [NonSerialized]
+    public DateTimeOffset updatedAt;
+
+    public void SyncSerializedValues()
+    {
+        updatedAtIso = DateTimeHelper.ToIsoString(updatedAt);
+    }
+
+    public void HydrateRuntimeValues()
+    {
+        try
+        {
+            updatedAt = DateTimeHelper.ParseDateTimeOffset(updatedAtIso);
+        }
+        catch
+        {
+            updatedAt = DateTimeOffset.MinValue;
+        }
+    }
 }
 
 [Serializable]
@@ -70,7 +90,7 @@ public class CacheManager : IDisposable
     // URI(material - unique): /worlds/00000000-0000-0000-0000-000000000000/materials/c172b8c5-050f-4a83-bad7-0239ea48de25.jpg
     // BASE URL (remote): https://example.cloudfront.net
     // BASE URL (local): file://~/.config/unity3d/AtusGames/Feed the realm
-    public async Task<Texture2D> GetSprite(string uri, DateTime updatedAt)
+    public async Task<Texture2D> GetSprite(string uri, DateTimeOffset updatedAt)
     {
         if (!IsCachingEnabled)
             return await assetsService.DownloadTexture2D(uri);
@@ -99,7 +119,7 @@ public class CacheManager : IDisposable
     // URI (default models - unique): /worlds/00000000-0000-0000-0000-000000000000/models/7f141c6e-09f7-4c3d-ae16-1ea31f253888/DEFAULT_CHEST_CLOSED_chest_closed.glb
     // BASE URL (remote): https://example.cloudfront.net
     // BASE URL (local): file://~/.config/unity3d/AtusGames/Feed the realm
-    public async Task<GameObject> GetModel(string uri, DateTime updatedAt)
+    public async Task<GameObject> GetModel(string uri, DateTimeOffset updatedAt)
     {
         if (!IsCachingEnabled)
         {
@@ -159,16 +179,24 @@ public class CacheManager : IDisposable
         return texture;
     }
 
-    private bool ShouldInvalidateCache(string uri, DateTime updatedAt)
+    private bool ShouldInvalidateCache(string uri, DateTimeOffset updatedAt)
     {
-        return false;
         if (cacheEntries.TryGetValue(uri, out var entry))
+        {
+            Debug.Log(
+                $"updatedAt {updatedAt} > {entry.updatedAt} for URI: {uri}, cache miss or stale entry."
+            );
             return updatedAt > entry.updatedAt; // TODO: consider deleting file instead of just overwriting it
+        }
         return true;
     }
 
     private void SaveCacheState()
     {
+        foreach (var entry in cacheState.entries)
+        {
+            entry.SyncSerializedValues();
+        }
         var cacheStateJson = JsonUtility.ToJson(cacheState);
         disk.Write(cacheStateFile, System.Text.Encoding.UTF8.GetBytes(cacheStateJson));
         pendingStateWrites = 0;
@@ -217,6 +245,7 @@ public class CacheManager : IDisposable
         for (int i = 0; i < loadedState.entries.Count; i++)
         {
             var entry = loadedState.entries[i];
+            entry.HydrateRuntimeValues();
             cacheEntries[entry.uri] = entry;
             cacheEntryIndex[entry.uri] = i;
         }

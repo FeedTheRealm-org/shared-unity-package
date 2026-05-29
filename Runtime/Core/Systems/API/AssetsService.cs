@@ -20,6 +20,7 @@ namespace API
         {
             public string cosmetic_id;
             public string cosmetic_url;
+            public string updated_at;
         }
 
         [System.Serializable]
@@ -68,6 +69,7 @@ namespace API
             {
                 sprite_id = cosmetic.cosmetic_id,
                 sprite_url = cosmetic.cosmetic_url,
+                updated_at = cosmetic.updated_at,
             };
         }
 

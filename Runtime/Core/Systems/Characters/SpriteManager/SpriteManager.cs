@@ -205,6 +205,7 @@ public class SpriteManager : MonoBehaviour
             if (string.IsNullOrEmpty(entry.Value))
                 continue;
 
+            var updatedAt = DateTimeOffset.MinValue;
             if (!spriteUrlsById.TryGetValue(entry.Value, out var spriteUrl))
             {
                 var sprite = await assetsService.GetSpriteByIdAsync(entry.Value);
@@ -213,6 +214,7 @@ public class SpriteManager : MonoBehaviour
 
                 spriteUrl = sprite.sprite_url;
                 spriteUrlsById[entry.Value] = spriteUrl;
+                updatedAt = DateTimeHelper.ParseDateTimeOffset(sprite.updated_at);
             }
 
             if (string.IsNullOrEmpty(spriteUrl))
@@ -220,7 +222,7 @@ public class SpriteManager : MonoBehaviour
 
             if (!cachedCategoryTexturesByUrl.TryGetValue(spriteUrl, out Texture2D texture))
             {
-                texture = await cacheManager.GetSprite(spriteUrl, DateTime.UtcNow);
+                texture = await cacheManager.GetSprite(spriteUrl, updatedAt);
                 if (texture == null)
                     continue;
                 cachedCategoryTexturesByUrl[spriteUrl] = texture;
