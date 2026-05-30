@@ -214,7 +214,18 @@ public class SpriteManager : MonoBehaviour
 
                 spriteUrl = sprite.sprite_url;
                 spriteUrlsById[entry.Value] = spriteUrl;
-                updatedAt = DateTimeHelper.ParseDateTimeOffset(sprite.updated_at);
+                try
+                {
+                    updatedAt = DateTimeHelper.ParseDateTimeOffset(sprite.updated_at);
+                }
+                catch
+                {
+                    logger?.Log(
+                        $"SpriteManager: Failed to parse updated_at for sprite '{sprite.sprite_id}'.",
+                        this,
+                        Logging.LogType.Warning
+                    );
+                }
             }
 
             if (string.IsNullOrEmpty(spriteUrl))
