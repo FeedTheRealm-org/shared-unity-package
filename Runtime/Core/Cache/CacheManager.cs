@@ -57,6 +57,7 @@ public class CacheManager : IDisposable
     private DateTime lastStateSaveUtc = DateTime.MinValue;
     private const int StateSaveWriteThreshold = 10;
     private static readonly TimeSpan StateSaveInterval = TimeSpan.FromSeconds(2);
+    private static readonly TimeSpan CacheInvalidationTolerance = TimeSpan.FromSeconds(10);
 
     private const string cacheFolder = "cache/";
     private const string cacheStateFile = "cache/cache_state.json";
@@ -183,10 +184,16 @@ public class CacheManager : IDisposable
     {
         if (cacheEntries.TryGetValue(uri, out var entry))
         {
+            var updatedAtUtc = updatedAt.ToUniversalTime();
+            var entryUpdatedAtUtc = entry.updatedAt.ToUniversalTime();
+            var delta = updatedAtUtc - entryUpdatedAtUtc;
+            bool shouldInvalidate = delta >= CacheInvalidationTolerance;
+
             Debug.Log(
-                $"updatedAt {updatedAt} > {entry.updatedAt} for URI: {uri}, should invalidate: {updatedAt > entry.updatedAt}."
+                $"updatedAt {updatedAtUtc:o} - {entryUpdatedAtUtc:o} = {delta.TotalSeconds:0.###}s for URI: {uri}, should invalidate: {shouldInvalidate}."
             );
-            return updatedAt > entry.updatedAt; // TODO: consider deleting file instead of just overwriting it
+
+            return shouldInvalidate; // TODO: consider deleting file instead of just overwriting it
         }
         return true;
     }
