@@ -97,7 +97,6 @@ public class CacheManager : IDisposable
             return await assetsService.DownloadTexture2D(uri);
 
         var cachePath = Path.Combine(cacheFolder, uri.TrimStart('/'));
-        Debug.Log($"Getting sprite for URI: {uri}, cache path: {cachePath}");
         byte[] data = disk.Read(cachePath);
         if (data == null || ShouldInvalidateCache(uri, updatedAt))
         {
@@ -141,7 +140,6 @@ public class CacheManager : IDisposable
         }
 
         var cachePath = Path.Combine(cacheFolder, uri.TrimStart('/'));
-        Debug.Log($"Getting model for URI: {uri}, cache path: {cachePath}");
         byte[] data = disk.Read(cachePath);
         if (data == null || ShouldInvalidateCache(uri, updatedAt))
         {
@@ -188,10 +186,6 @@ public class CacheManager : IDisposable
             var entryUpdatedAtUtc = entry.updatedAt.ToUniversalTime();
             var delta = updatedAtUtc - entryUpdatedAtUtc;
             bool shouldInvalidate = delta >= CacheInvalidationTolerance;
-
-            Debug.Log(
-                $"updatedAt {updatedAtUtc:o} - {entryUpdatedAtUtc:o} = {delta.TotalSeconds:0.###}s for URI: {uri}, should invalidate: {shouldInvalidate}."
-            );
 
             return shouldInvalidate; // TODO: consider deleting file instead of just overwriting it
         }
