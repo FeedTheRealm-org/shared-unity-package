@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using FTRShared.Runtime.Models;
 using UnityEngine;
@@ -179,6 +181,27 @@ namespace API
             return (worldData, creatablesData, "", statusCode);
         }
 
+        public async Task<(int activePlayers, long statusCode)> GetActivePlayers(string worldId)
+        {
+            var (responseText, result, statusCode) = await SendRequestAsync(
+                $"{BaseUrl}/orchestrator/{worldId}/players",
+                "GET",
+                session.AccessToken,
+                null,
+                "GetActivePlayers"
+            );
+
+            var error = ParseError(result, responseText, statusCode, "GetActivePlayers");
+            if (error != null)
+                return (0, statusCode);
+
+            var envelope = JsonUtility.FromJson<DataEnvelope<ActivePlayersResponse>>(responseText);
+            if (envelope?.data == null)
+                return (0, statusCode);
+
+            return (envelope.data.active_players, statusCode);
+        }
+
         public async Task<(string ip, int port, string error, long statusCode)> GetZoneAddress(
             string worldId,
             int zoneId
@@ -249,6 +272,8 @@ namespace API
                             worldId = world.id,
                             worldName = world.name,
                             description = world.description ?? "",
+                            created_at = ParseUtcTimestamp(world.created_at),
+                            created_by = world.user_id ?? "",
                         },
                         zoneAddress = new ZoneAddressResponse { ip = ip, port = port },
                         updatedAt = world.updated_at,
@@ -262,6 +287,26 @@ namespace API
                 Logging.LogType.Info
             );
             return (activeWorlds, "");
+        }
+
+        private static DateTime ParseUtcTimestamp(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return DateTime.MinValue;
+
+            if (
+                DateTimeOffset.TryParse(
+                    value,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+                    out var timestamp
+                )
+            )
+            {
+                return timestamp.UtcDateTime;
+            }
+
+            return DateTime.MinValue;
         }
 
         public async Task<(string error, long statusCode)> DeleteWorld(string worldId)

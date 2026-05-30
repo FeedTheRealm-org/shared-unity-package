@@ -116,4 +116,11 @@ namespace API
         public ZoneAddressResponse zoneAddress;
         public string updatedAt;
     }
+
+    [Serializable]
+    public class ActivePlayersResponse
+    {
+        public int active_players;
+        public int average_player_time;
+    }
 }
