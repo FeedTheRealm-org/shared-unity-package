@@ -279,6 +279,46 @@ public class CacheManager : IDisposable
             deletedCount++;
         }
 
+        SaveCacheState();
+
+        return deletedCount;
+    }
+
+    public int ClearCacheForUriPrefix(string uriStart)
+    {
+        int deletedCount = 0;
+        var keysToDelete = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var kvp in cacheEntries)
+        {
+            if (kvp.Key.StartsWith(uriStart, StringComparison.OrdinalIgnoreCase))
+            {
+                var cachePath = Path.Combine(cacheFolder, kvp.Key.TrimStart('/'));
+                if (disk.Exists(cachePath))
+                {
+                    disk.Delete(cachePath);
+                    deletedCount++;
+                }
+                keysToDelete.Add(kvp.Key);
+            }
+        }
+
+        if (keysToDelete.Count == 0)
+            return deletedCount;
+
+        foreach (var key in keysToDelete)
+            cacheEntries.Remove(key);
+
+        cacheState.entries.RemoveAll(entry => entry != null && keysToDelete.Contains(entry.uri));
+        cacheEntryIndex.Clear();
+        for (int i = 0; i < cacheState.entries.Count; i++)
+        {
+            var entry = cacheState.entries[i];
+            if (entry != null)
+                cacheEntryIndex[entry.uri] = i;
+        }
+
+        SaveCacheState();
+
         return deletedCount;
     }
 
