@@ -251,6 +251,7 @@ namespace API
                             description = world.description ?? "",
                         },
                         zoneAddress = new ZoneAddressResponse { ip = ip, port = port },
+                        updatedAt = world.updated_at,
                     }
                 );
             }
