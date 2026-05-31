@@ -114,6 +114,7 @@ namespace API
     {
         public WorldData worldData;
         public ZoneAddressResponse zoneAddress;
+        public string updatedAt;
     }
 
     [Serializable]

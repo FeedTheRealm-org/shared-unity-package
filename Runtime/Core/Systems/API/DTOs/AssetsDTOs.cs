@@ -14,6 +14,7 @@ namespace API
     {
         public string sprite_id;
         public string sprite_url;
+        public string updated_at;
     }
 
     [System.Serializable]

@@ -153,12 +153,20 @@ namespace API
             return uwr.error;
         }
 
-        public async Task<string> DownloadModel(ModelInfo modelInfo, bool isRetry = false)
+        public async Task<string> DownloadModel(
+            ModelInfo modelInfo,
+            string savePath = null,
+            bool isTemp = true,
+            bool isRetry = false
+        )
         {
             string fileName = Path.GetFileName(modelInfo.url);
             string downloadUrl = $"{apiConfig.WorldsCDN}{modelInfo.url}";
 
-            string tempPath = Path.Combine(Application.temporaryCachePath, fileName);
+            var baseUrl = isTemp ? Application.temporaryCachePath : Application.persistentDataPath;
+            string tempPath = Path.Combine(baseUrl, fileName);
+            if (!string.IsNullOrEmpty(savePath))
+                tempPath = Path.Combine(baseUrl, savePath);
 
             logger.Log($"[ModelService] Downloading model: {fileName} from {downloadUrl}", this);
 
@@ -171,7 +179,7 @@ namespace API
                 bool result = await session.EnsureValidSession();
                 if (!result)
                     return null;
-                return await DownloadModel(modelInfo, isRetry: true);
+                return await DownloadModel(modelInfo, savePath, isTemp, isRetry: true);
             }
 
             if (uwr.result != UnityWebRequest.Result.Success)

@@ -276,6 +276,7 @@ namespace API
                             created_by = world.user_id ?? "",
                         },
                         zoneAddress = new ZoneAddressResponse { ip = ip, port = port },
+                        updatedAt = world.updated_at,
                     }
                 );
             }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FTRShared.Runtime.Core.Cache;
 using UnityEngine;
 using VContainer;
 
@@ -14,6 +15,9 @@ public class SpriteManager : MonoBehaviour
 
     [Inject]
     private Logging.Logger logger;
+
+    [Inject]
+    private CacheManager cacheManager;
 
     private string characterId;
     private SpriteLoader spriteLoader;
@@ -201,6 +205,7 @@ public class SpriteManager : MonoBehaviour
             if (string.IsNullOrEmpty(entry.Value))
                 continue;
 
+            var updatedAt = DateTimeOffset.MinValue;
             if (!spriteUrlsById.TryGetValue(entry.Value, out var spriteUrl))
             {
                 var sprite = await assetsService.GetSpriteByIdAsync(entry.Value);
@@ -209,6 +214,18 @@ public class SpriteManager : MonoBehaviour
 
                 spriteUrl = sprite.sprite_url;
                 spriteUrlsById[entry.Value] = spriteUrl;
+                try
+                {
+                    updatedAt = DateTimeHelper.ParseDateTimeOffset(sprite.updated_at);
+                }
+                catch
+                {
+                    logger?.Log(
+                        $"SpriteManager: Failed to parse updated_at for sprite '{sprite.sprite_id}'.",
+                        this,
+                        Logging.LogType.Warning
+                    );
+                }
             }
 
             if (string.IsNullOrEmpty(spriteUrl))
@@ -216,7 +233,7 @@ public class SpriteManager : MonoBehaviour
 
             if (!cachedCategoryTexturesByUrl.TryGetValue(spriteUrl, out Texture2D texture))
             {
-                texture = await assetsService.DownloadTexture2D(spriteUrl);
+                texture = await cacheManager.GetSprite(spriteUrl, updatedAt);
                 if (texture == null)
                     continue;
                 cachedCategoryTexturesByUrl[spriteUrl] = texture;
