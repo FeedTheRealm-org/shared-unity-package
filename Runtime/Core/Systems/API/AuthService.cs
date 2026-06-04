@@ -27,7 +27,8 @@ namespace API
                 "POST",
                 adminToken,
                 json,
-                "Login"
+                "Login",
+                false
             );
             (string responseText, UnityWebRequest.Result result, long statusCode) = await task;
 
@@ -97,7 +98,8 @@ namespace API
                 "POST",
                 null,
                 json,
-                "SignUp"
+                "SignUp",
+                false
             );
             (string responseText, UnityWebRequest.Result result, long statusCode) = await task;
 
@@ -148,7 +150,8 @@ namespace API
                 "POST",
                 null,
                 json,
-                "VerifyCode"
+                "VerifyCode",
+                false
             );
             (string responseText, UnityWebRequest.Result result, long statusCode) = await task;
 
@@ -202,7 +205,8 @@ namespace API
                 "POST",
                 null,
                 json,
-                "RefreshVerification"
+                "RefreshVerification",
+                false
             );
             (string responseText, UnityWebRequest.Result result, long statusCode) = await task;
 
@@ -360,7 +364,7 @@ namespace API
             string json = JsonUtility.ToJson(payload);
 
             (string responseText, UnityWebRequest.Result result, long statusCode) =
-                await SendRequestAsync(url, "POST", null, json, "ForgotPassword");
+                await SendRequestAsync(url, "POST", null, json, "ForgotPassword", false);
 
             if (result == UnityWebRequest.Result.ConnectionError)
             {
@@ -413,7 +417,7 @@ namespace API
             string json = JsonUtility.ToJson(payload);
 
             (string responseText, UnityWebRequest.Result result, long statusCode) =
-                await SendRequestAsync(url, "POST", null, json, "VerifyResetCode");
+                await SendRequestAsync(url, "POST", null, json, "VerifyResetCode", false);
 
             if (result == UnityWebRequest.Result.ConnectionError)
             {
@@ -467,7 +471,7 @@ namespace API
             string json = JsonUtility.ToJson(payload);
 
             (string responseText, UnityWebRequest.Result result, long statusCode) =
-                await SendRequestAsync(url, "POST", null, json, "ResetPassword");
+                await SendRequestAsync(url, "POST", null, json, "ResetPassword", false);
 
             if (result == UnityWebRequest.Result.ConnectionError)
             {
