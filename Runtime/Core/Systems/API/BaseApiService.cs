@@ -31,10 +31,18 @@ namespace API
             string method,
             string accessToken,
             string jsonBody = null,
-            string logPrefix = null
+            string logPrefix = null,
+            bool showRequestLogs = true
         )
         {
-            var response = await ExecuteRequestAsync(url, method, accessToken, jsonBody, logPrefix);
+            var response = await ExecuteRequestAsync(
+                url,
+                method,
+                accessToken,
+                jsonBody,
+                logPrefix,
+                showRequestLogs
+            );
 
             if (response.responseCode == 401 && session != null)
             {
@@ -55,7 +63,8 @@ namespace API
                         method,
                         session.AccessToken,
                         jsonBody,
-                        logPrefix
+                        logPrefix,
+                        showRequestLogs
                     );
                 }
             }
@@ -72,7 +81,8 @@ namespace API
             string method,
             string accessToken,
             string jsonBody = null,
-            string logPrefix = null
+            string logPrefix = null,
+            bool showRequestLogs = true
         )
         {
             UnityWebRequest uwr;
@@ -90,7 +100,7 @@ namespace API
             uwr.SetRequestHeader("Content-Type", "application/json");
             uwr.SetRequestHeader("Authorization", $"Bearer {accessToken}");
 
-            if (!string.IsNullOrEmpty(logPrefix))
+            if (!string.IsNullOrEmpty(logPrefix) && showRequestLogs)
                 logger.Log($"{logPrefix} Request to {url}: {jsonBody}", this);
 
             await uwr.SendWebRequest();
