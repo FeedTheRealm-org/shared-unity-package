@@ -5,7 +5,7 @@ using UnityEngine;
 public static class FolderScriptIconAssigner
 {
     private const string TargetFolder = "Packages/com.feed_the_realm.shared";
-    private const string IconPath = "Packages/com.feed_the_realm.shared/Editor/icon.jpeg";
+    private const string IconPath = "Packages/com.feed_the_realm.shared/Editor/icon.png";
 
     static FolderScriptIconAssigner()
     {
