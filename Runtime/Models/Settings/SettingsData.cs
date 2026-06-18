@@ -14,5 +14,7 @@ namespace FTRShared.Runtime.Models.Settings
         public bool isFullscreen = true;
 
         public bool enableCaching = true;
+
+        public bool showPerformanceStats = false;
     }
 }
