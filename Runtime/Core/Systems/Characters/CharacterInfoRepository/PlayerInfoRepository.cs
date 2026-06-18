@@ -41,6 +41,16 @@ public class PlayerInfoRepository : CharacterInfoRepository
             session.CharacterName = response.data.character_name;
         }
 
+        if (response.error != null)
+            ShowToastError(response.error.detail);
+
         return response?.data;
+    }
+
+    private void ShowToastError(string message)
+    {
+        if (!string.IsNullOrEmpty(message) && message.Length > 1)
+            message = char.ToUpper(message[0]) + message.Substring(1);
+        ToastNotification.Show(message, "error", Color.red);
     }
 }
