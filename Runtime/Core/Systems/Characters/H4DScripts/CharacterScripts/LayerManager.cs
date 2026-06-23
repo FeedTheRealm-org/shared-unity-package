@@ -51,10 +51,15 @@ namespace Assets.HeroEditor4D.Common.Scripts.CharacterScripts
         private void UpdateRuntimeDepthSorting()
         {
             var sortingGroup = EnsureSortingGroup();
-            var camera = DepthSortingCamera != null ? DepthSortingCamera : Camera.main;
-
-            if (camera == null || sortingGroup == null)
+            if (sortingGroup == null)
                 return;
+
+            if (DepthSortingCamera == null)
+            {
+                if (Camera.main == null)
+                    return;
+                DepthSortingCamera = Camera.main;
+            }
 
             if (AssignSortingLayer && !string.IsNullOrWhiteSpace(CharacterSortingLayer))
             {
@@ -62,7 +67,10 @@ namespace Assets.HeroEditor4D.Common.Scripts.CharacterScripts
             }
 
             var precision = DepthSortingPrecision <= 0 ? 100 : DepthSortingPrecision;
-            var depth = Vector3.Dot(GetSortingRootTransform().position, camera.transform.forward);
+            var depth = Vector3.Dot(
+                GetSortingRootTransform().position,
+                DepthSortingCamera.transform.forward
+            );
             sortingGroup.sortingOrder = Mathf.RoundToInt(-depth * precision) + DepthSortingOffset;
         }
 
