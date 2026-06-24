@@ -38,6 +38,7 @@ public class ApiConfig : ScriptableObject
     [SerializeField]
     private string _prodCosmeticsCDN = "https://d3ry8oaxnx8r71.cloudfront.net/";
 
+    public ApiEnvironment Environment => _environment;
     public string Hostname => _environment == ApiEnvironment.Local ? _localHostname : _prodHostname;
     public int Port => _environment == ApiEnvironment.Local ? _localPort : _prodPort;
     public string WorldsCDN =>
