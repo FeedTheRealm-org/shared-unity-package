@@ -16,5 +16,7 @@ namespace FTRShared.Runtime.Models.Settings
         public bool enableCaching = true;
 
         public bool showPerformanceStats = false;
+
+        public bool showDownloadContentPopupOnStart = true;
     }
 }
